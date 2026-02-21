@@ -4,10 +4,11 @@ interface TitleSelectorProps {
   titles: string[];
   onSelect: (title: string) => void;
   isLoading: boolean;
+  selectedTitle?: string;
   onBack: () => void;
 }
 
-export default function TitleSelector({ titles, onSelect, isLoading, onBack }: TitleSelectorProps) {
+export default function TitleSelector({ titles, onSelect, isLoading, selectedTitle, onBack }: TitleSelectorProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <div style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', borderRadius: '8px', padding: '0.75rem 1rem' }}>
@@ -16,31 +17,35 @@ export default function TitleSelector({ titles, onSelect, isLoading, onBack }: T
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {titles.map((title, index) => (
+        {titles.map((title, index) => {
+          const isSelected = title === selectedTitle;
+          return (
           <button
             key={index}
             onClick={() => !isLoading && onSelect(title)}
             disabled={isLoading}
             style={{
               padding: '0.75rem 1rem',
-              background: 'white',
-              border: '1px solid var(--border-color)',
+              background: isSelected ? '#eef2ff' : 'white',
+              border: `1px solid ${isSelected ? 'var(--focus-color)' : 'var(--border-color)'}`,
               borderRadius: '8px',
               cursor: isLoading ? 'not-allowed' : 'pointer',
               textAlign: 'left',
               fontSize: '0.82rem',
-              color: 'var(--text-primary)',
+              color: isSelected ? 'var(--focus-color)' : 'var(--text-primary)',
               lineHeight: 1.4,
               transition: 'all 0.2s ease',
               opacity: isLoading ? 0.6 : 1,
+              fontWeight: isSelected ? '600' : '400',
             }}
-            onMouseEnter={e => { if (!isLoading) { e.currentTarget.style.borderColor = 'var(--focus-color)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(99,102,241,0.15)'; } }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.boxShadow = 'none'; }}
+            onMouseEnter={e => { if (!isLoading && !isSelected) { e.currentTarget.style.borderColor = 'var(--focus-color)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(99,102,241,0.15)'; } }}
+            onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.boxShadow = 'none'; } }}
           >
             <span style={{ color: 'var(--text-muted)', marginRight: '0.5rem', fontSize: '0.75rem' }}>{index + 1}.</span>
             {title}
           </button>
-        ))}
+          );
+        })}
       </div>
 
       <button onClick={onBack} style={{ padding: '0.5rem', background: 'white', color: 'var(--text-secondary)', border: '1px solid var(--border-color)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem' }}>

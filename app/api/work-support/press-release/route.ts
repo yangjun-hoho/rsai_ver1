@@ -11,39 +11,33 @@ async function generateTitles(coreContent: string, keywords: string[]): Promise<
     messages: [
       {
         role: 'system',
-        content: `당신은 대한민국 지방자치단체 보도자료 제목 작성 전문가입니다.
-남양주시 공식 보도자료에 사용될 간결하고 핵심을 담은 제목 5개를 생성합니다.
-각 제목은 서로 다른 스타일로 작성하세요:
-1. 핵심 사실 중심형
-2. 숫자/성과 강조형
-3. 시민 혜택 중심형
-4. 행정 목적 강조형
-5. 미래지향/희망 메시지형`,
+        content: `당신은 남양주시 공식 보도자료 작성에 특화된 AI입니다.
+
+## 남양주시 보도자료 제목 원칙
+- "남양주시, [핵심 내용] [추진/실시/개최/발표]" 형식
+- 남양주시 주체 명시, 구체적 수치/사업명 포함
+- 15-45자 내외, 공식적이고 임팩트 있게
+- 예) "남양주시, 총 50억원 투입해 스마트도시 구축 본격 추진"
+- 예) "남양주시 초6~고3 학생 1,500명에 수강권 지원...교육격차 해소 앞장"`,
       },
       {
         role: 'user',
-        content: `다음 내용으로 보도자료 제목 5개를 생성해주세요:
+        content: `핵심 내용: ${coreContent}${keywordText ? `\n키워드: ${keywordText}` : ''}
 
-핵심 내용: ${coreContent}
-${keywordText ? `키워드: ${keywordText}` : ''}
-
-각 제목은 새 줄에 작성하고, 번호(1. 2. 3. ...)를 붙여주세요. 제목만 작성하세요.`,
+남양주시 공식 보도자료에 적합한 제목 5개를 서로 다른 스타일로 생성하세요.
+번호(1. 2. 3. ...)를 붙여 한 줄씩 작성하세요. 제목만 작성하세요.`,
       },
     ],
-    temperature: 0.9,
-    max_tokens: 500,
+    temperature: 0.8,
+    max_tokens: 600,
   });
 
   const raw = completion.choices[0]?.message?.content?.trim() || '';
-  const lines = raw.split('\n').filter((l) => /^\d+\./.test(l.trim()));
-  return lines.map((l) => l.replace(/^\d+\.\s*/, '').trim()).filter(Boolean);
+  const lines = raw.split('\n').filter(l => /^\d+\./.test(l.trim()));
+  return lines.map(l => l.replace(/^\d+\.\s*/, '').trim()).filter(Boolean);
 }
 
-async function generatePressRelease(
-  title: string,
-  coreContent: string,
-  keywords: string[]
-): Promise<object> {
+async function generatePressRelease(title: string, coreContent: string, keywords: string[]): Promise<object> {
   const keywordText = keywords.filter(Boolean).join(', ');
 
   const completion = await openai.chat.completions.create({
@@ -51,40 +45,39 @@ async function generatePressRelease(
     messages: [
       {
         role: 'system',
-        content: `당신은 대한민국 지방자치단체 공식 보도자료 작성 전문가입니다.
-남양주시 공식 보도자료를 작성합니다. 반드시 다음 JSON 형식으로 응답하세요:
+        content: `너는 남양주시 공식 보도자료 작성 전문가야. 실제 신문 보도자료처럼 자연스럽고 격식 있는 문체로 작성해.
+
+## 작성 원칙
+- 첫 문장: "남양주시(시장 주광덕)는 ~했다/한다/밝혔다" 형식으로 시작 (5W1H 포함)
+- 각 단락은 3-4문장, 단락 간 자연스러운 흐름
+- 구체적 수치, 기간, 예산, 대상 인원 적극 활용
+- 종결어: "~했다", "~밝혔다", "~전했다" 일관 사용
+- 마지막 단락에 담당 부서와 연락처를 자연스럽게 포함
+  예) "자세한 사항은 남양주시 ○○과 ○○팀(☎031-590-XXXX)로 문의하면 된다."
+- 전체 5-7개 단락, 800-1200자 내외
+
+## JSON 형식 (이 구조로만 응답)
 {
-  "metadata": {
-    "department": "담당 부서명",
-    "contact": "담당자 연락처",
-    "date": "배포일"
-  },
-  "title": "보도자료 제목",
-  "lead": "첫 문단 (핵심 내용 요약, 5W1H 포함)",
-  "body": [
-    {
-      "subtitle": "소제목",
-      "content": "내용"
-    }
-  ],
-  "conclusion": "마무리 문단 (시장 코멘트 또는 기대 효과)",
-  "contact": {
-    "name": "담당자명",
-    "department": "부서",
-    "phone": "전화번호",
-    "email": "이메일"
-  }
-}`,
+  "title": "보도자료 기사 제목",
+  "paragraphs": [
+    "첫 번째 단락 전체 내용",
+    "두 번째 단락 전체 내용",
+    "...",
+    "마지막 단락 (담당부서 연락처 포함)"
+  ]
+}
+
+JSON 외 다른 텍스트 절대 포함 금지.`,
       },
       {
         role: 'user',
-        content: `다음 내용으로 공식 보도자료를 작성해주세요:
+        content: `제목: ${title}
+핵심 내용: ${coreContent}${keywordText ? `\n키워드: ${keywordText}` : ''}
 
-제목: ${title}
-핵심 내용: ${coreContent}
-${keywordText ? `키워드: ${keywordText}` : ''}
-
-JSON 형식으로만 응답하세요. 마크다운 코드 블록 없이 순수 JSON만 출력하세요.`,
+위 내용으로 남양주시 공식 보도자료를 JSON 형식으로 작성해.
+- 모든 수치, 기간, 예산은 현실적이고 구체적으로
+- 시민이 체감할 수 있는 혜택과 변화 명시
+- 관계자 발언(시장 또는 담당자)을 한 단락에 자연스럽게 포함`,
       },
     ],
     temperature: 0.7,
@@ -96,7 +89,7 @@ JSON 형식으로만 응답하세요. 마크다운 코드 블록 없이 순수 J
   try {
     return JSON.parse(raw);
   } catch {
-    return { error: 'JSON 파싱 실패', raw };
+    return { error: 'JSON 파싱 실패' };
   }
 }
 
@@ -109,8 +102,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'action과 핵심 내용을 입력해주세요.' }, { status: 400 });
     }
 
+    const cleanedKeywords = (keywords as string[]).map((k: string) => k?.trim()).filter(Boolean);
+
     if (action === 'generateTitles') {
-      const titles = await generateTitles(coreContent, keywords);
+      const titles = await generateTitles(coreContent, cleanedKeywords);
       return NextResponse.json({ titles });
     }
 
@@ -118,7 +113,7 @@ export async function POST(request: NextRequest) {
       if (!title) {
         return NextResponse.json({ error: '제목을 선택해주세요.' }, { status: 400 });
       }
-      const pressRelease = await generatePressRelease(title, coreContent, keywords);
+      const pressRelease = await generatePressRelease(title, coreContent, cleanedKeywords);
       return NextResponse.json({ pressRelease });
     }
 

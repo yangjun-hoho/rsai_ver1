@@ -99,24 +99,26 @@ export default function ReportForm({ onGenerate, isLoading }: ReportFormProps) {
         </div>
       </div>
 
-      <div>
-        <label style={labelStyle}>보고서 유형</label>
-        <select style={inputStyle} value={selectedReportType} onChange={e => handleReportTypeChange(e.target.value)}>
-          <option value="plan">계획 보고서</option>
-          <option value="measure">대책 보고서</option>
-          <option value="status">상황 보고서</option>
-          <option value="analysis">분석 보고서</option>
-          <option value="other">기타 보고서</option>
-        </select>
-      </div>
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>보고서 유형</label>
+          <select style={inputStyle} value={selectedReportType} onChange={e => handleReportTypeChange(e.target.value)}>
+            <option value="plan">계획 보고서</option>
+            <option value="measure">대책 보고서</option>
+            <option value="status">상황 보고서</option>
+            <option value="analysis">분석 보고서</option>
+            <option value="other">기타 보고서</option>
+          </select>
+        </div>
 
-      <div>
-        <label style={labelStyle}>세부 유형</label>
-        <select style={inputStyle} value={selectedDetailType} onChange={e => setSelectedDetailType(e.target.value)}>
-          {currentDetailTypes.map(dt => (
-            <option key={dt.id} value={dt.id}>{dt.label}</option>
-          ))}
-        </select>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>세부 유형</label>
+          <select style={inputStyle} value={selectedDetailType} onChange={e => setSelectedDetailType(e.target.value)}>
+            {currentDetailTypes.map(dt => (
+              <option key={dt.id} value={dt.id}>{dt.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div>
@@ -128,18 +130,21 @@ export default function ReportForm({ onGenerate, isLoading }: ReportFormProps) {
         </select>
       </div>
 
-      {currentStructure.length > 0 && (
-        <div style={{ background: '#f8f9fa', borderRadius: '6px', padding: '0.6rem 0.8rem' }}>
-          <p style={{ margin: '0 0 0.35rem 0', fontSize: '0.72rem', fontWeight: '600', color: 'var(--text-muted)' }}>📋 섹션 구조</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+      <div>
+        <label style={labelStyle}>보고서 구조 미리보기</label>
+        <div style={{ background: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '6px', padding: '0.6rem 0.8rem', minHeight: '42px', display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.3rem' }}>
             {currentStructure.map((section, i) => (
-              <div key={i} style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
-                {i + 1}. {section}
-              </div>
+              <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span style={{ background: '#dbeafe', color: '#1e40af', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '400', border: '1px solid #bfdbfe' }}>{section}</span>
+                {i < currentStructure.length - 1 && (
+                  <span style={{ color: '#6b7280', fontSize: '0.7rem', fontWeight: '600' }}>→</span>
+                )}
+              </span>
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       <div>
         <label style={labelStyle}>AI 모델</label>

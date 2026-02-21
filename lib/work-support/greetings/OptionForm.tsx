@@ -8,15 +8,13 @@ interface OptionFormProps {
   isLoading: boolean;
 }
 
-const formStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '0.75rem' };
-const labelStyle: React.CSSProperties = { fontSize: '0.78rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.25rem', display: 'block' };
-const selectStyle: React.CSSProperties = { width: '100%', padding: '0.4rem 0.6rem', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '0.8rem', background: 'var(--input-background)', color: 'var(--text-primary)' };
-const textareaStyle: React.CSSProperties = { ...selectStyle, resize: 'vertical', minHeight: '80px', fontFamily: 'inherit' };
-const btnStyle: React.CSSProperties = { width: '100%', padding: '0.6rem', background: 'var(--focus-color)', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem' };
+const labelStyle: React.CSSProperties = { display: 'block', marginBottom: '0.5rem', fontWeight: '400', fontSize: '0.75rem', color: '#303592' };
+const inputStyle: React.CSSProperties = { width: '100%', padding: '0.3rem', border: '1px solid #ddd', borderRadius: '5px', color: '#160a72', fontSize: '0.75rem', fontWeight: '500', boxSizing: 'border-box' };
+const textareaStyle: React.CSSProperties = { ...inputStyle, resize: 'vertical', height: '70px', minHeight: '70px', fontFamily: 'inherit' };
 
 export default function OptionForm({ onSubmit, isLoading }: OptionFormProps) {
   const [formState, setFormState] = useState({
-    speechCategory: '',
+    speechCategory: '일반 행사',
     greetingType: '개회사',
     specificSituation: '',
     speaker: '시장',
@@ -32,87 +30,115 @@ export default function OptionForm({ onSubmit, isLoading }: OptionFormProps) {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!formState.specificSituation) {
+      alert('구체적 명칭을 입력해주세요.');
+      return;
+    }
     onSubmit(formState);
   }
 
   return (
-    <form onSubmit={handleSubmit} style={formStyle}>
-      <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '0.25rem' }}>
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+
+      <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem' }}>
         <h2 style={{ color: 'white', margin: 0, fontSize: '0.9rem', fontWeight: '600' }}>🎤 인사말씀 설정</h2>
       </div>
 
-      <div>
-        <label style={labelStyle}>행사 유형 *</label>
-        <select style={selectStyle} value={formState.speechCategory} onChange={e => update('speechCategory', e.target.value)} required>
-          <option value="">선택해주세요</option>
-          {optionData.speechCategories.map(v => <option key={v} value={v}>{v}</option>)}
-        </select>
+      {/* 구체적 명칭 */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={labelStyle}>구체적 명칭</label>
+        <input
+          style={inputStyle}
+          type="text"
+          placeholder="예> 제14회 남양주 북한강 축제, 2025 시민의 날 기념식 등"
+          value={formState.specificSituation}
+          onChange={e => update('specificSituation', e.target.value)}
+          disabled={isLoading}
+        />
       </div>
 
-      <div>
-        <label style={labelStyle}>말씀 유형 *</label>
-        <select style={selectStyle} value={formState.greetingType} onChange={e => update('greetingType', e.target.value)}>
-          {optionData.greetingTypes.map(v => <option key={v} value={v}>{v}</option>)}
-        </select>
+      {/* 상황 선택 + 인사말 성격 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>상황 선택</label>
+          <select style={inputStyle} value={formState.speechCategory} onChange={e => update('speechCategory', e.target.value)} disabled={isLoading}>
+            {optionData.speechCategories.map(v => <option key={v} value={v}>{v}</option>)}
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>인사말 성격</label>
+          <select style={inputStyle} value={formState.greetingType} onChange={e => update('greetingType', e.target.value)} disabled={isLoading}>
+            {optionData.greetingTypes.map(v => <option key={v} value={v}>{v}</option>)}
+          </select>
+        </div>
       </div>
 
-      <div>
-        <label style={labelStyle}>구체적 상황 *</label>
-        <input style={{ ...selectStyle }} type="text" placeholder="예: 2025년 남양주시 스마트도시 추진단 발대식" value={formState.specificSituation} onChange={e => update('specificSituation', e.target.value)} required />
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-        <div>
-          <label style={labelStyle}>발언자</label>
-          <select style={selectStyle} value={formState.speaker} onChange={e => update('speaker', e.target.value)}>
+      {/* 연설자 선택 + 주요 청중 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>연설자 선택</label>
+          <select style={inputStyle} value={formState.speaker} onChange={e => update('speaker', e.target.value)} disabled={isLoading}>
             {optionData.speakers.map(v => <option key={v} value={v}>{v}</option>)}
           </select>
         </div>
-        <div>
-          <label style={labelStyle}>청중 유형</label>
-          <select style={selectStyle} value={formState.audienceType} onChange={e => update('audienceType', e.target.value)}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>주요 청중</label>
+          <select style={inputStyle} value={formState.audienceType} onChange={e => update('audienceType', e.target.value)} disabled={isLoading}>
             {optionData.audienceTypes.map(v => <option key={v} value={v}>{v}</option>)}
           </select>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-        <div>
+      {/* 인용구 유형 + 인용구 성격 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{ flex: 1 }}>
           <label style={labelStyle}>인용구 유형</label>
-          <select style={selectStyle} value={formState.quoteType1} onChange={e => update('quoteType1', e.target.value)}>
+          <select style={inputStyle} value={formState.quoteType1} onChange={e => update('quoteType1', e.target.value)} disabled={isLoading}>
             {optionData.quoteTypes1.map(v => <option key={v} value={v}>{v}</option>)}
           </select>
         </div>
-        <div>
-          <label style={labelStyle}>인용구 분위기</label>
-          <select style={selectStyle} value={formState.quoteType2} onChange={e => update('quoteType2', e.target.value)}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>인용구 성격</label>
+          <select style={inputStyle} value={formState.quoteType2} onChange={e => update('quoteType2', e.target.value)} disabled={isLoading}>
             {optionData.quoteTypes2.map(v => <option key={v} value={v}>{v}</option>)}
           </select>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-        <div>
-          <label style={labelStyle}>계절/시기</label>
-          <select style={selectStyle} value={formState.season} onChange={e => update('season', e.target.value)}>
+      {/* 계절/시기 선택 + 말씀 길이 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>계절/시기 선택</label>
+          <select style={inputStyle} value={formState.season} onChange={e => update('season', e.target.value)} disabled={isLoading}>
             {optionData.seasons.map(v => <option key={v} value={v}>{v}</option>)}
           </select>
         </div>
-        <div>
+        <div style={{ flex: 1 }}>
           <label style={labelStyle}>말씀 길이</label>
-          <select style={selectStyle} value={formState.speechLength} onChange={e => update('speechLength', e.target.value)}>
+          <select style={inputStyle} value={formState.speechLength} onChange={e => update('speechLength', e.target.value)} disabled={isLoading}>
             {optionData.speechLengths.map(v => <option key={v} value={v}>{v}</option>)}
           </select>
         </div>
       </div>
 
-      <div>
-        <label style={labelStyle}>핵심 내용 (선택)</label>
-        <textarea style={textareaStyle} placeholder="포함시키고 싶은 핵심 내용이나 특별한 사항을 입력하세요..." value={formState.coreContent} onChange={e => update('coreContent', e.target.value)} />
+      {/* 추가 내용 */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={labelStyle}>추가 내용</label>
+        <textarea
+          style={textareaStyle}
+          placeholder="전달사항, 특이사항, 지역 현안, 예산 및 지원 내역에 대한 내용을 입력하세요."
+          value={formState.coreContent}
+          onChange={e => update('coreContent', e.target.value)}
+          disabled={isLoading}
+        />
       </div>
 
-      <button type="submit" style={{ ...btnStyle, opacity: isLoading ? 0.7 : 1 }} disabled={isLoading}>
-        {isLoading ? '생성 중...' : '✨ 인사말씀 생성'}
+      <button
+        type="submit"
+        disabled={isLoading}
+        style={{ width: '100%', padding: '0.3rem', background: isLoading ? '#aaa' : '#4676B8', color: 'white', border: 'none', borderRadius: '5px', fontSize: '1rem', fontWeight: '600', cursor: isLoading ? 'not-allowed' : 'pointer' }}
+      >
+        {isLoading ? '생성 중...' : '인사말씀 생성하기'}
       </button>
     </form>
   );

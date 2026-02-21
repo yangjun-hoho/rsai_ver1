@@ -5,6 +5,7 @@ import Sidebar, { type ToolId } from '@/lib/chat/Sidebar';
 import ChatHeader from '@/lib/chat/ChatHeader';
 import ChatArea from '@/lib/chat/ChatArea';
 import InputArea from '@/lib/chat/InputArea';
+import PreviewPanel from '@/lib/chat/PreviewPanel';
 import type { Message } from '@/lib/chat/MessageBubble';
 
 const AVAILABLE_MODELS = [
@@ -14,27 +15,56 @@ const AVAILABLE_MODELS = [
 
 const LS_KEY = 'ares-ai-messages';
 
+// 도구별 개별 localStorage 키
+const PREVIEW_TOOL_IDS: ToolId[] = ['report', 'ppt', 'scenario', 'merit-citation', 'greetings', 'press-release'];
+function previewKey(toolId: ToolId) { return `ares-ai-preview-${toolId}`; }
+
 function newId() {
   return Math.random().toString(36).slice(2);
 }
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [activeMode, setActiveMode] = useState<ToolId | null>(null);
+  const [messages, setMessages]       = useState<Message[]>([]);
+  const [activeMode, setActiveMode]   = useState<ToolId | null>(null);
   const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading]     = useState(false);
+  const [error, setError]             = useState('');
+
+  // 미리보기 패널 상태
+  const [previewTool, setPreviewTool] = useState<ToolId | null>(null);
+  // 도구별 독립 저장소 (SvelteKit 방식)
+  const [previewStore, setPreviewStore] = useState<Partial<Record<ToolId, Record<string, unknown>>>>({});
+  const [previewOpen, setPreviewOpen] = useState(true);
+
+  // 현재 표시할 미리보기 데이터 (store에서 파생)
+  const previewData = previewTool ? (previewStore[previewTool] ?? null) : null;
 
   useEffect(() => {
     document.title = '아레스 AI';
     try {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) setMessages(JSON.parse(saved));
+
+      // 도구별 저장된 미리보기 데이터 로드
+      const store: Partial<Record<ToolId, Record<string, unknown>>> = {};
+      for (const toolId of PREVIEW_TOOL_IDS) {
+        const raw = localStorage.getItem(previewKey(toolId));
+        if (raw) {
+          try { store[toolId] = JSON.parse(raw); } catch { /* ignore */ }
+        }
+      }
+      setPreviewStore(store);
     } catch { /* ignore */ }
   }, []);
 
   function saveMessages(msgs: Message[]) {
     try { localStorage.setItem(LS_KEY, JSON.stringify(msgs)); } catch { /* ignore */ }
+  }
+
+  // 도구별 미리보기 저장 (store + localStorage)
+  function saveToolPreview(toolId: ToolId, data: Record<string, unknown>) {
+    try { localStorage.setItem(previewKey(toolId), JSON.stringify(data)); } catch { /* ignore */ }
+    setPreviewStore(prev => ({ ...prev, [toolId]: data }));
   }
 
   function updateLastAssistant(content: string) {
@@ -51,8 +81,23 @@ export default function Home() {
     });
   }
 
+  // 사이드바 도구 클릭: 폼 토글만 (미리보기 탭은 건드리지 않음)
   function handleToolClick(toolId: ToolId) {
     setActiveMode(prev => prev === toolId ? null : toolId);
+  }
+
+  // 탭 × 닫기: 해당 도구의 저장 데이터 삭제, 남은 탭으로 전환
+  function handleTabClose(toolId: ToolId) {
+    try { localStorage.removeItem(previewKey(toolId)); } catch { /* ignore */ }
+    setPreviewStore(prev => {
+      const next = { ...prev };
+      delete next[toolId];
+      return next;
+    });
+    if (previewTool === toolId) {
+      const remaining = PREVIEW_TOOL_IDS.filter(id => id !== toolId && previewStore[id] !== undefined);
+      setPreviewTool(remaining[0] ?? null);
+    }
   }
 
   // 일반 채팅 전송 (SSE 스트리밍)
@@ -71,7 +116,6 @@ export default function Home() {
     });
     setIsLoading(true);
 
-    // 스트리밍 참조용으로 이전 메시지(userMsg 포함) 스냅샷
     const historyForApi = [...messages, userMsg].map(m => ({ role: m.role, content: m.content }));
 
     try {
@@ -117,7 +161,6 @@ export default function Home() {
 
   // 도구 폼 제출 핸들러
   const handleToolSubmit = useCallback(async (toolId: ToolId, data: Record<string, unknown>) => {
-    setActiveMode(null);
     setIsLoading(true);
     setError('');
 
@@ -131,14 +174,24 @@ export default function Home() {
     };
     const label = toolLabels[toolId] || toolId;
 
+    // 보도자료: 폼이 자체적으로 API 호출을 처리함 - 완성된 데이터를 받아 미리보기에 표시
+    if (toolId === 'press-release') {
+      const pr = (data.pressRelease as Record<string, unknown>) || {};
+      setPreviewTool('press-release');
+      saveToolPreview('press-release', pr);
+      const userMsg: Message = { id: newId(), role: 'user', content: `${label} 생성 요청` };
+      const assistantMsg: Message = { id: newId(), role: 'assistant', content: `✅ **${label} 생성 완료**` };
+      setMessages(prev => { const n = [...prev, userMsg, assistantMsg]; saveMessages(n); return n; });
+      setIsLoading(false);
+      return;
+    }
+
     const userMsg: Message = { id: newId(), role: 'user', content: `${label} 생성 요청` };
     const assistantMsg: Message = { id: newId(), role: 'assistant', content: `${label}을(를) 생성하고 있습니다...` };
+    setMessages(prev => { const n = [...prev, userMsg, assistantMsg]; saveMessages(n); return n; });
 
-    setMessages(prev => {
-      const next = [...prev, userMsg, assistantMsg];
-      saveMessages(next);
-      return next;
-    });
+    // 미리보기 패널: 해당 도구로 전환 (로딩 표시)
+    setPreviewTool(toolId);
 
     try {
       let apiUrl = '';
@@ -151,6 +204,7 @@ export default function Home() {
           reportType: String(data.selectedReportType || ''),
           detailType: String(data.selectedDetailType || ''),
           reportLength: String(data.selectedLength || 'standard'),
+          model: String(data.selectedModel || 'gemini-2.5-flash-lite'),
         };
       } else if (toolId === 'ppt') {
         apiUrl = '/api/work-support/ppt-converter/generate';
@@ -176,9 +230,6 @@ export default function Home() {
         apiUrl = '/api/work-support/merit-citation';
       } else if (toolId === 'greetings') {
         apiUrl = '/api/work-support/greetings';
-      } else if (toolId === 'press-release') {
-        apiUrl = '/api/work-support/press-release';
-        body = { action: 'generateAll', coreContent: data.coreContent, keywords: data.keywords };
       }
 
       const response = await fetch(apiUrl, {
@@ -193,42 +244,41 @@ export default function Home() {
       }
 
       const result = await response.json();
-      let summary = `✅ **${label} 생성 완료**\n\n`;
 
-      if (toolId === 'report' && result.title) {
-        summary += `📋 **제목:** ${result.title}\n`;
-        summary += `📄 **섹션 수:** ${result.sections?.length || 0}개\n`;
-        summary += `\n[보고서 페이지에서 확인하기](/work-support/report)`;
-        try { localStorage.setItem('generated-report', JSON.stringify(result)); } catch { /* ignore */ }
-      } else if (toolId === 'ppt' && result.slides) {
-        summary += `📊 **슬라이드 수:** ${result.slides.length}개\n`;
-        summary += `\n[PPT 변환기에서 확인하기](/work-support/ppt-converter)`;
-        try { localStorage.setItem('generated-ppt', JSON.stringify(result)); } catch { /* ignore */ }
-      } else if (toolId === 'scenario' && result.content) {
-        summary += `📋 **템플릿:** ${result.metadata?.template || ''}\n`;
-        summary += `📝 **단어 수:** ${result.metadata?.wordCount || ''}개\n\n`;
-        summary += `\`\`\`\n${String(result.content).slice(0, 500)}${String(result.content).length > 500 ? '...' : ''}\n\`\`\``;
-      } else if (toolId === 'merit-citation' && result.title) {
-        summary += `📋 **제목:** ${result.title}\n\n`;
-        summary += String(result.citation || '').slice(0, 500);
-      } else if (toolId === 'greetings' && result.title) {
-        summary += `📋 **제목:** ${result.title}\n\n`;
-        summary += String(result.greeting || '').slice(0, 500);
-      } else if (toolId === 'press-release' && result.titles) {
-        summary += `📋 **제목:** ${result.titles[0]}\n`;
-        summary += `📝 **생성된 제목 수:** ${result.titles.length}개`;
+      // 도구별 미리보기 데이터 매핑
+      let previewPayload: Record<string, unknown> = {};
+
+      if (toolId === 'greetings') {
+        previewPayload = {
+          greeting: result.greeting,
+          title: String(data.specificSituation || '인사말씀'),
+        };
+      } else if (toolId === 'merit-citation') {
+        previewPayload = { citation: result.citation, title: result.title };
+      } else if (toolId === 'report') {
+        // API가 { report: {...} } 형태로 반환 → 내부 객체를 unwrap
+        previewPayload = (result.report as Record<string, unknown>) || result;
+      } else if (toolId === 'scenario') {
+        previewPayload = {
+          content: result.scenario || result.content || '',
+          metadata: { template: String(data.template || '') },
+        };
+      } else if (toolId === 'ppt') {
+        previewPayload = { slides: result.slides || [] };
       }
 
-      updateLastAssistant(summary);
+      saveToolPreview(toolId, previewPayload);
+      updateLastAssistant(`✅ **${label} 생성 완료**`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : '생성 중 오류가 발생했습니다.';
       updateLastAssistant(`❌ ${label} 생성 실패: ${msg}`);
       setError(msg);
+      setPreviewTool(null);
     } finally {
       setIsLoading(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [previewStore]);
 
   function handleClear() {
     if (window.confirm('모든 대화 내역을 삭제하시겠습니까?')) {
@@ -261,31 +311,48 @@ export default function Home() {
     }}>
       <Sidebar activeMode={activeMode} onToolClick={handleToolClick} />
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-        <ChatHeader
-          models={AVAILABLE_MODELS}
-          selectedModel={selectedModel}
-          onClear={handleClear}
-          onExport={handleExport}
-        />
+      {/* 채팅 + 미리보기 공유 영역 (sidebar 제외한 나머지를 1:1 분할) */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'row', overflow: 'hidden', minWidth: 0 }}>
 
-        <ChatArea messages={messages} isLoading={isLoading} />
+        {/* 채팅 영역 */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+          <ChatHeader
+            models={AVAILABLE_MODELS}
+            selectedModel={selectedModel}
+            onClear={handleClear}
+            onExport={handleExport}
+          />
 
-        {error && (
-          <div style={{ padding: '0.5rem 2rem', background: '#fee', borderTop: '1px solid #fcc', color: '#e03e3e', fontSize: '0.875rem', flexShrink: 0 }}>
-            ⚠️ {error}
-          </div>
-        )}
+          <ChatArea messages={messages} isLoading={isLoading} />
 
-        <InputArea
-          activeMode={activeMode}
-          selectedModel={selectedModel}
-          models={AVAILABLE_MODELS}
+          {error && (
+            <div style={{ padding: '0.5rem 2rem', background: '#fee', borderTop: '1px solid #fcc', color: '#e03e3e', fontSize: '0.875rem', flexShrink: 0 }}>
+              ⚠️ {error}
+            </div>
+          )}
+
+          <InputArea
+            activeMode={activeMode}
+            selectedModel={selectedModel}
+            models={AVAILABLE_MODELS}
+            isLoading={isLoading}
+            onSend={handleSend}
+            onModelChange={setSelectedModel}
+            onCloseMode={() => setActiveMode(null)}
+            onToolSubmit={handleToolSubmit}
+          />
+        </div>
+
+        {/* 미리보기 패널 (사이드바 제외 공간의 50%) */}
+        <PreviewPanel
+          tool={previewTool}
+          data={previewData}
+          store={previewStore}
           isLoading={isLoading}
-          onSend={handleSend}
-          onModelChange={setSelectedModel}
-          onCloseMode={() => setActiveMode(null)}
-          onToolSubmit={handleToolSubmit}
+          isOpen={previewOpen}
+          onToggle={() => setPreviewOpen(p => !p)}
+          onTabSwitch={setPreviewTool}
+          onTabClose={handleTabClose}
         />
       </div>
     </div>

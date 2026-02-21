@@ -3,8 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --page-header-height: 32px;
-  --sidebar-width: 400px;
+  --page-header-height: 40px;
+  --sidebar-width: 500px;
   --content-gap: 0.5rem;
   --form-background: rgb(250, 249, 245);
   --input-background: #f9fafb;
@@ -136,7 +136,7 @@ body {
   min-height: 0;
   margin: 0.5rem 0 0.5rem 0.5rem;
   flex-shrink: 0;
-  padding: 5px 20px;
+  padding: 20px 20px;
 }
 
 .result-section {
