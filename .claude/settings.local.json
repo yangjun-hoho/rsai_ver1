@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"/c/Users/USER/Desktop/React/rsai_ver1/app/work-support/greetings/page.tsx\":*)",
+      "Bash(\"/c/Users/USER/Desktop/React/rsai_ver1/app/text-to-speech/page.tsx\":*)",
+      "Bash(\"/c/Users/USER/Desktop/React/rsai_ver1/app/chart-editor/page.tsx\":*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next build)",
+      "WebFetch(domain:developers.openai.com)"
+    ]
+  }
+}

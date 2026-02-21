@@ -3,6 +3,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --page-header-height: 32px;
+  --sidebar-width: 400px;
+  --content-gap: 0.5rem;
+  --form-background: rgb(250, 249, 245);
+  --input-background: #f9fafb;
+  --border-color: #d1d5db;
+  --focus-color: #6366f1;
+  --text-primary: #1f2937;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --success-color: #28a745;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --primary-gradient: linear-gradient(135deg, #b7c8de 0%, #959ca5 100%);
 }
 
 @theme inline {
@@ -12,15 +26,212 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+
+/* 공통 페이지 레이아웃 */
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 0.4rem 2rem;
+  border-radius: 1px;
+  height: var(--page-header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(70, 118, 184, 0.3);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 30px;
+  height: 22px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.page-header h1 {
+  text-align: center;
+  width: 100%;
+  padding: 0 40px;
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.content-container {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.content-layout {
+  display: flex;
+  flex: 1;
+  gap: var(--content-gap);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.form-section {
+  width: var(--sidebar-width);
+  background-color: var(--form-background);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  flex-shrink: 0;
+  padding: 5px 20px;
+}
+
+.result-section {
+  flex: 1;
+  background-color: var(--form-background);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-height: 500px;
+  margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid var(--focus-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 에러 메시지 */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem;
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.375rem;
+  color: var(--error-color);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 반응형 */
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .content-layout {
+    flex-direction: column;
+  }
+  .form-section {
+    width: auto;
+    max-height: 400px;
+    margin: 0.5rem;
+  }
+  .result-section {
+    margin: 0 0.5rem 0.5rem 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-header-height: 40px;
+  }
+  .page-header h1 {
+    padding: 0 35px;
+  }
+  .back-button {
+    width: 28px;
+    height: 28px;
+  }
 }
