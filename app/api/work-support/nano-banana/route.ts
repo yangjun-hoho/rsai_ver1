@@ -82,12 +82,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '이미지를 생성하지 못했습니다.' }, { status: 500 });
     }
 
-    for (const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        return NextResponse.json({
-          image: part.inlineData.data,
-          mimeType: part.inlineData.mimeType ?? 'image/png',
-        });
+    const candidates = response.candidates;
+    if (candidates && candidates.length > 0 && candidates[0].content?.parts) {
+      for (const part of candidates[0].content.parts) {
+        if (part.inlineData) {
+          return NextResponse.json({
+            image: part.inlineData.data,
+          });
+        }
       }
     }
 
