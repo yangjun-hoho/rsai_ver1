@@ -62,8 +62,8 @@ export default function ImageCanvas({
   const getCanvasCoords = useCallback((e: MouseEvent | Touch): { x: number; y: number } => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    const clientX = 'clientX' in e ? e.clientX : e.clientX;
-    const clientY = 'clientY' in e ? e.clientY : e.clientY;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
     const mx = clientX - rect.left;
     const my = clientY - rect.top;
     return {
