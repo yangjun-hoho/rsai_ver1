@@ -33,10 +33,10 @@ const AI_TOOLS = [
     color: '#06B6D4',
   },
   {
-    name: 'GenSpike',
+    name: 'GenSpark',
     emoji: '⚡',
     description: 'AI 기반 콘텐츠 생성 및 마케팅 자동화 플랫폼입니다.',
-    url: 'https://genspike.com',
+    url: 'https://genspark.ai',
     color: '#EF4444',
   },
   {
@@ -133,7 +133,7 @@ export default function LatestToolsPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0f2f5 0%, #e8eef5 100%)', fontFamily: 'inherit' }}>
+    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: 'linear-gradient(135deg, #f0f2f5 0%, #e8eef5 100%)', fontFamily: 'inherit', zIndex: 50 }}>
       {/* 헤더 */}
       <div style={{ padding: '1.25rem 2rem', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid rgba(0,0,0,0.07)', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', position: 'sticky', top: 0, zIndex: 10 }}>
         <button

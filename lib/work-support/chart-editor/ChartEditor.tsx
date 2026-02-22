@@ -273,11 +273,11 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
         .ce-container {
           display: grid;
           grid-template-columns: 1fr 1fr 2fr;
-          gap: 16px;
+          gap: 14px;
           height: 100%;
-          padding: 16px;
-          background: #faf9f5;
-          font-family: 'Malgun Gothic', Arial, sans-serif;
+          padding: 14px;
+          background: #f9fafb;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           box-sizing: border-box;
         }
         .ce-left {
@@ -304,32 +304,33 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
           min-height: 0;
         }
         .ce-card {
-          background: white;
-          border-radius: 10px;
-          padding: 16px;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-          border: 1px solid rgba(0,0,0,0.06);
+          background: #ffffff;
+          border-radius: 8px;
+          padding: 14px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+          border: 1px solid #e5e7eb;
           box-sizing: border-box;
         }
         .ce-chart-card {
-          background: white;
-          border-radius: 10px;
-          padding: 16px;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-          border: 1px solid rgba(0,0,0,0.06);
+          background: #ffffff;
+          border-radius: 8px;
+          padding: 14px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+          border: 1px solid #e5e7eb;
           flex: 1;
           display: flex;
           flex-direction: column;
           min-height: 0;
         }
         .ce-section-title {
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: #333;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #374151;
           margin: 0 0 12px 0;
           display: flex;
           align-items: center;
           gap: 6px;
+          letter-spacing: 0.01em;
         }
         .ce-form-group {
           margin-bottom: 8px;
@@ -339,25 +340,26 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
         .ce-label {
           display: block;
           font-size: 0.7rem;
-          font-weight: 300;
-          color: #555;
-          margin-bottom: 4px;
+          font-weight: 500;
+          color: #6b7280;
+          margin-bottom: 5px;
+          letter-spacing: 0.01em;
         }
         .ce-input {
           width: 100%;
-          padding: 8px 10px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          font-size: 0.7rem;
-          transition: border-color 0.2s;
-          background: #fafafa;
+          padding: 7px 10px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          transition: border-color 0.15s, box-shadow 0.15s;
+          background: #ffffff;
+          color: #111827;
           box-sizing: border-box;
         }
         .ce-input:focus {
           outline: none;
-          border-color: #667eea;
-          background: white;
-          box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
         }
         .ce-grid-2 {
           display: grid;
@@ -371,19 +373,19 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
         }
         .ce-number-input {
           width: 100%;
-          padding: 5px 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          background: #fafafa;
+          padding: 6px 8px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          background: #ffffff;
+          color: #111827;
           box-sizing: border-box;
           text-align: center;
         }
         .ce-number-input:focus {
           outline: none;
-          border-color: #667eea;
-          background: white;
-          box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
         }
         .ce-checkbox-group {
           grid-column: 1 / -1;
@@ -400,55 +402,51 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
           justify-content: space-between;
           align-items: center;
           margin-bottom: 12px;
-          padding-bottom: 8px;
-          border-bottom: 1px solid #f1f3f4;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #e5e7eb;
         }
         .ce-add-btn {
-          background: linear-gradient(135deg, #28a745, #20c997);
+          background: #16a34a;
           color: white;
           border: none;
-          padding: 7px 12px;
+          padding: 6px 12px;
           border-radius: 6px;
-          font-size: 0.75rem;
+          font-size: 0.73rem;
           font-weight: 500;
           cursor: pointer;
           display: flex;
           align-items: center;
           gap: 5px;
-          transition: all 0.2s;
-          box-shadow: 0 2px 4px rgba(40,167,69,0.2);
+          transition: background 0.15s;
         }
         .ce-add-btn:hover {
-          background: linear-gradient(135deg, #218838, #1ea085);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(40,167,69,0.3);
+          background: #15803d;
         }
         .ce-data-table {
-          border: 1px solid #e9ecef;
+          border: 1px solid #e5e7eb;
           border-radius: 8px;
           overflow: hidden;
-          margin-bottom: 16px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+          margin-bottom: 14px;
         }
         .ce-table-header {
           display: grid;
           grid-template-columns: 1fr 1fr 50px;
-          background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-          font-weight: 400;
-          font-size: 0.7rem;
-          color: #495057;
-          border-bottom: 2px solid #dee2e6;
+          background: #f3f4f6;
+          font-weight: 600;
+          font-size: 0.68rem;
+          color: #6b7280;
+          border-bottom: 1px solid #e5e7eb;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
         }
         .ce-table-row {
           display: grid;
           grid-template-columns: 1fr 1fr 50px;
-          border-bottom: 1px solid #f8f9fa;
-          transition: background 0.2s;
+          border-bottom: 1px solid #f3f4f6;
+          transition: background 0.1s;
         }
         .ce-table-row:last-child { border-bottom: none; }
-        .ce-table-row:hover { background: #f8f9fa; }
-        .ce-table-row:nth-child(even) { background: #fdfdfd; }
-        .ce-table-row:nth-child(even):hover { background: #f8f9fa; }
+        .ce-table-row:hover { background: #f9fafb; }
         .ce-table-cell {
           padding: 5px 9px;
           display: flex;
@@ -462,49 +460,45 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
         }
         .ce-table-input {
           width: 100%;
-          padding: 6px 8px;
-          border: 1px solid #ddd;
+          padding: 5px 8px;
+          border: 1px solid #e5e7eb;
           border-radius: 5px;
-          font-size: 0.75rem;
+          font-size: 0.73rem;
           background: white;
-          transition: all 0.2s;
+          color: #111827;
+          transition: border-color 0.15s, box-shadow 0.15s;
           box-sizing: border-box;
         }
         .ce-table-input:focus {
           outline: none;
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59,130,246,0.12);
         }
         .ce-table-input[type="number"] {
           text-align: center;
           font-weight: 500;
         }
         .ce-remove-btn {
-          background: linear-gradient(135deg, #dc3545, #c82333);
-          color: white;
+          background: #fee2e2;
+          color: #dc2626;
           border: none;
-          padding: 6px 8px;
           border-radius: 5px;
           font-size: 0.75rem;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: background 0.15s;
           display: flex;
           align-items: center;
           justify-content: center;
           width: 26px;
           height: 26px;
-          box-shadow: 0 2px 4px rgba(220,53,69,0.2);
         }
         .ce-remove-btn:hover:not(:disabled) {
-          background: linear-gradient(135deg, #c82333, #a71e2a);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(220,53,69,0.3);
+          background: #fca5a5;
         }
         .ce-remove-btn:disabled {
-          background: #e9ecef;
-          color: #6c757d;
+          background: #f3f4f6;
+          color: #9ca3af;
           cursor: not-allowed;
-          box-shadow: none;
         }
         .ce-action-buttons {
           display: grid;
@@ -515,35 +509,26 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
           padding: 8px 14px;
           border: none;
           border-radius: 6px;
-          font-size: 0.72rem;
-          font-weight: 400;
+          font-size: 0.73rem;
+          font-weight: 500;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 6px;
-          transition: all 0.2s;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          transition: background 0.15s;
         }
         .ce-btn-primary {
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: #2563eb;
           color: white;
         }
-        .ce-btn-primary:hover {
-          background: linear-gradient(135deg, #5a6fd8, #6a42a0);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(102,126,234,0.3);
-        }
+        .ce-btn-primary:hover { background: #1d4ed8; }
         .ce-btn-secondary {
-          background: linear-gradient(135deg, #6c757d, #5a6268);
-          color: white;
+          background: #f3f4f6;
+          color: #374151;
+          border: 1px solid #e5e7eb;
         }
-        .ce-btn-secondary:hover {
-          background: linear-gradient(135deg, #5a6268, #495057);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(108,117,125,0.3);
-        }
-        .ce-btn:active { transform: translateY(0); }
+        .ce-btn-secondary:hover { background: #e5e7eb; }
         .ce-chart-container {
           flex: 1;
           position: relative;
@@ -571,12 +556,12 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
           to { transform: rotate(360deg); }
         }
         .ce-info-alert {
-          background: #d1ecf1;
-          color: #0c5460;
-          padding: 10px 14px;
+          background: #eff6ff;
+          color: #1e40af;
+          padding: 9px 12px;
           border-radius: 6px;
-          border: 1px solid #bee5eb;
-          font-size: 0.82rem;
+          border: 1px solid #bfdbfe;
+          font-size: 0.73rem;
           display: flex;
           align-items: center;
           gap: 8px;
