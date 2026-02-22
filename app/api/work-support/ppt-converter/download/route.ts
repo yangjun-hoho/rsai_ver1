@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     const pptxBuffer = await pptx.write({ outputType: 'nodebuffer' });
     const safeTitle = title.replace(/[^a-zA-Z0-9가-힣_\-]/g, '_');
 
-    return new NextResponse(pptxBuffer as Buffer, {
+    return new NextResponse(new Uint8Array(pptxBuffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         'Content-Disposition': `attachment; filename="${encodeURIComponent(safeTitle)}.pptx"`,
