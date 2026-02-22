@@ -39,6 +39,7 @@ const SHORTCUTS = [
   { id: 'work-support',  label: '업무지원',      icon: '⚡', path: '/work-support' },
   { id: 'nano-banana',   label: 'Nano Banana AI', icon: '🍌', path: '/work-support/nano-banana' },
   { id: 'chart-editor',  label: '차트 에디터',   icon: '📊', path: '/work-support/chart-editor' },
+  { id: 'latest-tools',  label: '최신 AI 도구',  icon: '🌐', path: '/work-support/latest-tools' },
 ];
 
 interface SidebarProps {

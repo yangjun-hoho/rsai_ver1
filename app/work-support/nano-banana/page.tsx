@@ -222,6 +222,7 @@ export default function NanaBananaPage() {
           aspectRatio={aspectRatio}
           showPromptPanel={showPromptPanel}
           isUsageLimitReached={dailyUsageCount >= DAILY_LIMIT}
+          dailyUsageLimit={DAILY_LIMIT}
           onSetTool={setSelectedTool}
           onSetPrompt={setCurrentPrompt}
           onGenerate={handleGenerate}
