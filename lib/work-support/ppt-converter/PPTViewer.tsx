@@ -29,7 +29,6 @@ const STYLE = {
 };
 
 function SlideView({ slide, tpl, isFullscreen }: { slide: Slide; tpl: typeof STYLE; isFullscreen: boolean }) {
-  const scale = isFullscreen ? 1 : 1;
   const baseFontTitle = isFullscreen ? '2.8rem' : '1.5rem';
   const baseFontSub = isFullscreen ? '1.4rem' : '0.9rem';
   const baseFontContent = isFullscreen ? '1.1rem' : '0.82rem';

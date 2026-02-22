@@ -26,7 +26,7 @@ const detailTypes: Record<string, { id: string; label: string }[]> = {
 };
 
 const sampleTitles: Record<string, string[]> = {
-  plan:     ['2024년 스마트시티 구축 기본계획', '디지털 전환 추진 세부 계획'],
+  plan:     ['2026년 남양주 AI전략 주친 계획', '2026년 남양주 스마트시티 구축 기본계획', '남양주 디지털 전환 추진 세부 계획'],
   measure:  ['민원 처리 개선 방안', '위기상황 대응 계획'],
   status:   ['1분기 사업 추진 현황', '주요 업무 진행 현황'],
   analysis: ['빅데이터 분석 보고서', '사업 성과 분석'],

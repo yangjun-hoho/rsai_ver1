@@ -45,7 +45,7 @@ const detailTypes: Record<string, Array<{ id: string; label: string }>> = {
 };
 
 const sampleTitles: Record<string, string[]> = {
-  plan: ['2024년 스마트시티 구축 기본계획', '디지털 전환 추진 세부 계획', '신규 사업 추진 계획'],
+  plan: ['2026년 스마트시티 구축 기본계획', '디지털 전환 추진 세부 계획', 'AI 신규 사업 추진 계획'],
   measure: ['민원 처리 개선 방안', '위기상황 대응 계획', '업무 효율화 방안'],
   status: ['1분기 사업 추진 현황', '주요 업무 진행 현황', '긴급 상황 보고'],
   analysis: ['빅데이터 분석 보고서', '사업 성과 분석', '시장 동향 분석'],

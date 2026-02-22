@@ -85,6 +85,7 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
 
   // 차트 상태
   const canvasRef     = useRef<HTMLCanvasElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const chartRef      = useRef<any>(null);
   const [chartReady, setChartReady] = useState(false);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -106,6 +107,7 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
 
   // Chart.js CDN 로드
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((window as any).Chart) {
       const t = setTimeout(() => setChartReady(true), 0);
       return () => clearTimeout(t);
@@ -120,6 +122,7 @@ export default function ChartEditor({ initialData }: { initialData?: ChartSpec }
   const updateChart = useCallback(() => {
     const s = stateRef.current;
     const canvas = canvasRef.current;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ChartJS = (window as any).Chart;
     if (!canvas || !ChartJS) return;
 
