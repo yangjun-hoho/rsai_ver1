@@ -34,14 +34,25 @@ export default function ScenarioGeneratorPage() {
       const response = await fetch('/api/work-support/scenario-generator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: data.content.trim(), template: data.template, settings: data.settings }),
+        body: JSON.stringify({
+          templateType: data.template,
+          content:      data.content.trim(),
+          style:        String(data.settings.style    || 'formal'),
+          audience:     String(data.settings.audience || 'general'),
+          duration:     String(data.settings.duration || 'medium'),
+        }),
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || '스크립트 생성에 실패했습니다.');
       }
       const result = await response.json();
-      setGeneratedScript(result);
+      setGeneratedScript({
+        content:           result.scenario || result.content || '',
+        estimatedDuration: result.estimatedDuration || 0,
+        tips:              result.tips || [],
+        metadata:          result.metadata || {},
+      });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : '오류가 발생했습니다.');
     } finally {
@@ -76,18 +87,7 @@ export default function ScenarioGeneratorPage() {
               )}
             </div>
             <div className="result-section">
-              <div style={{ padding: '1.2rem', borderBottom: '1px solid var(--border-color)', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, fontSize: '1rem', fontWeight: '600', color: 'var(--text-primary)' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-                  생성된 대본
-                </h2>
-                {generatedScript && (
-                  <button onClick={() => { setGeneratedScript(null); setCurrentContent(''); }} style={{ padding: '0.5rem 1rem', background: 'var(--focus-color)', color: 'white', border: 'none', borderRadius: '0.375rem', fontSize: '0.75rem', cursor: 'pointer' }}>
-                    새 대본 생성
-                  </button>
-                )}
-              </div>
-              <div style={{ flex: 1, padding: '1.2rem', overflowY: 'auto' }}>
+              <div style={{ flex: 1, overflowY: 'auto' }}>
                 {isGenerating ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem', textAlign: 'center' }}>
                     <div className="loading-spinner" />

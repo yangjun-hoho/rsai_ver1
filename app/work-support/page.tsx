@@ -4,14 +4,17 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const services = [
-  { id: 'report', title: '보고서 생성', subtitle: 'AI 보고서 자동 작성', icon: '📊', path: '/work-support/report' },
-  { id: 'ppt-converter', title: 'PPT 변환기', subtitle: '문서를 PPT로 자동 변환', icon: '🖥️', path: '/work-support/ppt-converter' },
-  { id: 'tts', title: '텍스트 음성변환', subtitle: 'TTS 음성 생성', icon: '🔊', path: '/work-support/text-to-speech' },
-  { id: 'chart-editor', title: '차트 에디터', subtitle: '데이터 시각화', icon: '📈', path: '/work-support/chart-editor' },
-  { id: 'greetings', title: 'AI 인사말씀 생성기', subtitle: '공식 행사 인사말 자동 작성', icon: '🎤', path: '/work-support/greetings' },
-  { id: 'press-release', title: '보도자료 생성기', subtitle: '남양주시 공식 보도자료 작성', icon: '📰', path: '/work-support/press-release' },
-  { id: 'scenario-generator', title: '발표 대본 생성기', subtitle: '다양한 형식의 발표 대본 생성', icon: '📝', path: '/work-support/scenario-generator' },
-  { id: 'merit-citation', title: '공적조서 생성기', subtitle: '공무원/일반인 공적조서 작성', icon: '🏆', path: '/work-support/merit-citation' },
+  // 1행
+  { id: 'report',             title: '보고서 생성',      subtitle: 'AI 보고서 자동 작성',          icon: '📊', path: '/work-support/report' },
+  { id: 'greetings',          title: 'AI 인사말씀 생성기', subtitle: '공식 행사 인사말 자동 작성',  icon: '🎤', path: '/work-support/greetings' },
+  { id: 'press-release',      title: '보도자료 생성기',   subtitle: '남양주시 공식 보도자료 작성',  icon: '📰', path: '/work-support/press-release' },
+  { id: 'merit-citation',     title: '공적조서 생성기',   subtitle: '공무원/일반인 공적조서 작성',  icon: '🏆', path: '/work-support/merit-citation' },
+  // 2행
+  { id: 'ppt-converter',      title: 'PPT 변환기',        subtitle: '문서를 PPT로 자동 변환',       icon: '🖥️', path: '/work-support/ppt-converter' },
+  { id: 'tts',                title: '텍스트 음성변환',   subtitle: 'TTS 음성 생성',               icon: '🔊', path: '/work-support/text-to-speech' },
+  { id: 'scenario-generator', title: '발표 대본 생성기',  subtitle: '다양한 형식의 발표 대본 생성', icon: '📝', path: '/work-support/scenario-generator' },
+  { id: 'chart-editor',       title: '차트 에디터',       subtitle: '데이터 시각화',               icon: '📈', path: '/work-support/chart-editor' },
+  { id: 'nano-banana',        title: 'Nano Banana AI',    subtitle: 'AI 이미지 생성 · 편집',        icon: '🍌', path: '/work-support/nano-banana' },
 ];
 
 export default function WorkSupportPage() {
@@ -35,7 +38,7 @@ export default function WorkSupportPage() {
       </header>
 
       <div className="page-content" style={{ overflow: 'auto' }}>
-        <div style={{ padding: '1.5rem', maxWidth: '900px', margin: '0 auto' }}>
+        <div style={{ padding: '1.5rem', maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
             {services.map((item) => (
               <button
@@ -52,7 +55,7 @@ export default function WorkSupportPage() {
                   gap: '0.75rem',
                   transition: 'all 0.2s ease',
                   textAlign: 'left',
-                  height: '82px',
+                  height: '100px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';

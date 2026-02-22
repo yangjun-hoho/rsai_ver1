@@ -31,10 +31,10 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', width: '100%', maxWidth: '800px' }}>
         <div style={{
           maxWidth: '70%',
-          padding: '0.75rem 1rem',
-          background: '#2383e2',
-          color: '#fff',
-          borderRadius: '18px 18px 4px 18px',
+          padding: '0.5rem 1rem',
+          background: '#dee8f1',
+          color: '#3f3f3f',
+          borderRadius: '10px 10px 4px 18px',
           fontSize: '0.9rem',
           lineHeight: 1.6,
           whiteSpace: 'pre-wrap',
@@ -53,7 +53,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
         width: '32px',
         height: '32px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #d9dceb 0%, #b6aebd 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -63,7 +63,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
         color: '#fff',
         fontWeight: 700,
       }}>
-        AI
+        RS
       </div>
       <div style={{
         flex: 1,

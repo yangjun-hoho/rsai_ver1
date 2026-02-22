@@ -40,8 +40,8 @@ export default function OptionForm({ onSubmit, isLoading }: OptionFormProps) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
 
-      <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem' }}>
-        <h2 style={{ color: 'white', margin: 0, fontSize: '0.9rem', fontWeight: '600' }}>🎤 인사말씀 설정</h2>
+      <div style={{ paddingBottom: '0.6rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
+        <h2 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Greeting Settings</h2>
       </div>
 
       {/* 구체적 명칭 */}

@@ -10,6 +10,15 @@ interface ChartDataRow {
 type ChartType = 'bar' | 'line' | 'pie' | 'doughnut' | 'radar' | 'polarArea' | 'scatter';
 type ColorTheme = 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'rainbow' | 'ocean' | 'sunset';
 
+export interface ChartSpec {
+  title?: string;
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  chartType?: ChartType;
+  colorTheme?: ColorTheme;
+  data?: ChartDataRow[];
+}
+
 const colorPalettes: Record<ColorTheme, string[]> = {
   blue:    ['#4285F4', '#1976D2', '#0D47A1', '#42A5F5', '#64B5F6', '#90CAF9', '#BBDEFB', '#E3F2FD'],
   red:     ['#F44336', '#D32F2F', '#B71C1C', '#EF5350', '#E57373', '#FFCDD2', '#FFEBEE', '#FCE4EC'],
@@ -44,13 +53,22 @@ const colorThemeOptions = [
 
 const circularChartTypes = ['pie', 'doughnut', 'polarArea', 'radar'];
 
-export default function ChartEditor() {
-  // 차트 설정
-  const [chartTitle, setChartTitle]           = useState('부서별 매출 현황');
-  const [xAxisLabel, setXAxisLabel]           = useState('부서명');
-  const [yAxisLabel, setYAxisLabel]           = useState('예산액 (백만원)');
-  const [chartType, setChartType]             = useState<ChartType>('bar');
-  const [colorTheme, setColorTheme]           = useState<ColorTheme>('blue');
+const DEFAULT_DATA: ChartDataRow[] = [
+  { 항목: '총무과', 값: 150 },
+  { 항목: '민원과', 값: 230 },
+  { 항목: '세무과', 값: 180 },
+  { 항목: '건설과', 값: 120 },
+  { 항목: '교통과', 값: 120 },
+  { 항목: '복지과', 값: 200 },
+];
+
+export default function ChartEditor({ initialData }: { initialData?: ChartSpec }) {
+  // 차트 설정 (initialData가 있으면 해당 값으로 초기화)
+  const [chartTitle, setChartTitle]           = useState(initialData?.title      ?? '부서별 매출 현황');
+  const [xAxisLabel, setXAxisLabel]           = useState(initialData?.xAxisLabel ?? '부서명');
+  const [yAxisLabel, setYAxisLabel]           = useState(initialData?.yAxisLabel ?? '예산액 (백만원)');
+  const [chartType, setChartType]             = useState<ChartType>(initialData?.chartType   ?? 'bar');
+  const [colorTheme, setColorTheme]           = useState<ColorTheme>(initialData?.colorTheme ?? 'blue');
 
   // 스타일 설정
   const [barThickness, setBarThickness]             = useState(30);
@@ -62,15 +80,8 @@ export default function ChartEditor() {
   const [animationDuration, setAnimationDuration]   = useState(1000);
   const [borderWidth, setBorderWidth]               = useState(1);
 
-  // 데이터
-  const [chartData, setChartData] = useState<ChartDataRow[]>([
-    { 항목: '총무과', 값: 150 },
-    { 항목: '민원과', 값: 230 },
-    { 항목: '세무과', 값: 180 },
-    { 항목: '건설과', 값: 120 },
-    { 항목: '교통과', 값: 120 },
-    { 항목: '복지과', 값: 200 },
-  ]);
+  // 데이터 (initialData가 있으면 해당 데이터로 초기화)
+  const [chartData, setChartData] = useState<ChartDataRow[]>(initialData?.data ?? DEFAULT_DATA);
 
   // 차트 상태
   const canvasRef     = useRef<HTMLCanvasElement>(null);
@@ -96,8 +107,8 @@ export default function ChartEditor() {
   // Chart.js CDN 로드
   useEffect(() => {
     if ((window as any).Chart) {
-      setChartReady(true);
-      return;
+      const t = setTimeout(() => setChartReady(true), 0);
+      return () => clearTimeout(t);
     }
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';

@@ -29,8 +29,8 @@ export default function PressReleaseForm({ onSubmit, isLoading }: PressReleaseFo
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-      <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '0.25rem' }}>
-        <h2 style={{ color: 'white', margin: 0, fontSize: '0.9rem', fontWeight: '600' }}>📰 보도자료 설정</h2>
+      <div style={{ paddingBottom: '0.6rem', marginBottom: '0.25rem', borderBottom: '1px solid var(--border-color)' }}>
+        <h2 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Press Release Settings</h2>
       </div>
 
       <div>

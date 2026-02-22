@@ -24,7 +24,7 @@ export default function ChatHeader({ models, selectedModel, onClear, onExport }:
       alignItems: 'center',
       padding: '0 1.5rem',
       borderBottom: '1px solid #f0f0f0',
-      background: '#ffffff',
+      background: '#faf9f5',
       height: '40px',
       flexShrink: 0,
     }}>
@@ -75,7 +75,7 @@ export default function ChatHeader({ models, selectedModel, onClear, onExport }:
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </IconBtn>
         <IconBtn onClick={onClear} title="대화 초기화">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.08"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><g transform="scale(-1,1) translate(-24,0)"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></g></svg>
         </IconBtn>
       </div>
     </div>

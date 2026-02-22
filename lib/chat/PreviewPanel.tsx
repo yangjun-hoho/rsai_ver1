@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import type { ToolId } from '@/lib/chat/Sidebar';
 import GreetingDisplay from '@/lib/work-support/greetings/GreetingDisplay';
 import PressReleaseDisplay from '@/lib/work-support/press-release/PressReleaseDisplay';
@@ -13,8 +14,9 @@ interface SlideType {
   title: string;
   content: string;
   bulletPoints: string[];
-  type: string;
+  type: 'title' | 'index' | 'content' | 'conclusion';
   subtitle?: string;
+  notes?: string;
 }
 
 const PREVIEW_TOOL_IDS: ToolId[] = ['report', 'ppt', 'scenario', 'merit-citation', 'greetings', 'press-release'];
@@ -73,6 +75,53 @@ function PanelEmpty({ emoji, label }: { emoji: string; label: string }) {
         <span style={{ fontSize: '0.78rem', color: '#c8c6c0' }}>{label} 폼에서 생성해보세요.</span>
       </p>
     </div>
+  );
+}
+
+function PPTPanelView({ data, isLoading }: { data: Record<string, unknown> | null; isLoading: boolean }) {
+  const [slides, setSlides] = useState<SlideType[]>((data?.slides as SlideType[]) ?? []);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  // data가 바뀌면 slides 동기화
+  useEffect(() => {
+    if (data?.slides) setSlides(data.slides as SlideType[]);
+  }, [data?.slides]);
+
+  async function handleDownload() {
+    if (!slides.length) return;
+    setIsDownloading(true);
+    try {
+      const title = slides.find(s => s.type === 'title')?.title || '프레젠테이션';
+      const res = await fetch('/api/work-support/ppt-converter/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slides, title }),
+      });
+      if (!res.ok) throw new Error('다운로드 실패');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title}.pptx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'PPT 다운로드 중 오류가 발생했습니다.');
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
+  if (isLoading) return <PanelLoading text="PPT를 생성하고 있습니다..." />;
+  if (!slides.length) return <PanelEmpty emoji="🖥️" label="PPT" />;
+
+  return (
+    <PPTViewer
+      slides={slides}
+      onSlidesChange={setSlides}
+      onDownload={handleDownload}
+      isDownloading={isDownloading}
+    />
   );
 }
 
@@ -156,7 +205,7 @@ export default function PreviewPanel({
   // ── 펼쳐진 상태 ─────────────────────────────────────────────────────────
   return (
     <div style={{
-      flex: 1,
+      flex: 6,
       minWidth: 0,
       borderLeft: '1px solid #e9e9e7',
       background: '#ffffff',
@@ -166,17 +215,18 @@ export default function PreviewPanel({
     }}>
       {/* 탭 헤더 */}
       <div style={{
-        height: '40px',
+        height: '44px',
         borderBottom: '1px solid #e9e9e7',
         display: 'flex',
-        alignItems: 'stretch',
+        alignItems: 'center',
         flexShrink: 0,
         background: '#f7f6f3',
-        overflow: 'hidden',
+        padding: '0 0.4rem',
+        gap: '0.25rem',
       }}>
         {/* 탭 목록 (가로 스크롤) */}
         <div style={{
-          display: 'flex', alignItems: 'stretch', flex: 1,
+          display: 'flex', alignItems: 'center', flex: 1, gap: '0.25rem',
           overflowX: 'auto', overflowY: 'hidden',
         }}>
           {openTabs.map(tabId => {
@@ -188,21 +238,20 @@ export default function PreviewPanel({
                 onClick={() => onTabSwitch(tabId)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.28rem',
-                  padding: '0 0.4rem 0 0.7rem',
-                  background: isActive ? '#ffffff' : 'transparent',
-                  border: 'none',
-                  borderRight: '1px solid #e9e9e7',
-                  borderBottom: isActive ? '2px solid #2383e2' : '2px solid transparent',
+                  padding: '0.25rem 0.5rem 0.25rem 0.65rem',
+                  background: isActive ? '#f4b8b8' : 'transparent',
+                  border: isActive ? 'none' : '1px solid transparent',
+                  borderRadius: '5px 5px 0px 0px',
                   cursor: 'pointer',
                   fontSize: '0.72rem',
-                  color: isActive ? '#37352f' : '#888',
+                  color: isActive ? '#ffffff' : '#888',
                   fontWeight: isActive ? 600 : 400,
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
-                  transition: 'background 0.1s',
+                  transition: 'all 0.15s',
                 }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+                onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; e.currentTarget.style.color = '#37352f'; } }}
+                onMouseLeave={e => { if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#888'; } }}
               >
                 <span style={{ fontSize: '0.8rem' }}>{TOOL_EMOJI[tabId]}</span>
                 <span>{TAB_LABELS[tabId]}</span>
@@ -330,14 +379,9 @@ export default function PreviewPanel({
         )}
 
         {tool === 'ppt' && (
-          isLoading ? (
-            <PanelLoading text="PPT를 생성하고 있습니다..." />
-          ) : !data?.slides ? (
-            <PanelEmpty emoji="🖥️" label="PPT" />
-          ) : (
-            <PPTViewer slides={data.slides as SlideType[]} />
-          )
+          <PPTPanelView data={data} isLoading={isLoading} />
         )}
+
       </div>
     </div>
   );

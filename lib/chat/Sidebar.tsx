@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export type ToolId = 'search' | 'document' | 'report' | 'ppt' | 'scenario' | 'merit-citation' | 'greetings' | 'press-release';
+export type ToolId = 'search' | 'document' | 'report' | 'ppt' | 'scenario' | 'merit-citation' | 'greetings' | 'press-release' | 'templates';
 
 export interface Tool {
   id: ToolId;
@@ -11,14 +11,15 @@ export interface Tool {
 }
 
 export const TOOLS: Tool[] = [
-  { id: 'search',        label: '검색',          tooltip: '웹에서 실시간 정보 검색' },
-  { id: 'document',      label: '문서 분석',      tooltip: 'PDF/TXT 파일 업로드 및 질의응답' },
   { id: 'report',        label: '보고서 생성',    tooltip: 'AI 자동 보고서 작성' },
-  { id: 'ppt',           label: 'PPT 생성',       tooltip: 'AI 자동 프레젠테이션 작성' },
-  { id: 'scenario',      label: '시나리오 생성',  tooltip: '발표 시나리오 자동 변환' },
-  { id: 'merit-citation', label: '공적조서 생성', tooltip: '공적조서 자동 작성' },
   { id: 'greetings',     label: '인사말씀 생성',  tooltip: '상황별 맞춤 인사말 작성' },
   { id: 'press-release', label: '보도자료 생성',  tooltip: '효과적인 보도자료 작성' },
+  { id: 'merit-citation', label: '공적조서 생성', tooltip: '공적조서 자동 작성' },
+  { id: 'scenario',      label: '시나리오 생성',  tooltip: '발표 시나리오 자동 변환' },
+  { id: 'ppt',           label: 'PPT 생성',       tooltip: 'AI 자동 프레젠테이션 작성' },
+  { id: 'document',      label: '문서 분석',      tooltip: 'PDF/TXT 파일 업로드 및 질의응답' },
+  { id: 'search',        label: '검색',           tooltip: '웹에서 실시간 정보 검색' },
+  { id: 'templates',     label: '템플릿',         tooltip: '공무원 업무 특화 AI 템플릿' },
 ];
 
 const ICON_MAP: Record<string, string> = {
@@ -30,13 +31,14 @@ const ICON_MAP: Record<string, string> = {
   'merit-citation': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
   greetings: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>`,
   'press-release': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/><rect x="7" y="7" width="8" height="5"/><line x1="8" y1="15" x2="12" y2="15"/><path d="M17 18v-1a2 2 0 0 1 2-2h2"/></svg>`,
+  templates: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
+  chart: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
 };
 
 const SHORTCUTS = [
-  { id: 'work-support', label: '업무지원', icon: '⚡', path: '/work-support' },
-  { id: 'report',       label: '보고서 생성', icon: '📊', path: '/work-support/report' },
-  { id: 'ppt',          label: 'PPT 변환기', icon: '🖥️', path: '/work-support/ppt-converter' },
-  { id: 'tts',          label: '텍스트 음성변환', icon: '🔊', path: '/work-support/text-to-speech' },
+  { id: 'work-support',  label: '업무지원',      icon: '⚡', path: '/work-support' },
+  { id: 'nano-banana',   label: 'Nano Banana AI', icon: '🍌', path: '/work-support/nano-banana' },
+  { id: 'chart-editor',  label: '차트 에디터',   icon: '📊', path: '/work-support/chart-editor' },
 ];
 
 interface SidebarProps {

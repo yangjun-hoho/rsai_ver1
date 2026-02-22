@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import MessageBubble, { type Message } from './MessageBubble';
 
 interface ChatAreaProps {
@@ -30,7 +31,7 @@ export default function ChatArea({ messages, isLoading }: ChatAreaProps) {
       style={{
         flex: 1,
         overflowY: 'auto',
-        background: '#ffffff',
+        background: '#faf9f5',
         padding: '2rem',
         display: 'flex',
         flexDirection: 'column',
@@ -59,15 +60,18 @@ export default function ChatArea({ messages, isLoading }: ChatAreaProps) {
         /* 웰컴 화면 */
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', width: '100%', maxWidth: '800px', paddingTop: '2rem', textAlign: 'center' }}>
           <div style={{
-            width: '80px', height: '80px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '50%',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '100px', height: '100px',
             marginBottom: '1.5rem',
-            boxShadow: '0 4px 12px rgba(102,126,234,0.4)',
-            fontSize: '2rem',
+            borderRadius: '50%',
+            overflow: 'hidden',
           }}>
-            🤖
+            <Image
+              src="/images/welcome-animation.gif"
+              alt="RSAI 로고"
+              width={100}
+              height={100}
+              style={{ objectFit: 'cover' }}
+            />
           </div>
           <h2 style={{ fontSize: '1.6rem', fontWeight: 600, color: '#37352f', margin: '0 0 0.5rem 0' }}>
             아레스 AI-Agent에 오신 것을 환영합니다

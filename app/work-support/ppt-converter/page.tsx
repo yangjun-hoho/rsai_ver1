@@ -3,29 +3,26 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PPTInputForm from '@/lib/work-support/ppt-converter/InputForm';
-import PPTViewer from '@/lib/work-support/ppt-converter/PPTViewer';
-
-interface Slide {
-  slideNumber: number;
-  title: string;
-  content: string;
-  bulletPoints: string[];
-  type: string;
-  subtitle?: string;
-}
+import PPTViewer, { type Slide } from '@/lib/work-support/ppt-converter/PPTViewer';
 
 export default function PPTConverterPage() {
   const router = useRouter();
   const [slides, setSlides] = useState<Slide[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState('');
   const [uploadedFileInfo, setUploadedFileInfo] = useState<{ name: string; size: number } | null>(null);
+  const [pptTitle, setPptTitle] = useState('프레젠테이션');
 
   useEffect(() => { document.title = 'PPT 변환기 | 아레스 AI'; }, []);
 
-  async function handleGenerate(data: { content: string; title: string; slideCount: number; includeTitle: boolean; includeIndex: boolean; includeConclusion: boolean; template: string }) {
+  async function handleGenerate(data: {
+    content: string; title: string; slideCount: number;
+    includeTitle: boolean; includeIndex: boolean; includeConclusion: boolean;
+  }) {
     setIsGenerating(true);
     setError('');
+    setPptTitle(data.title);
     try {
       const response = await fetch('/api/work-support/ppt-converter/generate', {
         method: 'POST',
@@ -34,7 +31,7 @@ export default function PPTConverterPage() {
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'PPT 생성에 실패했습니다.');
+        throw new Error((errorData as { error?: string }).error || 'PPT 생성에 실패했습니다.');
       }
       const result = await response.json();
       setSlides(result.slides);
@@ -51,11 +48,38 @@ export default function PPTConverterPage() {
     const response = await fetch('/api/work-support/ppt-converter/upload', { method: 'POST', body: formData });
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
-      throw new Error(err.error || '파일 업로드에 실패했습니다.');
+      throw new Error((err as { error?: string }).error || '파일 업로드에 실패했습니다.');
     }
     const result = await response.json();
     setUploadedFileInfo({ name: file.name, size: file.size });
-    return result.content;
+    return result.text;
+  }
+
+  async function handleDownload() {
+    if (!slides.length) return;
+    setIsDownloading(true);
+    try {
+      const response = await fetch('/api/work-support/ppt-converter/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slides, title: pptTitle }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error((err as { error?: string }).error || 'PPT 다운로드 실패');
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${pptTitle}.pptx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'PPT 다운로드 중 오류가 발생했습니다.');
+    } finally {
+      setIsDownloading(false);
+    }
   }
 
   return (
@@ -73,10 +97,16 @@ export default function PPTConverterPage() {
       <div className="page-content">
         <div className="content-container">
           <div className="content-layout">
-            <div className="form-section" style={{ width: '500px' }}>
-              <PPTInputForm onGenerate={handleGenerate} onFileUpload={handleFileUpload} isGenerating={isGenerating} uploadedFileInfo={uploadedFileInfo} />
-              {error && <div className="error-message" role="alert">{error}</div>}
+            <div className="form-section" style={{ width: '380px' }}>
+              <PPTInputForm
+                onGenerate={handleGenerate}
+                onFileUpload={handleFileUpload}
+                isGenerating={isGenerating}
+                uploadedFileInfo={uploadedFileInfo}
+              />
+              {error && <div className="error-message" role="alert" style={{ marginTop: '0.5rem' }}>{error}</div>}
             </div>
+
             <div className="result-section">
               {isGenerating ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem' }}>
@@ -84,7 +114,12 @@ export default function PPTConverterPage() {
                   <p style={{ color: 'var(--text-secondary)' }}>PPT를 생성하고 있습니다...</p>
                 </div>
               ) : slides.length > 0 ? (
-                <PPTViewer slides={slides} />
+                <PPTViewer
+                  slides={slides}
+                  onSlidesChange={setSlides}
+                  onDownload={handleDownload}
+                  isDownloading={isDownloading}
+                />
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                   <span style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }}>🖥️</span>

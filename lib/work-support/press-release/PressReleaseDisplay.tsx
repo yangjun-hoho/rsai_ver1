@@ -51,6 +51,7 @@ const prCSS = `
     font-weight: 700;
     color: #111;
     margin: 1.5rem 0 0 0;
+    padding: 0 0.5rem;
     line-height: 1.6;
     text-align: center;
     word-break: keep-all;
@@ -134,8 +135,8 @@ export default function PressReleaseDisplay({ data, isLoading }: PressReleaseDis
           <div className="pr-doc-container">
             <div className="pr-doc-header">
               <h1 className="pr-doc-big-title">보도자료</h1>
-              {pr.title && <h2 className="pr-doc-article-title">{pr.title}</h2>}
             </div>
+            {pr.title && <h2 className="pr-doc-article-title">{pr.title}</h2>}
             <div className="pr-doc-body">
               {(pr.paragraphs || []).map((paragraph: string, i: number) => (
                 <p key={i} className="pr-doc-paragraph">{paragraph}</p>

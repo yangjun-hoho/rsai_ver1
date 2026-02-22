@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import { exportScenarioToODT } from './scenarioOdtExporter';
+
 interface ScriptData {
   content: string;
   estimatedDuration: number;
@@ -19,6 +22,10 @@ const templateLabels: Record<string, string> = {
   scenario:     '시나리오',
   speech:       '연설문',
   lecture:      '강의 대본',
+  meeting:      '회의 진행 대본',
+  mc:           '사회자 대본',
+  briefing:     '브리핑 대본',
+  debate:       '토론 대본',
 };
 
 const scenarioCSS = `
@@ -68,12 +75,27 @@ const scenarioCSS = `
 `;
 
 export default function ScenarioViewer({ script, template }: ScenarioViewerProps) {
-  function handleCopy() {
-    navigator.clipboard.writeText(script.content);
-    alert('클립보드에 복사되었습니다.');
-  }
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const titleLabel = templateLabels[template] || template || '시나리오';
+
+  function handleCopy() {
+    navigator.clipboard.writeText(script.content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  async function handleDownload() {
+    if (!script.content || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      await exportScenarioToODT(script.content, titleLabel);
+    } finally {
+      setIsDownloading(false);
+    }
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -85,9 +107,16 @@ export default function ScenarioViewer({ script, template }: ScenarioViewerProps
           <button
             onClick={handleCopy}
             disabled={!script.content}
-            style={{ padding: '0.3rem 0.65rem', background: script.content ? 'var(--focus-color)' : '#aaa', color: 'white', border: 'none', borderRadius: '4px', fontSize: '0.72rem', cursor: script.content ? 'pointer' : 'not-allowed' }}
+            style={{ padding: '0.3rem 0.65rem', background: copied ? '#059669' : script.content ? 'var(--focus-color)' : '#aaa', color: 'white', border: 'none', borderRadius: '4px', fontSize: '0.72rem', cursor: script.content ? 'pointer' : 'not-allowed', transition: 'background 0.2s' }}
           >
-            복사
+            {copied ? '✓ 복사됨' : '복사'}
+          </button>
+          <button
+            onClick={handleDownload}
+            disabled={!script.content || isDownloading}
+            style={{ padding: '0.3rem 0.65rem', background: !script.content || isDownloading ? '#aaa' : '#374151', color: 'white', border: 'none', borderRadius: '4px', fontSize: '0.72rem', cursor: !script.content || isDownloading ? 'not-allowed' : 'pointer' }}
+          >
+            {isDownloading ? '⏳' : '⬇ ODT'}
           </button>
         </div>
       </div>

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Sidebar, { type ToolId } from '@/lib/chat/Sidebar';
 import ChatHeader from '@/lib/chat/ChatHeader';
 import ChatArea from '@/lib/chat/ChatArea';
 import InputArea from '@/lib/chat/InputArea';
 import PreviewPanel from '@/lib/chat/PreviewPanel';
+import TemplateView from '@/lib/templates/TemplateView';
 import type { Message } from '@/lib/chat/MessageBubble';
 
 const AVAILABLE_MODELS = [
@@ -27,6 +28,8 @@ export default function Home() {
   const [messages, setMessages]       = useState<Message[]>([]);
   const [activeMode, setActiveMode]   = useState<ToolId | null>(null);
   const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
+  const selectedModelRef = useRef(selectedModel);
+  useEffect(() => { selectedModelRef.current = selectedModel; }, [selectedModel]);
   const [isLoading, setIsLoading]     = useState(false);
   const [error, setError]             = useState('');
 
@@ -67,7 +70,7 @@ export default function Home() {
     setPreviewStore(prev => ({ ...prev, [toolId]: data }));
   }
 
-  function updateLastAssistant(content: string) {
+  const updateLastAssistant = useCallback((content: string) => {
     setMessages(prev => {
       const next = [...prev];
       for (let i = next.length - 1; i >= 0; i--) {
@@ -79,7 +82,7 @@ export default function Home() {
       saveMessages(next);
       return next;
     });
-  }
+  }, []);
 
   // 사이드바 도구 클릭: 폼 토글만 (미리보기 탭은 건드리지 않음)
   function handleToolClick(toolId: ToolId) {
@@ -122,7 +125,7 @@ export default function Home() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: historyForApi, model: selectedModel }),
+        body: JSON.stringify({ messages: historyForApi, model: selectedModelRef.current }),
       });
 
       if (!response.ok) throw new Error('API 응답 오류');
@@ -156,8 +159,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, selectedModel, isLoading]);
+  }, [messages, isLoading, updateLastAssistant]);
 
   // 도구 폼 제출 핸들러
   const handleToolSubmit = useCallback(async (toolId: ToolId, data: Record<string, unknown>) => {
@@ -305,55 +307,62 @@ export default function Home() {
       display: 'flex',
       flexDirection: 'row',
       height: '100vh',
-      background: '#ffffff',
+      background: '#faf9f5',
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
       overflow: 'hidden',
     }}>
       <Sidebar activeMode={activeMode} onToolClick={handleToolClick} />
 
-      {/* 채팅 + 미리보기 공유 영역 (sidebar 제외한 나머지를 1:1 분할) */}
+      {/* 메인 콘텐츠 영역 */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'row', overflow: 'hidden', minWidth: 0 }}>
 
-        {/* 채팅 영역 */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-          <ChatHeader
-            models={AVAILABLE_MODELS}
-            selectedModel={selectedModel}
-            onClear={handleClear}
-            onExport={handleExport}
-          />
+        {activeMode === 'templates' ? (
+          /* 템플릿 모드: 전체 영역을 TemplateView로 교체 */
+          <TemplateView />
+        ) : (
+          <>
+            {/* 채팅 영역 */}
+            <div style={{ flex: 4, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+              <ChatHeader
+                models={AVAILABLE_MODELS}
+                selectedModel={selectedModel}
+                onClear={handleClear}
+                onExport={handleExport}
+              />
 
-          <ChatArea messages={messages} isLoading={isLoading} />
+              <ChatArea messages={messages} isLoading={isLoading} />
 
-          {error && (
-            <div style={{ padding: '0.5rem 2rem', background: '#fee', borderTop: '1px solid #fcc', color: '#e03e3e', fontSize: '0.875rem', flexShrink: 0 }}>
-              ⚠️ {error}
+              {error && (
+                <div style={{ padding: '0.5rem 2rem', background: '#fee', borderTop: '1px solid #fcc', color: '#e03e3e', fontSize: '0.875rem', flexShrink: 0 }}>
+                  ⚠️ {error}
+                </div>
+              )}
+
+              <InputArea
+                activeMode={activeMode}
+                selectedModel={selectedModel}
+                models={AVAILABLE_MODELS}
+                isLoading={isLoading}
+                onSend={handleSend}
+                onModelChange={setSelectedModel}
+                onCloseMode={() => setActiveMode(null)}
+                onToolSubmit={handleToolSubmit}
+              />
             </div>
-          )}
 
-          <InputArea
-            activeMode={activeMode}
-            selectedModel={selectedModel}
-            models={AVAILABLE_MODELS}
-            isLoading={isLoading}
-            onSend={handleSend}
-            onModelChange={setSelectedModel}
-            onCloseMode={() => setActiveMode(null)}
-            onToolSubmit={handleToolSubmit}
-          />
-        </div>
-
-        {/* 미리보기 패널 (사이드바 제외 공간의 50%) */}
-        <PreviewPanel
-          tool={previewTool}
-          data={previewData}
-          store={previewStore}
-          isLoading={isLoading}
-          isOpen={previewOpen}
-          onToggle={() => setPreviewOpen(p => !p)}
-          onTabSwitch={setPreviewTool}
-          onTabClose={handleTabClose}
-        />
+            {/* 미리보기 패널 */}
+            <PreviewPanel
+              tool={previewTool}
+              data={previewData}
+              store={previewStore}
+              isLoading={isLoading}
+              isOpen={previewOpen}
+              onToggle={() => setPreviewOpen(p => !p)}
+              onTabSwitch={setPreviewTool}
+              onTabClose={handleTabClose}
+            />
+          </>
+        )}
       </div>
     </div>
   );

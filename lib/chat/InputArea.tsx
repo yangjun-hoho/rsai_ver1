@@ -76,7 +76,7 @@ export default function InputArea({
   // 폼 기반 도구가 활성화된 경우 → 해당 폼 렌더링
   if (activeMode && FORM_TOOLS.includes(activeMode)) {
     return (
-      <div style={{ padding: '0.5rem 2rem', background: '#ffffff', display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+      <div style={{ padding: '0.5rem 2rem', background: '#faf9f5', display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
         <div style={{ width: '100%', maxWidth: '800px' }}>
           {/* 도구별 폼 */}
           <div>
@@ -130,7 +130,7 @@ export default function InputArea({
 
   // 일반 텍스트 입력 (+ search/document 모드 배지 포함)
   return (
-    <div style={{ padding: '0.5rem 2rem 1.25rem', background: '#ffffff' }}>
+    <div style={{ padding: '0.5rem 2rem 1.25rem', background: '#faf9f5' }}>
       <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto', border: '1px solid #e0e0e0', borderRadius: '12px', background: '#ffffff', boxShadow: '0 3px 4px rgba(0,0,0,0.12)', transition: 'all 0.2s ease' }}
         onFocus={e => {
           const el = e.currentTarget;

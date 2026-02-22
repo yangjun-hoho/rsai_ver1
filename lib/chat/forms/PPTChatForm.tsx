@@ -3,6 +3,8 @@
 import { useState, useRef } from 'react';
 import { S } from './chatFormStyles';
 
+const MAX_CHARS = 8000;
+
 interface Props {
   onSubmit: (data: Record<string, unknown>) => void;
   onCancel: () => void;
@@ -12,8 +14,7 @@ interface Props {
 export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
   const [title, setTitle]                 = useState('');
   const [content, setContent]             = useState('');
-  const [slideCount, setSlideCount]       = useState(15);
-  const [template, setTemplate]           = useState('business');
+  const [slideCount, setSlideCount]       = useState(10);
   const [includeTitle, setIncludeTitle]   = useState(true);
   const [includeIndex, setIncludeIndex]   = useState(true);
   const [includeConclusion, setIncludeConclusion] = useState(true);
@@ -28,12 +29,16 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
       const fd = new FormData();
       fd.append('file', file);
       const res = await fetch('/api/work-support/ppt-converter/upload', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error((err as { error?: string }).error || '파일 업로드 실패');
+      }
       const result = await res.json();
-      setContent(result.content as string);
+      setContent((result.text as string).slice(0, MAX_CHARS));
       setUploadedFile(file);
       setActiveTab('text');
-    } catch {
-      alert('파일 업로드 실패');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '파일 업로드 실패');
     } finally {
       setIsUploading(false);
     }
@@ -42,7 +47,7 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim() || !title.trim()) return;
-    onSubmit({ content, title, slideCount, includeTitle, includeIndex, includeConclusion, template });
+    onSubmit({ content, title, slideCount, includeTitle, includeIndex, includeConclusion });
   }
 
   const tabStyle = (active: boolean) => ({
@@ -53,6 +58,9 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
     fontSize: '0.75rem', cursor: 'pointer',
     fontWeight: active ? 600 : 400,
   } as React.CSSProperties);
+
+  const charRatio = content.length / MAX_CHARS;
+  const charColor = charRatio > 0.9 ? '#EF4444' : charRatio > 0.7 ? '#F59E0B' : '#9b9a97';
 
   return (
     <form onSubmit={handleSubmit} style={S.card}>
@@ -88,10 +96,12 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
               style={{ ...S.input, resize: 'vertical', minHeight: '90px', lineHeight: 1.4 }}
               placeholder="PPT로 변환할 내용을 입력하세요..."
               value={content}
-              onChange={e => setContent(e.target.value)}
+              onChange={e => setContent(e.target.value.slice(0, MAX_CHARS))}
               disabled={isLoading}
             />
-            <span style={{ fontSize: '0.65rem', color: '#9b9a97' }}>{content.length}자</span>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <span style={{ fontSize: '0.65rem', color: charColor }}>{content.length.toLocaleString()} / {MAX_CHARS.toLocaleString()}자</span>
+            </div>
           </div>
         )}
 
@@ -104,24 +114,17 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
             <p style={{ margin: 0, fontSize: '0.7rem', color: '#6b6b6b' }}>
               {isUploading ? '파일 처리 중...' : 'PDF, TXT, DOCX 파일을 클릭하여 업로드'}
             </p>
-            {uploadedFile && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.65rem', color: '#28a745' }}>✓ {uploadedFile.name}</p>}
+            {uploadedFile && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.65rem', color: '#28a745' }}>✓ {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}KB)</p>}
             <input ref={fileRef} type="file" accept=".pdf,.txt,.docx" style={{ display: 'none' }} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} disabled={isUploading} />
           </div>
         )}
 
-        {/* 슬라이드 수 + 템플릿 */}
-        <div style={S.row}>
-          <div>
-            <label style={S.label}>슬라이드 수: {slideCount}</label>
-            <input type="range" min={5} max={30} value={slideCount} onChange={e => setSlideCount(Number(e.target.value))} style={{ width: '100%' }} />
-          </div>
-          <div>
-            <label style={S.label}>템플릿</label>
-            <select style={S.input} value={template} onChange={e => setTemplate(e.target.value)} disabled={isLoading}>
-              <option value="business">비즈니스</option>
-              <option value="academic">학술</option>
-              <option value="creative">창의</option>
-            </select>
+        {/* 슬라이드 수 */}
+        <div>
+          <label style={S.label}>슬라이드 수: <strong>{slideCount}개</strong></label>
+          <input type="range" min={3} max={20} value={slideCount} onChange={e => setSlideCount(Number(e.target.value))} style={{ width: '100%' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: '#9b9a97' }}>
+            <span>3</span><span>20</span>
           </div>
         </div>
 

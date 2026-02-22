@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       try {
         const completion = await openai.chat.completions.create({
-          model: 'gpt-4o-mini',
+          model,
           messages: [
             { role: 'system', content: '당신은 친절하고 전문적인 AI 어시스턴트입니다. 한국어로 답변해주세요.' },
             ...messages.map((m) => ({ role: m.role, content: m.content })),
