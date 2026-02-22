@@ -16,6 +16,7 @@ interface PromptComposerProps {
   aspectRatio: string;
   showPromptPanel: boolean;
   isUsageLimitReached: boolean;
+  dailyUsageLimit: number;
   onSetTool: (tool: ToolMode) => void;
   onSetPrompt: (v: string) => void;
   onGenerate: () => void;
@@ -40,7 +41,7 @@ const ASPECT_RATIOS = [
 export default function PromptComposer(props: PromptComposerProps) {
   const {
     isDarkMode, selectedTool, currentPrompt, uploadedImages, editReferenceImages,
-    isGenerating, temperature, seed, aspectRatio, showPromptPanel, isUsageLimitReached,
+    isGenerating, temperature, seed, aspectRatio, showPromptPanel, isUsageLimitReached, dailyUsageLimit,
     onSetTool, onSetPrompt, onGenerate, onFileUpload, onRemoveUploadedImage,
     onRemoveEditReferenceImage, onSetTemperature, onSetSeed, onSetAspectRatio,
     onTogglePanel, onClearSession,
