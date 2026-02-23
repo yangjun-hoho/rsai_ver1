@@ -18,7 +18,8 @@
       "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" stash)",
       "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" stash pop)",
       "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" status)",
-      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" restore --staged .claude/settings.local.json)"
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" restore --staged .claude/settings.local.json)",
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" push)"
     ]
   }
 }
