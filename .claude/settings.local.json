@@ -8,8 +8,17 @@
       "Bash(npx tsc:*)",
       "Bash(npx next build)",
       "WebFetch(domain:developers.openai.com)",
-      "Bash(npm install:*)",
-      "Bash(node -e:*)"
+      "Bash(icacls:*)",
+      "Bash(cmd.exe /c \"icacls \"\"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\\\\.git\\\\objects\\\\pack\"\" /grant \"\"%USERNAME%:F\"\" /T\")",
+      "Bash(cmd.exe /c \"icacls \"\"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\\\\.git\\\\objects\\\\pack\"\" /grant %USERNAME%:F /T 2>&1\")",
+      "Bash(cmd.exe /c \"dir \"\"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\\\\.git\\\\objects\\\\pack\"\" 2>&1\")",
+      "Bash(powershell -Command \"Get-ChildItem ''C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\\\\.git\\\\objects\\\\pack'' | Select-Object Name, LastWriteTime\")",
+      "Bash(powershell -Command:*)",
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" pull)",
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" stash)",
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" stash pop)",
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" status)",
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" restore --staged .claude/settings.local.json)"
     ]
   }
 }

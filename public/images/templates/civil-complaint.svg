@@ -1,0 +1,26 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#eff6ff"/>
+  <!-- 남양주 상단 컬러바 -->
+  <rect width="400" height="9" fill="#1e40af"/>
+  <rect x="318" width="82" height="9" fill="#22c55e"/>
+  <!-- 문서 그림자 -->
+  <rect x="63" y="27" width="280" height="160" rx="6" fill="#c7d7f5" opacity="0.5"/>
+  <!-- 흰 종이 -->
+  <rect x="60" y="24" width="280" height="160" rx="6" fill="white"/>
+  <!-- 문서 헤더 영역 -->
+  <rect x="60" y="24" width="280" height="34" rx="6" fill="#dbeafe"/>
+  <rect x="60" y="46" width="280" height="12" fill="#dbeafe"/>
+  <rect x="78" y="35" width="110" height="8" rx="3" fill="#1e40af"/>
+  <rect x="290" y="35" width="32" height="8" rx="3" fill="#93c5fd"/>
+  <!-- 본문 줄들 -->
+  <rect x="78" y="74" width="244" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="87" width="200" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="100" width="224" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="113" width="180" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="126" width="210" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="139" width="155" height="5" rx="2" fill="#e2e8f0"/>
+  <!-- 직인 영역 -->
+  <rect x="262" y="148" width="62" height="28" rx="5" fill="#dbeafe"/>
+  <rect x="268" y="154" width="50" height="16" rx="3" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="293" y="165" text-anchor="middle" font-size="7" fill="#1e40af" font-family="sans-serif" letter-spacing="0.5">처  리  완  료</text>
+</svg>

@@ -1,0 +1,32 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#fff7ed"/>
+  <!-- 상단 컬러바 -->
+  <rect width="400" height="9" fill="#ea580c"/>
+  <rect x="318" width="82" height="9" fill="#22c55e"/>
+  <!-- 봉투 배경 -->
+  <rect x="63" y="27" width="280" height="160" rx="6" fill="#fed7aa" opacity="0.4"/>
+  <rect x="60" y="24" width="280" height="160" rx="6" fill="white"/>
+  <!-- 봉투 윗면 꺾임선 (이메일 아이콘 느낌) -->
+  <path d="M60 24 L200 90 L340 24" fill="none" stroke="#fed7aa" stroke-width="1.5"/>
+  <!-- 이메일 헤더 -->
+  <rect x="60" y="24" width="280" height="34" rx="6" fill="#fff7ed"/>
+  <rect x="60" y="46" width="280" height="12" fill="#fff7ed"/>
+  <!-- From/To 라벨 -->
+  <rect x="78" y="32" width="22" height="6" rx="2" fill="#fdba74"/>
+  <rect x="108" y="32" width="100" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="78" y="42" width="16" height="6" rx="2" fill="#fdba74"/>
+  <rect x="102" y="42" width="130" height="6" rx="3" fill="#e2e8f0"/>
+  <!-- 제목 줄 -->
+  <rect x="78" y="68" width="180" height="7" rx="3" fill="#ea580c" opacity="0.7"/>
+  <!-- 본문 줄들 -->
+  <rect x="78" y="84" width="244" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="97" width="200" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="110" width="224" height="5" rx="2" fill="#e2e8f0"/>
+  <rect x="78" y="123" width="180" height="5" rx="2" fill="#e2e8f0"/>
+  <!-- 서명 구분선 -->
+  <rect x="78" y="140" width="244" height="1" rx="1" fill="#fed7aa"/>
+  <rect x="78" y="150" width="100" height="4" rx="2" fill="#fdba74" opacity="0.6"/>
+  <rect x="78" y="158" width="70" height="4" rx="2" fill="#fdba74" opacity="0.4"/>
+  <!-- 화살표 (회신 표현) -->
+  <path d="M330 110 L316 100 L316 107 L302 107 L302 113 L316 113 L316 120 Z" fill="#ea580c" opacity="0.5"/>
+</svg>
