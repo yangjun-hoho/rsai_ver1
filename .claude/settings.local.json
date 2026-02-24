@@ -19,7 +19,12 @@
       "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" stash pop)",
       "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" status)",
       "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" restore --staged .claude/settings.local.json)",
-      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" push)"
+      "Bash(git -C \"C:\\\\Users\\\\USER\\\\Desktop\\\\React\\\\rsai_ver1\" push)",
+      "WebFetch(domain:www.vworld.kr)",
+      "Bash(curl -s \"https://api.vworld.kr/req/address?service=address&request=getCoord&address=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%A4%91%EA%B5%AC%20%EC%84%B8%EC%A2%85%EB%8C%80%EB%A1%9C%20110&key=0F2B2615-B43F-397A-8E31-32011A4B9891&type=BOTH&crs=epsg:4326&format=json\")",
+      "Bash(curl -s \"https://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=0F2B2615-B43F-397A-8E31-32011A4B9891&geomFilter=BOX\\(126.9770000,37.5655000,126.9790000,37.5675000\\)&format=json&size=3&geometry=true&attribute=true&crs=EPSG:4326\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://api.vworld.kr/req/wmts/1.0.0/0F2B2615-B43F-397A-8E31-32011A4B9891/Cadastral/15/13543/27648.png\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://api.vworld.kr/req/wmts/1.0.0/0F2B2615-B43F-397A-8E31-32011A4B9891/Base/15/13543/27648.png\")"
     ]
   }
 }

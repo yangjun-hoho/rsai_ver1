@@ -41,6 +41,7 @@ const SHORTCUTS = [
   { id: 'chart-editor',      label: '차트 에디터',    icon: '📊', path: '/work-support/chart-editor' },
   { id: 'screen-recorder',   label: '화면 녹화',      icon: '🎬', path: '/work-support/screen-recorder' },
   { id: 'latest-tools',      label: '최신 AI 도구',   icon: '🌐', path: '/work-support/latest-tools' },
+  { id: 'cadastral-map',     label: '연속지적도',      icon: '🗺️', path: '/work-support/cadastral-map' },
 ];
 
 interface SidebarProps {

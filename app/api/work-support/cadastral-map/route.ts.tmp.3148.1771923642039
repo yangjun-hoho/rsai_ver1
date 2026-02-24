@@ -1,0 +1,35 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get('type') ?? 'cadastral';
+  const apiKey = process.env.VWORLD_API_KEY?.trim();
+
+  if (!apiKey) {
+    return NextResponse.json({ error: 'V-World API 키가 설정되지 않았습니다.' }, { status: 500 });
+  }
+
+  try {
+    if (type === 'geocode') {
+      const address = searchParams.get('address') ?? '';
+      if (!address) return NextResponse.json({ error: '주소가 필요합니다.' }, { status: 400 });
+
+      const url = `https://api.vworld.kr/req/address?service=address&request=getCoord&address=${encodeURIComponent(address)}&key=${apiKey}&type=parcel&format=json`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return NextResponse.json(data);
+    }
+
+    // type === 'cadastral'
+    const bbox = searchParams.get('bbox') ?? '';
+    if (!bbox) return NextResponse.json({ error: 'bbox가 필요합니다.' }, { status: 400 });
+
+    const url = `https://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=${apiKey}&geomFilter=BOX(${bbox})&format=json&size=1000&geometry=true&attribute=true&crs=EPSG:4326`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('[cadastral-map] error:', error);
+    return NextResponse.json({ error: '서버 오류가 발생했습니다.' }, { status: 500 });
+  }
+}
