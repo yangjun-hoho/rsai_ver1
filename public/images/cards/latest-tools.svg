@@ -1,0 +1,43 @@
+<svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#faf5ff"/>
+      <stop offset="100%" stop-color="#ede9fe"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="200" fill="url(#bg4)"/>
+  <!-- 배경 원형 glow -->
+  <circle cx="480" cy="100" r="100" fill="#8b5cf6" opacity="0.08"/>
+  <circle cx="120" cy="100" r="70" fill="#a78bfa" opacity="0.1"/>
+  <!-- AI 도구 아이콘 카드들 (3x2 그리드) -->
+  <rect x="60" y="40" width="70" height="50" rx="8" fill="white" opacity="0.85"/>
+  <text x="95" y="72" text-anchor="middle" font-size="22" font-family="sans-serif">🤖</text>
+
+  <rect x="148" y="40" width="70" height="50" rx="8" fill="white" opacity="0.85"/>
+  <text x="183" y="72" text-anchor="middle" font-size="22" font-family="sans-serif">🎨</text>
+
+  <rect x="236" y="40" width="70" height="50" rx="8" fill="white" opacity="0.85"/>
+  <text x="271" y="72" text-anchor="middle" font-size="22" font-family="sans-serif">🎵</text>
+
+  <rect x="60" y="108" width="70" height="50" rx="8" fill="white" opacity="0.85"/>
+  <text x="95" y="140" text-anchor="middle" font-size="22" font-family="sans-serif">✍️</text>
+
+  <rect x="148" y="108" width="70" height="50" rx="8" fill="white" opacity="0.85"/>
+  <text x="183" y="140" text-anchor="middle" font-size="22" font-family="sans-serif">🎬</text>
+
+  <rect x="236" y="108" width="70" height="50" rx="8" fill="white" opacity="0.85"/>
+  <text x="271" y="140" text-anchor="middle" font-size="22" font-family="sans-serif">🔍</text>
+
+  <!-- 우측 텍스트 -->
+  <text x="380" y="85" font-size="15" fill="#6d28d9" font-family="sans-serif" font-weight="bold">최신 AI 도구</text>
+  <rect x="380" y="96" width="160" height="4" rx="2" fill="#c4b5fd"/>
+  <rect x="380" y="108" width="130" height="4" rx="2" fill="#ddd6fe"/>
+  <rect x="380" y="120" width="145" height="4" rx="2" fill="#ddd6fe"/>
+  <!-- 태그 -->
+  <rect x="480" y="158" width="90" height="24" rx="12" fill="url(#glow)"/>
+  <text x="525" y="174" text-anchor="middle" font-size="11" fill="white" font-family="sans-serif" font-weight="bold">최신 AI 도구</text>
+</svg>

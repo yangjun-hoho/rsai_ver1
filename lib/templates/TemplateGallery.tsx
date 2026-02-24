@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { TemplateConfig } from './types';
 import { TEMPLATES, TEMPLATE_CATEGORIES } from './registry';
 
@@ -9,6 +10,7 @@ interface TemplateGalleryProps {
 }
 
 export default function TemplateGallery({ onSelect }: TemplateGalleryProps) {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
   const filtered = selectedCategory === '전체'
@@ -18,9 +20,20 @@ export default function TemplateGallery({ onSelect }: TemplateGalleryProps) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#f9f9f7' }}>
       {/* 헤더 */}
-      <div style={{ padding: '1.25rem 2rem 1rem', borderBottom: '1px solid #e9e9e7', background: 'white', flexShrink: 0 }}>
-        <h2 style={{ margin: '0 0 0.2rem', fontSize: '1.1rem', fontWeight: '700', color: '#1a1a1a' }}>📁 업무지원 템플릿</h2>
-        <p style={{ margin: 0, fontSize: '0.82rem', color: '#6b6b6b' }}>업무에 맞는 템플릿을 선택하여 AI 답변을 자동 생성하세요</p>
+      <div style={{ padding: '1.25rem 2rem 1rem', borderBottom: '1px solid #e9e9e7', background: 'white', flexShrink: 0, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div>
+          <h2 style={{ margin: '0 0 0.2rem', fontSize: '1.1rem', fontWeight: '700', color: '#1a1a1a' }}>📁 업무지원 템플릿</h2>
+          <p style={{ margin: 0, fontSize: '0.82rem', color: '#6b6b6b' }}>업무에 맞는 템플릿을 선택하여 AI 답변을 자동 생성하세요</p>
+        </div>
+        <button
+          onClick={() => router.push('/')}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.75rem', background: 'transparent', border: '1px solid #e0e0e0', borderRadius: '7px', cursor: 'pointer', color: '#6b6b6b', fontSize: '0.78rem', fontWeight: 500, flexShrink: 0 }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#f9f9f7'; e.currentTarget.style.borderColor = '#c0c0c0'; e.currentTarget.style.color = '#1a1a1a'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#e0e0e0'; e.currentTarget.style.color = '#6b6b6b'; }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          홈
+        </button>
       </div>
 
       {/* 카테고리 필터 */}

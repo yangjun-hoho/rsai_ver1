@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { TemplateConfig, OutputSection } from './types';
 
 interface TemplateRunnerProps {
@@ -21,6 +22,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function TemplateRunner({ template, onBack }: TemplateRunnerProps) {
+  const router = useRouter();
   const [formData, setFormData]       = useState<Record<string, string>>({});
   const [isLoading, setIsLoading]     = useState(false);
   const [error, setError]             = useState('');
@@ -162,6 +164,15 @@ export default function TemplateRunner({ template, onBack }: TemplateRunnerProps
               {copied ? '✓ 복사됨' : '복사'}
             </button>
           )}
+          <button
+            onClick={() => router.push('/')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.6rem', background: 'white', border: '1px solid #e0e0e0', borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem', color: '#555', marginLeft: hasOutput ? '0' : 'auto' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#f9f9f7'; e.currentTarget.style.borderColor = '#c0c0c0'; e.currentTarget.style.color = '#1a1a1a'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#e0e0e0'; e.currentTarget.style.color = '#555'; }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            홈
+          </button>
         </div>
 
         {/* 본문: 좌측 입력 + 우측 결과 */}

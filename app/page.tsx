@@ -330,7 +330,7 @@ export default function Home() {
                 onExport={handleExport}
               />
 
-              <ChatArea messages={messages} isLoading={isLoading} />
+              <ChatArea messages={messages} isLoading={isLoading} onToolClick={handleToolClick} />
 
               {error && (
                 <div style={{ padding: '0.5rem 2rem', background: '#fee', borderTop: '1px solid #fcc', color: '#e03e3e', fontSize: '0.875rem', flexShrink: 0 }}>

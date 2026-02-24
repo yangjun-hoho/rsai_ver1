@@ -65,13 +65,14 @@ export default function EditorHeader({ isDarkMode, onToggleDarkMode, dailyUsageC
         {/* Right */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push('/')}
             style={{ ...iconBtnStyle, border: btnBorder, padding: '0.3rem 0.85rem', fontSize: '0.82rem', fontWeight: 500, gap: '0.4rem' }}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            뒤로가기
+            홈
           </button>
           <button onClick={onToggleDarkMode} style={iconBtnStyle} title={isDarkMode ? '라이트 모드' : '다크 모드'}>
             {isDarkMode ? (

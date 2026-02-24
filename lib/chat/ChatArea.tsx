@@ -1,29 +1,83 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import MessageBubble, { type Message } from './MessageBubble';
 
 interface ChatAreaProps {
   messages: Message[];
   isLoading: boolean;
+  onToolClick?: (toolId: string) => void;
 }
 
-const STARTER_CARDS = [
-  { icon: '📄', title: '문서 생성', desc: '보고서, 기획서 자동 작성' },
-  { icon: '📚', title: '문서 분석', desc: 'PDF 또는 텍스트 파일 업로드' },
-  { icon: '🖥️', title: 'PPT 생성', desc: 'AI 자동 프레젠테이션 작성' },
-  { icon: '✅', title: '작업 자동화', desc: '반복 작업을 AI로 처리' },
+type CardAction =
+  | { type: 'page'; path: string }
+  | { type: 'tool'; toolId: string };
+
+interface ShortcutCard {
+  id: string;
+  title: string;
+  desc: string;
+  image: string;
+  action: CardAction;
+}
+
+const SHORTCUT_CARDS: ShortcutCard[] = [
+  {
+    id: 'nano-banana',
+    title: 'Nano Banana AI',
+    desc: 'AI 이미지 생성 및 편집 도구',
+    image: '/images/cards/nano-banana.svg',
+    action: { type: 'page', path: '/work-support/nano-banana' },
+  },
+  {
+    id: 'templates',
+    title: '업무지원 템플릿',
+    desc: '공무원 업무 특화 AI 템플릿',
+    image: '/images/cards/templates.svg',
+    action: { type: 'tool', toolId: 'templates' },
+  },
+  {
+    id: 'chart-editor',
+    title: '차트 에디터',
+    desc: '데이터 시각화 차트 생성',
+    image: '/images/cards/chart-editor.svg',
+    action: { type: 'page', path: '/work-support/chart-editor' },
+  },
+  {
+    id: 'latest-tools',
+    title: '최신 AI 도구',
+    desc: '최신 AI 서비스 한눈에 보기',
+    image: '/images/cards/latest-tools.svg',
+    action: { type: 'page', path: '/work-support/latest-tools' },
+  },
+  {
+    id: 'screen-recorder',
+    title: '화면 녹화',
+    desc: '브라우저에서 바로 화면 녹화',
+    image: '/images/cards/screen-recorder.svg',
+    action: { type: 'page', path: '/work-support/screen-recorder' },
+  },
 ];
 
-export default function ChatArea({ messages, isLoading }: ChatAreaProps) {
+export default function ChatArea({ messages, isLoading, onToolClick }: ChatAreaProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   }, [messages, isLoading]);
+
+  function handleCardClick(card: ShortcutCard) {
+    if (card.action.type === 'page') {
+      router.push(card.action.path);
+    } else {
+      onToolClick?.(card.action.toolId);
+    }
+  }
 
   return (
     <div
@@ -54,17 +108,14 @@ export default function ChatArea({ messages, isLoading }: ChatAreaProps) {
         .chat-markdown table{border-collapse:collapse;width:100%;margin:0.5em 0}
         .chat-markdown th,.chat-markdown td{border:1px solid #e0e0e0;padding:0.4em 0.75em;text-align:left}
         .chat-markdown th{background:#f7f6f3;font-weight:600}
+        .shortcut-card { transition: all 0.18s ease; }
+        .shortcut-card:hover { border-color: #c0c0bd !important; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.09) !important; }
       `}</style>
 
       {messages.length === 0 ? (
         /* 웰컴 화면 */
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', width: '100%', maxWidth: '800px', paddingTop: '2rem', textAlign: 'center' }}>
-          <div style={{
-            width: '100px', height: '100px',
-            marginBottom: '1.5rem',
-            borderRadius: '50%',
-            overflow: 'hidden',
-          }}>
+          <div style={{ width: '100px', height: '100px', marginBottom: '1.5rem', borderRadius: '50%', overflow: 'hidden' }}>
             <Image
               src="/images/welcome-animation.gif"
               alt="RSAI 로고"
@@ -74,47 +125,47 @@ export default function ChatArea({ messages, isLoading }: ChatAreaProps) {
             />
           </div>
           <h2 style={{ fontSize: '1.6rem', fontWeight: 600, color: '#37352f', margin: '0 0 0.5rem 0' }}>
-            아레스 AI-Agent에 오신 것을 환영합니다
+            남양주시 스마트도시과 AI-Agent에 오신 것을 환영합니다
           </h2>
           <p style={{ color: '#9b9a97', fontSize: '0.9rem', margin: '0 0 2rem 0' }}>
             무엇을 도와드릴까요?
           </p>
 
           <div style={{ width: '100%', textAlign: 'left' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9b9a97', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
-              시작하기
+            <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9b9a97', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+              바로가기
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
-              {STARTER_CARDS.map((card) => (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.75rem' }}>
+              {SHORTCUT_CARDS.map((card) => (
                 <div
-                  key={card.title}
+                  key={card.id}
+                  className="shortcut-card"
+                  onClick={() => handleCardClick(card)}
                   style={{
-                    background: '#fcfcfc',
+                    background: '#fcfcfa',
                     border: '1px solid #e9e9e7',
-                    borderRadius: '8px',
-                    padding: '0.75rem 1rem',
+                    borderRadius: '10px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
+                    overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.35rem',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = '#f7f6f3';
-                    e.currentTarget.style.borderColor = '#d0d0d0';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = '#fcfcfc';
-                    e.currentTarget.style.borderColor = '#e9e9e7';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                   }}
                 >
-                  <div style={{ fontSize: '1rem' }}>{card.icon}</div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#37352f' }}>{card.title}</div>
-                  <div style={{ fontSize: '0.72rem', color: '#9b9a97', lineHeight: 1.4 }}>{card.desc}</div>
+                  {/* 3:1 이미지 영역 */}
+                  <div style={{ width: '100%', aspectRatio: '3 / 1', overflow: 'hidden', background: '#f0f0ee', flexShrink: 0 }}>
+                    <img
+                      src={card.image}
+                      alt={card.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
+                  {/* 텍스트 영역 */}
+                  <div style={{ padding: '0.65rem 0.8rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#37352f' }}>{card.title}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#9b9a97', lineHeight: 1.4 }}>{card.desc}</div>
+                  </div>
                 </div>
               ))}
             </div>

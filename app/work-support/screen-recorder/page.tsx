@@ -237,25 +237,28 @@ export default function ScreenRecorderPage() {
       {/* ── Header ── */}
       <header style={{ height: '52px', background: PANEL, borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => router.back()}
-            style={{ width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#374151', border: 'none', borderRadius: '6px', color: MUTED, cursor: 'pointer' }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#4b5563'; e.currentTarget.style.color = TEXT; }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#374151'; e.currentTarget.style.color = MUTED; }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          </button>
           <span style={{ fontSize: '18px' }}>🎬</span>
           <span style={{ fontSize: '15px', fontWeight: 600 }}>Screen Recorder</span>
           <span style={{ fontSize: '10px', padding: '2px 6px', background: '#374151', borderRadius: '4px', color: MUTED }}>v1.0</span>
         </div>
 
-        {isRecording && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', padding: '4px 12px', borderRadius: '20px' }}>
-            <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444', animation: 'recPulse 1s infinite' }} />
-            <span style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', letterSpacing: '1px' }}>REC</span>
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {isRecording && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', padding: '4px 12px', borderRadius: '20px' }}>
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444', animation: 'recPulse 1s infinite' }} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', letterSpacing: '1px' }}>REC</span>
+            </div>
+          )}
+          <button
+            onClick={() => router.push('/')}
+            style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '0.3rem 0.7rem', background: '#374151', border: 'none', borderRadius: '6px', color: MUTED, cursor: 'pointer', fontSize: '0.82rem', fontWeight: 500 }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#4b5563'; e.currentTarget.style.color = TEXT; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#374151'; e.currentTarget.style.color = MUTED; }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            홈
+          </button>
+        </div>
       </header>
 
       {/* ── Body ── */}

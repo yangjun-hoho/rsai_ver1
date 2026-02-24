@@ -1,0 +1,24 @@
+<svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="200" fill="url(#bg)"/>
+  <!-- 바나나 곡선 장식 -->
+  <ellipse cx="480" cy="100" rx="140" ry="80" fill="#fbbf24" opacity="0.3" transform="rotate(-20 480 100)"/>
+  <ellipse cx="500" cy="90" rx="100" ry="55" fill="#f59e0b" opacity="0.25" transform="rotate(-20 500 90)"/>
+  <!-- 텍스트 블록 (AI 이미지 느낌) -->
+  <rect x="40" y="50" width="260" height="14" rx="7" fill="#d97706" opacity="0.5"/>
+  <rect x="40" y="74" width="200" height="10" rx="5" fill="#d97706" opacity="0.3"/>
+  <rect x="40" y="94" width="230" height="10" rx="5" fill="#d97706" opacity="0.3"/>
+  <!-- 이미지 프레임 느낌 -->
+  <rect x="310" y="30" width="150" height="140" rx="10" fill="#f59e0b" opacity="0.2"/>
+  <rect x="320" y="40" width="130" height="120" rx="8" fill="#fef3c7" opacity="0.6"/>
+  <circle cx="385" cy="95" r="30" fill="#fbbf24" opacity="0.5"/>
+  <text x="385" y="102" text-anchor="middle" font-size="28" font-family="sans-serif">🍌</text>
+  <!-- 우측 하단 태그 -->
+  <rect x="490" y="160" width="90" height="24" rx="12" fill="#d97706"/>
+  <text x="535" y="176" text-anchor="middle" font-size="11" fill="white" font-family="sans-serif" font-weight="bold">Nano Banana</text>
+</svg>
