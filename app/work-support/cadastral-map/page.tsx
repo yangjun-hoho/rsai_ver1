@@ -109,16 +109,15 @@ export default function CadastralMapPage() {
     }
   }, []); // refs만 사용하므로 deps 불필요
 
-  // ── Leaflet 초기화 ──────────────────────────────────────
+  // ── Leaflet 초기화 (CDN 방식 - 빌드 의존성 없음) ──────────
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
     let destroyed = false;
 
-    import('leaflet').then(({ default: L }) => {
+    const initMap = (L: AnyLeaflet) => {
       if (destroyed || !containerRef.current || mapRef.current) return;
 
-      // 기본 아이콘 경로 수정 (번들러 환경 대응)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
@@ -139,7 +138,30 @@ export default function CadastralMapPage() {
 
       map.on('moveend', fetchCadastral);
       fetchCadastral();
-    });
+    };
+
+    // CSS (CDN)
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link');
+      link.id   = 'leaflet-css';
+      link.rel  = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+
+    // JS (CDN) - window.L이 이미 있으면 재사용
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((window as any).L) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      initMap((window as any).L);
+    } else {
+      const script = document.createElement('script');
+      script.id  = 'leaflet-js';
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      script.onload = () => initMap((window as any).L);
+      document.head.appendChild(script);
+    }
 
     return () => {
       destroyed = true;
