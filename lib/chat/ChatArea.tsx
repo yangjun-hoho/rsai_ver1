@@ -4,16 +4,17 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import MessageBubble, { type Message } from './MessageBubble';
+import { ToolId } from './Sidebar';
 
 interface ChatAreaProps {
   messages: Message[];
   isLoading: boolean;
-  onToolClick?: (toolId: string) => void;
+  onToolClick: (toolId: ToolId) => void;
 }
 
 type CardAction =
   | { type: 'page'; path: string }
-  | { type: 'tool'; toolId: string };
+  | { type: 'tool'; toolId: ToolId };
 
 interface ShortcutCard {
   id: string;
