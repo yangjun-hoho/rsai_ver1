@@ -318,7 +318,7 @@ export default function Home() {
 
         {activeMode === 'templates' ? (
           /* 템플릿 모드: 전체 영역을 TemplateView로 교체 */
-          <TemplateView />
+          <TemplateView onClose={() => setActiveMode(null)} />
         ) : (
           <>
             {/* 채팅 영역 */}

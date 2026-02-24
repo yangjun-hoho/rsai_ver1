@@ -3,6 +3,24 @@ import { GoogleGenAI } from '@google/genai';
 
 const MODEL = 'gemini-2.5-flash-image';
 
+// ── 서버 전역 사용량 (모든 사용자 합산) ──────────────────────
+const GLOBAL_DAILY_LIMIT = 10;
+let globalUsage = { count: 0, date: new Date().toDateString() };
+
+function getUsage() {
+  const today = new Date().toDateString();
+  if (globalUsage.date !== today) {
+    globalUsage = { count: 0, date: today };
+  }
+  return globalUsage;
+}
+
+export async function GET() {
+  const usage = getUsage();
+  const remaining = Math.max(0, GLOBAL_DAILY_LIMIT - usage.count);
+  return NextResponse.json({ remaining, total: GLOBAL_DAILY_LIMIT, used: usage.count });
+}
+
 function buildEditPrompt(instruction: string, hasMask: boolean): string {
   const maskInstruction = hasMask
     ? '\n\nIMPORTANT: Apply changes ONLY where the mask image shows white pixels (value 255). Leave all other areas completely unchanged. Respect the mask boundaries precisely and maintain seamless blending at the edges.'
@@ -17,6 +35,15 @@ Preserve image quality and ensure the edit looks professional and realistic.`;
 
 export async function POST(request: NextRequest) {
   try {
+    // 서버 전역 한도 체크
+    const usage = getUsage();
+    if (usage.count >= GLOBAL_DAILY_LIMIT) {
+      return NextResponse.json(
+        { error: `오늘의 전체 생성 한도(${GLOBAL_DAILY_LIMIT}회)에 도달했습니다. 내일 다시 이용해주세요.` },
+        { status: 429 }
+      );
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'Gemini API 키가 설정되지 않았습니다.' }, { status: 500 });
@@ -86,8 +113,11 @@ export async function POST(request: NextRequest) {
     if (candidates && candidates.length > 0 && candidates[0].content?.parts) {
       for (const part of candidates[0].content.parts) {
         if (part.inlineData) {
+          usage.count++;
+          const remaining = Math.max(0, GLOBAL_DAILY_LIMIT - usage.count);
           return NextResponse.json({
             image: part.inlineData.data,
+            remaining,
           });
         }
       }

@@ -6,21 +6,8 @@ import PromptComposer, { type ToolMode } from '@/lib/work-support/nano-banana/Pr
 import ImageCanvas, { type BrushStroke, brushStrokesToMask } from '@/lib/work-support/nano-banana/ImageCanvas';
 import HistoryPanel, { type Generation } from '@/lib/work-support/nano-banana/HistoryPanel';
 
-const DAILY_LIMIT = 30;
-const USAGE_KEY = 'nano-banana-usage';
+const DAILY_LIMIT = 10;
 const THEME_KEY = 'nano-banana-theme';
-
-function loadUsage(): { count: number; date: string } {
-  try {
-    const raw = localStorage.getItem(USAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch { /* ignore */ }
-  return { count: 0, date: new Date().toDateString() };
-}
-
-function saveUsage(count: number) {
-  localStorage.setItem(USAGE_KEY, JSON.stringify({ count, date: new Date().toDateString() }));
-}
 
 export default function NanaBananaPage() {
   // ── Theme ──────────────────────────────────────────────
@@ -55,14 +42,11 @@ export default function NanaBananaPage() {
     const saved = localStorage.getItem(THEME_KEY);
     if (saved) setIsDarkMode(saved === 'dark');
 
-    // Load usage (reset if new day)
-    const usage = loadUsage();
-    const today = new Date().toDateString();
-    if (usage.date === today) {
-      setDailyUsageCount(usage.count);
-    } else {
-      saveUsage(0);
-    }
+    // 서버에서 잔여 횟수 조회
+    fetch('/api/work-support/nano-banana')
+      .then(r => r.json())
+      .then(({ used }) => setDailyUsageCount(used ?? 0))
+      .catch(() => {});
 
     // Mobile: hide panels
     if (window.innerWidth < 768) {
@@ -137,11 +121,14 @@ export default function NanaBananaPage() {
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
+        if (response.status === 429) {
+          setDailyUsageCount(DAILY_LIMIT);
+        }
         alert(err.error || '이미지 생성에 실패했습니다.');
         return;
       }
 
-      const { image, mimeType } = await response.json();
+      const { image, mimeType, remaining } = await response.json();
       const dataUrl = `data:${mimeType ?? 'image/png'};base64,${image}`;
       setCanvasImage(dataUrl);
 
@@ -156,10 +143,12 @@ export default function NanaBananaPage() {
       setGenerations(prev => [...prev, newGen]);
       setSelectedGenerationId(newGen.id);
 
-      // Increment usage
-      const newCount = dailyUsageCount + 1;
-      setDailyUsageCount(newCount);
-      saveUsage(newCount);
+      // 서버 응답 기준으로 사용량 업데이트
+      if (remaining !== undefined) {
+        setDailyUsageCount(DAILY_LIMIT - remaining);
+      } else {
+        setDailyUsageCount(prev => prev + 1);
+      }
     } catch (err) {
       console.error('[nano-banana] generate error:', err);
       alert('오류가 발생했습니다.');

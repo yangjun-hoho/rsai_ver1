@@ -7,9 +7,10 @@ import { TEMPLATES, TEMPLATE_CATEGORIES } from './registry';
 
 interface TemplateGalleryProps {
   onSelect: (template: TemplateConfig) => void;
+  onClose?: () => void;
 }
 
-export default function TemplateGallery({ onSelect }: TemplateGalleryProps) {
+export default function TemplateGallery({ onSelect, onClose }: TemplateGalleryProps) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
@@ -26,7 +27,7 @@ export default function TemplateGallery({ onSelect }: TemplateGalleryProps) {
           <p style={{ margin: 0, fontSize: '0.82rem', color: '#6b6b6b' }}>업무에 맞는 템플릿을 선택하여 AI 답변을 자동 생성하세요</p>
         </div>
         <button
-          onClick={() => router.push('/')}
+          onClick={() => onClose ? onClose() : router.push('/')}
           style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.75rem', background: 'transparent', border: '1px solid #e0e0e0', borderRadius: '7px', cursor: 'pointer', color: '#6b6b6b', fontSize: '0.78rem', fontWeight: 500, flexShrink: 0 }}
           onMouseEnter={e => { e.currentTarget.style.background = '#f9f9f7'; e.currentTarget.style.borderColor = '#c0c0c0'; e.currentTarget.style.color = '#1a1a1a'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#e0e0e0'; e.currentTarget.style.color = '#6b6b6b'; }}
