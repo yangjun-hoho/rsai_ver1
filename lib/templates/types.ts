@@ -1,7 +1,7 @@
 export interface TemplateField {
   key: string;
   label: string;
-  type: 'text' | 'textarea' | 'select';
+  type: 'text' | 'textarea' | 'select' | 'checkbox-group';
   placeholder?: string;
   options?: { value: string; label: string }[];
   required?: boolean;

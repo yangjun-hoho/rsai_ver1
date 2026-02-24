@@ -196,6 +196,36 @@ export default function TemplateRunner({ template, onBack }: TemplateRunnerProps
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
+                  ) : field.type === 'checkbox-group' ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', padding: '0.25rem 0' }}>
+                      {field.options?.map(opt => {
+                        const selected = (formData[field.key] || '').split(',').filter(Boolean);
+                        const isChecked = selected.includes(opt.value);
+                        return (
+                          <label
+                            key={opt.value}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '0.5rem',
+                              cursor: 'pointer', fontSize: '0.82rem',
+                              color: '#333', userSelect: 'none',
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={e => {
+                                const next = e.target.checked
+                                  ? [...selected, opt.value]
+                                  : selected.filter(v => v !== opt.value);
+                                handleChange(field.key, next.join(','));
+                              }}
+                              style={{ width: '15px', height: '15px', cursor: 'pointer', accentColor: '#0066cc' }}
+                            />
+                            {opt.label}
+                          </label>
+                        );
+                      })}
+                    </div>
                   ) : (
                     <input
                       type="text"

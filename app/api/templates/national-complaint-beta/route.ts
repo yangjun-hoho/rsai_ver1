@@ -6,17 +6,24 @@ const GEMINI_STREAM_URL =
 
 export async function POST(request: NextRequest) {
   try {
-    const { category, complaintContent, responsePoints, department } = await request.json();
+    const { category, complaintContent, responseKeywords, extraKeywords, department } = await request.json();
 
-    if (!complaintContent?.trim() || !responsePoints?.trim()) {
-      return Response.json({ error: '민원 내용과 답변 핵심 내용을 입력해주세요.' }, { status: 400 });
+    // 체크박스 선택 키워드 + 기타 키워드 합산
+    const keywordList = [
+      ...(responseKeywords ? responseKeywords.split(',').filter((k: string) => k.trim()) : []),
+      ...(extraKeywords?.trim() ? [extraKeywords.trim()] : []),
+    ];
+    const keywordsText = keywordList.join(', ');
+
+    if (!complaintContent?.trim() || keywordList.length === 0) {
+      return Response.json({ error: '민원 내용과 답변 핵심 키워드를 입력해주세요.' }, { status: 400 });
     }
 
     const prompt = `당신은 지방자치단체 민원 담당 공무원입니다. 국민신문고 민원에 대한 공식 답변서를 작성하세요.
 
 민원 분류: ${category || '일반민원'}
 민원 내용: ${complaintContent}
-답변 핵심 내용: ${responsePoints}
+답변 핵심 키워드: ${keywordsText}
 담당 부서: ${department || '민원 담당부서'}
 
 반드시 아래 서식 형태를 그대로 유지하며 작성하세요. JSON이나 코드블록 없이 순수 텍스트로만 출력하세요:

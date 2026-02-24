@@ -33,12 +33,20 @@ export const nationalComplaintBetaConfig: TemplateConfig = {
       rows: 6,
     },
     {
-      key: 'responsePoints',
-      label: '답변 핵심 내용',
-      type: 'textarea',
-      placeholder: '답변에 포함할 핵심 사항을 입력하세요...',
-      required: true,
-      rows: 4,
+      key: 'responseKeywords',
+      label: '답변 핵심 키워드',
+      type: 'checkbox-group',
+      options: [
+        { value: '현장확인', label: '현장확인' },
+        { value: '관련법', label: '관련법' },
+        { value: '조치', label: '조치' },
+      ],
+    },
+    {
+      key: 'extraKeywords',
+      label: '기타 키워드',
+      type: 'text',
+      placeholder: '예: 민원인 상담 완료, 예산 검토 중',
     },
     {
       key: 'department',
