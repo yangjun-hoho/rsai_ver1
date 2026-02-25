@@ -28,8 +28,6 @@ interface InputAreaProps {
 }
 
 const TOOL_LABELS: Record<string, string> = {
-  search: '검색',
-  document: '문서 분석',
   report: '보고서 생성',
   ppt: 'PPT 생성',
   scenario: '시나리오 생성',
@@ -148,11 +146,7 @@ export default function InputArea({
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={
-            activeMode === 'search' ? '검색할 내용을 입력하세요...' :
-            activeMode === 'document' ? '문서에 대해 질문하세요...' :
-            '메시지를 입력하세요...'
-          }
+          placeholder="메시지를 입력하세요..."
           disabled={isLoading}
           style={{
             width: '100%',
