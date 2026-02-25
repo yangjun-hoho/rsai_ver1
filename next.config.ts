@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pdf-parse', 'pptxgenjs'],
+  serverExternalPackages: ['pdf-parse', 'pptxgenjs', 'better-sqlite3'],
   turbopack: {},  // dev 모드 Turbopack 명시적 활성화
   webpack: (config, { isServer }) => {
     if (isServer) {

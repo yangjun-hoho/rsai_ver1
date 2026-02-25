@@ -7,6 +7,7 @@ import ChatArea from '@/lib/chat/ChatArea';
 import InputArea from '@/lib/chat/InputArea';
 import PreviewPanel from '@/lib/chat/PreviewPanel';
 import TemplateView from '@/lib/templates/TemplateView';
+import RagView from '@/lib/rag/RagView';
 import type { Message } from '@/lib/chat/MessageBubble';
 
 const AVAILABLE_MODELS = [
@@ -316,8 +317,9 @@ export default function Home() {
       {/* 메인 콘텐츠 영역 */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'row', overflow: 'hidden', minWidth: 0 }}>
 
-        {activeMode === 'templates' ? (
-          /* 템플릿 모드: 전체 영역을 TemplateView로 교체 */
+        {activeMode === 'rag' ? (
+          <RagView onClose={() => setActiveMode(null)} />
+        ) : activeMode === 'templates' ? (
           <TemplateView onClose={() => setActiveMode(null)} />
         ) : (
           <>

@@ -17,6 +17,8 @@ export const TOOLS: Tool[] = [
   { id: 'merit-citation', label: '공적조서 생성', tooltip: '공적조서 자동 작성' },
   { id: 'scenario',      label: '시나리오 생성',  tooltip: '발표 시나리오 자동 변환' },
   { id: 'ppt',           label: 'PPT 생성',       tooltip: 'AI 자동 프레젠테이션 작성' },
+  { id: 'document',      label: '문서 분석',      tooltip: 'PDF/TXT 파일 업로드 및 질의응답' },
+  { id: 'search',        label: '검색',           tooltip: '웹에서 실시간 정보 검색' },
   { id: 'templates',     label: '템플릿',         tooltip: '공무원 업무 특화 AI 템플릿' },
   { id: 'rag',           label: 'Rag',            tooltip: '문서 기반 AI 지식 검색' },
 ];
