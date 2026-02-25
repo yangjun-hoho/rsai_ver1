@@ -85,7 +85,7 @@ export default function ReportChatForm({ onSubmit, onCancel, isLoading }: Props)
             <button
               type="button"
               onClick={setSample}
-              style={{ padding: '0.4rem 0.6rem', background: '#6c757d', color: 'white', border: 'none', borderRadius: '3px', fontSize: '0.7rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+              style={{ padding: '0.4rem 0.6rem', background: '#6c757d', color: 'white', border: 'none', borderRadius: '3px', fontSize: '0.84rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               예시
             </button>
@@ -133,7 +133,7 @@ export default function ReportChatForm({ onSubmit, onCancel, isLoading }: Props)
                   borderRadius: '4px',
                   background: selectedModel === m.id ? '#e8f4ff' : 'white',
                   color: selectedModel === m.id ? '#2383e2' : '#6b6b6b',
-                  fontSize: '0.68rem', cursor: 'pointer',
+                  fontSize: '0.82rem', cursor: 'pointer',
                   fontWeight: selectedModel === m.id ? 600 : 400,
                 }}
               >

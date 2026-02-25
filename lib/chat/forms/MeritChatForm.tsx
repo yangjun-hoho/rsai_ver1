@@ -34,7 +34,7 @@ export default function MeritChatForm({ onSubmit, onCancel, isLoading }: Props) 
           <label style={S.label}>공적 대상</label>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             {['공무원', '일반인', '단체'].map(type => (
-              <label key={type} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.7rem', color: '#37352f', cursor: 'pointer' }}>
+              <label key={type} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.84rem', color: '#37352f', cursor: 'pointer' }}>
                 <input
                   type="radio"
                   value={type}

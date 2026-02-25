@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface Slide {
   slideNumber: number;
@@ -340,24 +340,10 @@ export default function PPTViewer({
   const [fullscreen, setFullscreen] = useState(false);
   const [template, setTemplate]     = useState<TemplateId>(defaultTemplate);
 
-  const previewContainerRef = useRef<HTMLDivElement>(null);
-  const [previewW, setPreviewW] = useState(0);
-  const SLIDE_W = 960;
-  const SLIDE_H = 540;
-  const previewScale = previewW > 0 ? previewW / SLIDE_W : 0;
-
   const slide = slides[current];
 
   const goNext = useCallback(() => setCurrent(c => Math.min(slides.length - 1, c + 1)), [slides.length]);
   const goPrev = useCallback(() => setCurrent(c => Math.max(0, c - 1)), []);
-
-  useEffect(() => {
-    const el = previewContainerRef.current;
-    if (!el) return;
-    const obs = new ResizeObserver(([entry]) => setPreviewW(Math.round(entry.contentRect.width)));
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   function changeTemplate(t: TemplateId) {
     setTemplate(t);
@@ -466,15 +452,8 @@ export default function PPTViewer({
 
         {/* 슬라이드 미리보기 */}
         <div style={{ flex: 1, padding: '1rem', overflowY: 'auto', background: '#E5E7EB', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div
-            ref={previewContainerRef}
-            style={{ width: '100%', aspectRatio: '16/9', position: 'relative', overflow: 'hidden', borderRadius: '12px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', background: 'white', flexShrink: 0 }}
-          >
-            {previewScale > 0 && (
-              <div style={{ width: SLIDE_W, height: SLIDE_H, transform: `scale(${previewScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0 }}>
-                <SlideView s={slide} fs={true} />
-              </div>
-            )}
+          <div style={{ aspectRatio: '16/9', maxHeight: '340px', alignSelf: 'stretch' }}>
+            <SlideView s={slide} fs={false} />
           </div>
           {editMode && (
             editingIdx === current
@@ -482,7 +461,7 @@ export default function PPTViewer({
               : <button onClick={() => setEditingIdx(current)} style={{ padding: '0.4rem', background: 'white', border: '1px dashed #D1D5DB', borderRadius: '6px', fontSize: '0.78rem', color: '#6B7280', cursor: 'pointer' }}>✏️ 이 슬라이드 편집</button>
           )}
           {slide.notes && (
-            <div style={{ padding: '0.6rem 0.75rem', background: '#fdfaeeff', border: '1px solid #fd978aff', borderRadius: '6px', fontSize: '0.75rem', color: '#4d2c18ff' }}>
+            <div style={{ padding: '0.6rem 0.75rem', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '6px', fontSize: '0.75rem', color: '#92400E' }}>
               <strong>발표자 노트:</strong> {slide.notes}
             </div>
           )}
@@ -493,10 +472,10 @@ export default function PPTViewer({
           <div style={{ display: 'flex', gap: '0.3rem', padding: '0.5rem', overflowX: 'auto' }}>
             {slides.map((s, i) => (
               <button key={i} onClick={() => { setCurrent(i); setEditingIdx(null); }}
-                style={{ flexShrink: 0, width: '100px', height: '40px', border: i === current ? `2px solid ${accentColor}` : '2px solid transparent', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', padding: 0, background: s.type === 'title' || s.type === 'index' ? accentColor : 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1px' }}
+                style={{ flexShrink: 0, width: '64px', height: '40px', border: i === current ? `2px solid ${accentColor}` : '2px solid transparent', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', padding: 0, background: s.type === 'title' || s.type === 'index' ? accentColor : 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1px' }}
               >
-                <span style={{ fontSize: '0.8rem', color: s.type === 'title' || s.type === 'index' ? 'white' : accentColor, fontWeight: '700', textAlign: 'center', padding: '0 2px', lineHeight: 1.2, overflow: 'hidden', maxHeight: '20px', display: 'block', width: '100%', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.title}</span>
-                <span style={{ fontSize: '0.7rem', color: s.type === 'title' || s.type === 'index' ? 'rgba(255,255,255,0.7)' : '#9CA3AF' }}>{i + 1}</span>
+                <span style={{ fontSize: '0.5rem', color: s.type === 'title' || s.type === 'index' ? 'white' : accentColor, fontWeight: '700', textAlign: 'center', padding: '0 2px', lineHeight: 1.2, overflow: 'hidden', maxHeight: '20px', display: 'block', width: '100%', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.title}</span>
+                <span style={{ fontSize: '0.45rem', color: s.type === 'title' || s.type === 'index' ? 'rgba(255,255,255,0.7)' : '#9CA3AF' }}>{i + 1}</span>
               </button>
             ))}
           </div>

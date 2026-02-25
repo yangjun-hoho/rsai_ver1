@@ -105,7 +105,7 @@ export default function PressReleaseChatForm({ onSubmit, onCancel, isLoading }: 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
             <label style={{ ...S.label, marginBottom: 0 }}>핵심 내용 *</label>
             <span style={{
-              fontSize: '0.65rem', padding: '0.1rem 0.35rem', borderRadius: '10px',
+              fontSize: '0.78rem', padding: '0.1rem 0.35rem', borderRadius: '10px',
               background: isValid ? '#d4edda' : len > 0 ? '#f8d7da' : '#e9ecef',
               color: isValid ? '#155724' : len > 0 ? '#721c24' : '#6c757d',
             }}>
@@ -125,7 +125,7 @@ export default function PressReleaseChatForm({ onSubmit, onCancel, isLoading }: 
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
             <label style={{ ...S.label, marginBottom: 0 }}>핵심 키워드 (선택)</label>
-            <span style={{ fontSize: '0.65rem', color: '#6c757d' }}>{keywords.filter(k => k.trim()).length}/6개</span>
+            <span style={{ fontSize: '0.78rem', color: '#6c757d' }}>{keywords.filter(k => k.trim()).length}/6개</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.35rem' }}>
             {keywords.map((kw, i) => (

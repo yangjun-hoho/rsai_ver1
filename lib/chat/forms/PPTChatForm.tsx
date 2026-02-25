@@ -55,7 +55,7 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
     borderBottom: `2px solid ${active ? '#2383e2' : 'transparent'}`,
     background: 'none',
     color: active ? '#2383e2' : '#9b9a97',
-    fontSize: '0.75rem', cursor: 'pointer',
+    fontSize: '0.9rem', cursor: 'pointer',
     fontWeight: active ? 600 : 400,
   } as React.CSSProperties);
 
@@ -100,7 +100,7 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
               disabled={isLoading}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <span style={{ fontSize: '0.65rem', color: charColor }}>{content.length.toLocaleString()} / {MAX_CHARS.toLocaleString()}자</span>
+              <span style={{ fontSize: '0.78rem', color: charColor }}>{content.length.toLocaleString()} / {MAX_CHARS.toLocaleString()}자</span>
             </div>
           </div>
         )}
@@ -111,10 +111,10 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
             onClick={() => fileRef.current?.click()}
           >
             <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.25rem' }}>{isUploading ? '⏳' : '📎'}</span>
-            <p style={{ margin: 0, fontSize: '0.7rem', color: '#6b6b6b' }}>
+            <p style={{ margin: 0, fontSize: '0.84rem', color: '#6b6b6b' }}>
               {isUploading ? '파일 처리 중...' : 'PDF, TXT, DOCX 파일을 클릭하여 업로드'}
             </p>
-            {uploadedFile && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.65rem', color: '#28a745' }}>✓ {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}KB)</p>}
+            {uploadedFile && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.78rem', color: '#28a745' }}>✓ {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}KB)</p>}
             <input ref={fileRef} type="file" accept=".pdf,.txt,.docx" style={{ display: 'none' }} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} disabled={isUploading} />
           </div>
         )}
@@ -123,7 +123,7 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
         <div>
           <label style={S.label}>슬라이드 수: <strong>{slideCount}개</strong></label>
           <input type="range" min={3} max={20} value={slideCount} onChange={e => setSlideCount(Number(e.target.value))} style={{ width: '100%' }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: '#9b9a97' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#9b9a97' }}>
             <span>3</span><span>20</span>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
             { label: '목차',          state: includeIndex, set: setIncludeIndex },
             { label: '결론',          state: includeConclusion, set: setIncludeConclusion },
           ].map(item => (
-            <label key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.7rem', color: '#37352f', cursor: 'pointer' }}>
+            <label key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.84rem', color: '#37352f', cursor: 'pointer' }}>
               <input type="checkbox" checked={item.state} onChange={e => item.set(e.target.checked)} />
               {item.label}
             </label>

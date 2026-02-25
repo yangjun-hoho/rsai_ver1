@@ -113,15 +113,15 @@ export default function ScenarioChatForm({ onSubmit, onCancel, isLoading }: Prop
           <label style={S.label}>파일 업로드 (선택)</label>
           {uploadedFile ? (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.4rem', background: '#f7f6f3', borderRadius: '4px', border: '1px solid #e0e0e0' }}>
-              <span style={{ fontSize: '0.78rem', color: '#37352f' }}>📄 {uploadedFile.name}</span>
-              <button type="button" onClick={() => { setUploadedFile(null); setContent(''); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b6b6b', fontSize: '0.9rem' }}>✕</button>
+              <span style={{ fontSize: '0.65rem', color: '#37352f' }}>📄 {uploadedFile.name}</span>
+              <button type="button" onClick={() => { setUploadedFile(null); setContent(''); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b6b6b', fontSize: '0.75rem' }}>✕</button>
             </div>
           ) : (
             <div
               style={{ border: '1px dashed #d1d5db', borderRadius: '4px', background: '#fafafa', cursor: 'pointer' }}
               onClick={() => fileRef.current?.click()}
             >
-              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.4rem', cursor: 'pointer', color: '#6b6b6b', fontSize: '0.78rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.4rem', cursor: 'pointer', color: '#6b6b6b', fontSize: '0.65rem' }}>
                 {isProcessing ? '⏳ 처리 중...' : '📎 PDF/TXT 업로드'}
               </label>
               <input ref={fileRef} type="file" accept=".pdf,.txt" style={{ display: 'none' }} onChange={e => e.target.files?.[0] && processFile(e.target.files[0])} disabled={isProcessing} />
