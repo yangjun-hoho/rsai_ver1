@@ -116,22 +116,37 @@ export default function ChatArea({ messages, isLoading, onToolClick }: ChatAreaP
       {messages.length === 0 ? (
         /* 웰컴 화면 */
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', width: '100%', maxWidth: '800px', paddingTop: '2rem', textAlign: 'center' }}>
-          <div style={{ width: '100px', height: '100px', marginBottom: '1.5rem', borderRadius: '50%', overflow: 'hidden' }}>
-            <Image
-              src="/images/welcome-animation.gif"
-              alt="RSAI 로고"
-              width={100}
-              height={100}
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginBottom: '2rem', width: '100%' }}>
+            {/* 상단: gif */}
+            <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden' }}>
+              <Image
+                src="/images/welcome-animation.gif"
+                alt="RSAI 로고"
+                width={100}
+                height={100}
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+            {/* 하단: 좌측 이미지 + 우측 텍스트 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', width: '100%', textAlign: 'left' }}>
+              <Image
+                src="/images/chat-title.png"
+                alt="채팅 타이틀"
+                width={200}
+                height={80}
+                style={{ objectFit: 'contain', flexShrink: 0 }}
+                priority
+              />
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#37352f', margin: '0 0 0.4rem 0' }}>
+                  남양주시 스마트도시과 AI-Agent에 오신 것을 환영합니다
+                </h2>
+                <p style={{ color: '#9b9a97', fontSize: '0.9rem', margin: 0 }}>
+                  무엇을 도와드릴까요?
+                </p>
+              </div>
+            </div>
           </div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 600, color: '#37352f', margin: '0 0 0.5rem 0' }}>
-            남양주시 스마트도시과 AI-Agent에 오신 것을 환영합니다
-          </h2>
-          <p style={{ color: '#9b9a97', fontSize: '0.9rem', margin: '0 0 2rem 0' }}>
-            무엇을 도와드릴까요?
-          </p>
-
           <div style={{ width: '100%', textAlign: 'left' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9b9a97', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
               바로가기

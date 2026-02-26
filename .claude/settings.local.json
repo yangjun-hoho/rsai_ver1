@@ -26,7 +26,12 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://api.vworld.kr/req/wmts/1.0.0/0F2B2615-B43F-397A-8E31-32011A4B9891/Cadastral/15/13543/27648.png\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://api.vworld.kr/req/wmts/1.0.0/0F2B2615-B43F-397A-8E31-32011A4B9891/Base/15/13543/27648.png\")",
       "Bash(node -e \"const p = require\\(''./package.json''\\); console.log\\(''deps:'', JSON.stringify\\(p.dependencies?.leaflet\\)\\); console.log\\(''devDeps:'', JSON.stringify\\(p.devDependencies?.leaflet\\)\\);\")",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(taskkill /PID 54768 /F)",
+      "Bash(netstat -ano)",
+      "Read(//c/Users/USER/Desktop/React/rsai_ver1/**)",
+      "Bash(xargs -I{} taskkill /PID {} /F)",
+      "Bash(npm run dev)"
     ]
   }
 }
