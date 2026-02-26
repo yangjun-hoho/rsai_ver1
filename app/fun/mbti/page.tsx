@@ -4,25 +4,21 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const QUESTIONS = [
-  /* E/I */
   { id: 1, dim: 'EI', q: '퇴근 후 무엇이 더 끌리나요?', a: '동료들과 회식 한 잔!', b: '집에서 혼자 넷플릭스 정주행' },
   { id: 2, dim: 'EI', q: '회의 중 좋은 아이디어가 떠오르면?', a: '바로 손 들고 발언한다', b: '메모해두고 나중에 정리해서 말한다' },
   { id: 3, dim: 'EI', q: '새 업무를 시작할 때?', a: '팀원들과 함께 브레인스토밍', b: '혼자 먼저 구상하고 정리' },
   { id: 4, dim: 'EI', q: '점심시간이라면?', a: '동료들과 왁자지껄 함께 식사', b: '혼자 조용히, 또는 짧게 먹고 충전' },
   { id: 5, dim: 'EI', q: '낯선 사람이 많은 행사에서?', a: '먼저 다가가 말 건네기', b: '아는 사람 찾거나 조용히 관찰' },
-  /* S/N */
   { id: 6, dim: 'SN', q: '보고서를 쓸 때 나는?', a: '현황 데이터와 수치부터 정리', b: '전체 방향과 스토리를 먼저 잡는다' },
   { id: 7, dim: 'SN', q: '새 시스템 도입 제안을 들으면?', a: '현재 업무에 얼마나 실용적인가 따진다', b: '미래 가능성과 발전성이 먼저 보인다' },
   { id: 8, dim: 'SN', q: '문제 해결 방식은?', a: '과거 검증된 방법을 먼저 찾는다', b: '창의적인 새로운 방법을 시도해본다' },
   { id: 9, dim: 'SN', q: '업무 설명을 들을 때 집중하는 것은?', a: '구체적인 절차와 단계별 방법', b: '전체 맥락과 목적, 큰 그림' },
   { id: 10, dim: 'SN', q: '아이디어를 제안할 때 강조하는 건?', a: '현실적이고 실행 가능한 방안', b: '가능성과 잠재력, 미래 비전' },
-  /* T/F */
   { id: 11, dim: 'TF', q: '동료가 실수로 민원을 일으켰을 때?', a: '원인을 분석하고 재발 방지책 먼저', b: '일단 "괜찮아?" 위로가 먼저' },
   { id: 12, dim: 'TF', q: '중요한 의사결정 시 더 중요한 것은?', a: '객관적 데이터와 논리', b: '팀 분위기와 구성원 감정' },
   { id: 13, dim: 'TF', q: '부당한 지시를 받았을 때?', a: '논리적으로 반박하고 설득한다', b: '상황을 고려해 부드럽게 의견을 낸다' },
   { id: 14, dim: 'TF', q: '팀원을 평가할 때?', a: '성과와 결과물 위주로 평가', b: '노력과 과정도 함께 고려' },
   { id: 15, dim: 'TF', q: '팀 내 갈등 해결 방식은?', a: '사실 기반으로 토론해서 결론을 낸다', b: '서로의 입장을 이해하고 공감부터' },
-  /* J/P */
   { id: 16, dim: 'JP', q: '업무 스타일은?', a: '미리 계획 세우고 순서대로 처리', b: '상황에 따라 유연하게 대응' },
   { id: 17, dim: 'JP', q: '마감 처리 방식은?', a: '미리미리 여유 있게 끝낸다', b: '마감 전날 집중력 폭발시킨다' },
   { id: 18, dim: 'JP', q: '갑작스러운 일정 변경이 생기면?', a: '스트레스 받고 계획 재정비가 필요하다', b: '유연하게 받아들이고 즉흥 대응' },
@@ -31,10 +27,10 @@ const QUESTIONS = [
 ];
 
 const DIM_LABELS: Record<string, { label: string; color: string }> = {
-  EI: { label: 'E · I', color: '#6366f1' },
-  SN: { label: 'S · N', color: '#10b981' },
-  TF: { label: 'T · F', color: '#f59e0b' },
-  JP: { label: 'J · P', color: '#ef4444' },
+  EI: { label: 'E · I', color: '#0078D4' },
+  SN: { label: 'S · N', color: '#107c10' },
+  TF: { label: 'T · F', color: '#ca5010' },
+  JP: { label: 'J · P', color: '#d13438' },
 };
 
 const RESULTS: Record<string, { emoji: string; name: string; desc: string; tip: string }> = {
@@ -56,11 +52,13 @@ const RESULTS: Record<string, { emoji: string; name: string; desc: string; tip: 
   ENTJ: { emoji: '👑', name: '대담한 통솔자', desc: '비효율을 보면 참지 못하는 개혁파. 회의를 주도하고 결론을 만들어냅니다.', tip: '팀원들 페이스도 맞춰줘요~' },
 };
 
+const MS_FONT = '"Segoe UI", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif';
+
 export default function MBTIPage() {
   const router = useRouter();
-  const [current, setCurrent] = useState(0);          // 현재 문항 인덱스
-  const [answers, setAnswers] = useState<('a' | 'b')[]>([]); // 답변 배열
-  const [selected, setSelected] = useState<'a' | 'b' | null>(null); // 선택 직후 강조
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState<('a' | 'b')[]>([]);
+  const [selected, setSelected] = useState<'a' | 'b' | null>(null);
   const [result, setResult] = useState<string | null>(null);
 
   useEffect(() => { document.title = 'MBTI 테스트 | FuN fUn'; }, []);
@@ -70,7 +68,7 @@ export default function MBTIPage() {
   const dim = DIM_LABELS[q?.dim ?? 'EI'];
 
   function choose(opt: 'a' | 'b') {
-    if (selected !== null) return; // 이미 선택 중이면 무시
+    if (selected !== null) return;
     setSelected(opt);
 
     setTimeout(() => {
@@ -80,7 +78,6 @@ export default function MBTIPage() {
       setSelected(null);
 
       if (isLast) {
-        // 결과 계산
         let E = 0, I = 0, S = 0, N = 0, T = 0, F = 0, J = 0, P = 0;
         QUESTIONS.forEach((question, idx) => {
           const ans = newAnswers[idx];
@@ -99,49 +96,73 @@ export default function MBTIPage() {
 
   function goBack() {
     if (selected !== null) return;
-    if (current > 0) {
-      setCurrent(prev => prev - 1);
-    }
+    if (current > 0) setCurrent(prev => prev - 1);
   }
 
   function reset() {
-    setCurrent(0);
-    setAnswers([]);
-    setSelected(null);
-    setResult(null);
+    setCurrent(0); setAnswers([]); setSelected(null); setResult(null);
   }
 
   const res = result ? RESULTS[result] : null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)', padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ maxWidth: '520px', margin: '0 auto', width: '100%' }}>
-        <button onClick={() => router.push('/fun')} style={{ marginBottom: '1.5rem', padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151' }}>
-          ← FuN fUn 홈
-        </button>
+    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: '#f3f2f1', fontFamily: MS_FONT, color: '#323130' }}>
+
+      {/* ── Nav ── */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 200, height: '48px', background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #edebe9', display: 'flex', alignItems: 'center', padding: '0 2rem', gap: '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1, cursor: 'pointer' }} onClick={() => router.push('/fun')}>
+          <svg width="14" height="14" viewBox="0 0 23 23" fill="none" style={{ flexShrink: 0 }}>
+            <rect x="0" y="0" width="10" height="10" fill="#f25022"/><rect x="12" y="0" width="10" height="10" fill="#7fba00"/>
+            <rect x="0" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/>
+          </svg>
+          <span style={{ color: '#0078D4', fontSize: '0.82rem', fontWeight: 600 }}>FuN fUn</span>
+          <span style={{ color: '#a19f9d', fontSize: '0.82rem', margin: '0 0.2rem' }}>›</span>
+          <span style={{ color: '#323130', fontSize: '0.82rem', fontWeight: 600 }}>MBTI 테스트</span>
+        </div>
+        {!result && (
+          <span style={{ color: '#605e5c', fontSize: '0.78rem', fontWeight: 600, marginRight: '1rem' }}>{current + 1} / {QUESTIONS.length}</span>
+        )}
+        <button onClick={() => router.push('/')} style={{ padding: '0.35rem 0.85rem', background: 'transparent', border: '1px solid #8a8886', borderRadius: '2px', cursor: 'pointer', color: '#323130', fontSize: '0.78rem' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#f3f2f1'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>메인 채팅</button>
+      </nav>
+
+      {/* ── Hero ── */}
+      <div style={{ background: 'linear-gradient(135deg, #003366 0%, #0078D4 100%)', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '1.75rem', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>🧠</div>
+        <div>
+          <p style={{ color: '#a8d4f5', fontSize: '0.62rem', letterSpacing: '1.5px', textTransform: 'uppercase', margin: '0 0 0.15rem', fontWeight: 600 }}>테스트 · MBTI</p>
+          <h1 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.1rem', letterSpacing: '-0.3px' }}>공무원 MBTI 테스트</h1>
+          <p style={{ color: '#c7e3f7', margin: 0, fontSize: '0.72rem' }}>나는 어떤 공무원 유형일까?</p>
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div style={{ padding: '1.5rem 2rem 3rem', maxWidth: '560px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1px' }}>
 
         {!result ? (
           <>
-            {/* 헤더 + 진행바 */}
-            <div style={{ background: 'white', borderRadius: '16px', padding: '1.25rem 1.5rem', marginBottom: '1.25rem', boxShadow: '0 4px 16px rgba(99,102,241,0.12)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <h1 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#4338ca' }}>🧠 공무원 MBTI 테스트</h1>
-                <span style={{ padding: '0.2rem 0.75rem', background: dim.color + '18', color: dim.color, borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
-                  {dim.label}
+            {/* 진행 바 */}
+            <div style={{ background: 'white', border: '1px solid #edebe9', padding: '0.85rem 1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{
+                  padding: '0.15rem 0.6rem',
+                  background: `${dim.color}12`, color: dim.color,
+                  border: `1px solid ${dim.color}30`,
+                  fontSize: '0.72rem', fontWeight: 700,
+                }}>{dim.label}</span>
+                <span style={{ fontSize: '0.72rem', color: dim.color, fontWeight: 600 }}>
+                  {Math.round(((current + 1) / QUESTIONS.length) * 100)}% 완료
                 </span>
               </div>
-              <div style={{ background: '#eef2ff', borderRadius: '8px', height: '8px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${((current + 1) / QUESTIONS.length) * 100}%`, background: `linear-gradient(90deg, ${dim.color}, #8b5cf6)`, borderRadius: '8px', transition: 'width 0.4s ease' }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.4rem' }}>
-                <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>Q{current + 1} / {QUESTIONS.length}</span>
-                <span style={{ fontSize: '0.75rem', color: '#6366f1', fontWeight: 700 }}>{Math.round(((current + 1) / QUESTIONS.length) * 100)}%</span>
+              <div style={{ height: '4px', background: '#f3f2f1', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${((current + 1) / QUESTIONS.length) * 100}%`, background: dim.color, transition: 'width 0.4s ease' }} />
               </div>
             </div>
 
             {/* 질문 카드 */}
-            <div style={{ background: 'white', borderRadius: '16px', padding: '2rem 1.5rem', boxShadow: '0 2px 12px rgba(99,102,241,0.1)' }}>
-              <p style={{ margin: '0 0 1.75rem 0', fontWeight: 700, color: '#1f2937', fontSize: '1.05rem', lineHeight: 1.65, textAlign: 'center' }}>
+            <div style={{ background: 'white', border: '1px solid #edebe9', padding: '2rem 1.5rem' }}>
+              <p style={{ margin: '0 0 1.75rem 0', fontWeight: 700, color: '#323130', fontSize: '1rem', lineHeight: 1.65, textAlign: 'center' }}>
                 {q.q}
               </p>
 
@@ -155,21 +176,27 @@ export default function MBTIPage() {
                       onClick={() => choose(opt)}
                       disabled={selected !== null}
                       style={{
-                        padding: '0.85rem 1.25rem',
-                        borderRadius: '12px',
-                        border: `2px solid ${isChosen ? '#6366f1' : '#e5e7eb'}`,
-                        background: isChosen ? '#eef2ff' : isOther ? '#f9fafb' : 'white',
-                        color: isChosen ? '#4338ca' : isOther ? '#9ca3af' : '#374151',
-                        fontWeight: isChosen ? 700 : 500,
+                        padding: '0.9rem 1.25rem',
+                        border: `1.5px solid ${isChosen ? '#0078D4' : '#edebe9'}`,
+                        background: isChosen ? '#0078D408' : isOther ? '#faf9f8' : 'white',
+                        color: isChosen ? '#004f9f' : isOther ? '#a19f9d' : '#323130',
+                        fontWeight: isChosen ? 600 : 400,
                         cursor: selected !== null ? 'not-allowed' : 'pointer',
-                        fontSize: '0.92rem',
-                        textAlign: 'left',
-                        transition: 'all 0.15s',
-                        opacity: isOther ? 0.5 : 1,
-                        transform: isChosen ? 'scale(1.01)' : 'scale(1)',
+                        fontSize: '0.88rem', textAlign: 'left', transition: 'all 0.12s',
+                        opacity: isOther ? 0.55 : 1,
+                        borderRadius: '2px',
                       }}
+                      onMouseEnter={e => { if (selected === null) { e.currentTarget.style.borderColor = '#0078D4'; e.currentTarget.style.background = '#0078D405'; } }}
+                      onMouseLeave={e => { if (!isChosen) { e.currentTarget.style.borderColor = '#edebe9'; e.currentTarget.style.background = 'white'; } }}
                     >
-                      <span style={{ fontWeight: 800, marginRight: '0.5rem', color: isChosen ? '#6366f1' : '#9ca3af' }}>
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        width: '22px', height: '22px',
+                        background: isChosen ? '#0078D4' : '#f3f2f1',
+                        color: isChosen ? 'white' : '#605e5c',
+                        borderRadius: '2px', fontSize: '0.72rem', fontWeight: 700,
+                        marginRight: '0.65rem', transition: 'all 0.12s', flexShrink: 0,
+                      }}>
                         {opt === 'a' ? 'A' : 'B'}
                       </span>
                       {opt === 'a' ? q.a : q.b}
@@ -178,29 +205,48 @@ export default function MBTIPage() {
                 })}
               </div>
 
-              {/* 이전 버튼 */}
               {current > 0 && selected === null && (
                 <button
                   onClick={goBack}
-                  style={{ marginTop: '1.25rem', padding: '0.55rem 1.25rem', background: 'none', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.82rem', color: '#6b7280' }}
-                >
-                  ← 이전 문항으로
-                </button>
+                  style={{ marginTop: '1.25rem', padding: '0.45rem 1.1rem', background: 'transparent', border: '1px solid #8a8886', borderRadius: '2px', cursor: 'pointer', fontSize: '0.78rem', color: '#605e5c' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#f3f2f1'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >← 이전 문항으로</button>
               )}
             </div>
           </>
         ) : res ? (
-          <div style={{ background: 'white', borderRadius: '20px', padding: '2.5rem 2rem', textAlign: 'center', boxShadow: '0 8px 32px rgba(99,102,241,0.2)' }}>
-            <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{res.emoji}</div>
-            <div style={{ display: 'inline-block', padding: '0.4rem 1.25rem', background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', color: 'white', borderRadius: '20px', fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.75rem' }}>{result}</div>
-            <h2 style={{ margin: '0.5rem 0 1rem 0', fontSize: '1.3rem', fontWeight: 800, color: '#1f2937' }}>{res.name}</h2>
-            <p style={{ color: '#4b5563', lineHeight: 1.7, marginBottom: '1.25rem', fontSize: '0.95rem' }}>{res.desc}</p>
-            <div style={{ padding: '0.75rem 1.25rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', color: '#92400e', fontSize: '0.85rem', marginBottom: '2rem' }}>
+          <div style={{ background: 'white', border: '1px solid #edebe9', padding: '2.5rem 2rem', textAlign: 'center' }}>
+            <div style={{ fontSize: '4.5rem', marginBottom: '0.75rem' }}>{res.emoji}</div>
+            <div style={{
+              display: 'inline-block', padding: '0.4rem 1.5rem',
+              background: '#0078D4', color: 'white',
+              fontSize: '1.6rem', fontWeight: 700,
+              marginBottom: '0.85rem', letterSpacing: '2px',
+            }}>{result}</div>
+            <h2 style={{ margin: '0.5rem 0 1rem 0', fontSize: '1.2rem', fontWeight: 700, color: '#323130' }}>{res.name}</h2>
+            <p style={{ color: '#605e5c', lineHeight: 1.75, marginBottom: '1.25rem', fontSize: '0.92rem' }}>{res.desc}</p>
+            <div style={{
+              padding: '0.85rem 1.25rem',
+              background: '#f3f2f1', border: '1px solid #edebe9',
+              borderLeft: '4px solid #ca5010',
+              color: '#323130', fontSize: '0.82rem', marginBottom: '2rem', textAlign: 'left',
+            }}>
               💡 {res.tip}
             </div>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button onClick={reset} style={{ flex: 1, padding: '0.75rem', background: '#eef2ff', color: '#6366f1', border: '2px solid #6366f1', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer' }}>다시 하기</button>
-              <button onClick={() => router.push('/fun')} style={{ flex: 1, padding: '0.75rem', background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer' }}>FuN fUn 홈</button>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={reset}
+                style={{ flex: 1, padding: '0.55rem', background: 'transparent', color: '#0078D4', border: '1px solid #0078D4', borderRadius: '2px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+                onMouseEnter={e => e.currentTarget.style.background = '#0078D408'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >다시 하기</button>
+              <button
+                onClick={() => router.push('/fun')}
+                style={{ flex: 1, padding: '0.55rem', background: '#0078D4', color: 'white', border: 'none', borderRadius: '2px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+                onMouseEnter={e => e.currentTarget.style.background = '#106ebe'}
+                onMouseLeave={e => e.currentTarget.style.background = '#0078D4'}
+              >FuN fUn 홈</button>
             </div>
           </div>
         ) : null}

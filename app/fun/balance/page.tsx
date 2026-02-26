@@ -16,6 +16,10 @@ const QUESTIONS = [
   { q: '더 힘든 상황은?', a: '아는 사람 하나 없는 타 지역 전출', b: '복잡한 인간관계의 현 부서 잔류' },
 ];
 
+const MS_FONT = '"Segoe UI", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif';
+const COLOR_A = '#744da9';
+const COLOR_B = '#d13438';
+
 export default function BalancePage() {
   const router = useRouter();
   const [idx, setIdx] = useState(0);
@@ -52,86 +56,145 @@ export default function BalancePage() {
   const pctB = 100 - pctA;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', padding: '1.5rem 1rem' }}>
-      <div style={{ maxWidth: '520px', margin: '0 auto' }}>
-        <button onClick={() => router.push('/fun')} style={{ marginBottom: '1.5rem', padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151' }}>
-          ← FuN fUn 홈
-        </button>
+    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: '#f3f2f1', fontFamily: MS_FONT, color: '#323130' }}>
 
-        <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(139,92,246,0.15)' }}>
-          <h1 style={{ margin: '0 0 0.25rem 0', fontSize: '1.5rem', fontWeight: 900, color: '#5b21b6' }}>⚖️ 공무원 밸런스 게임</h1>
-          <p style={{ margin: 0, color: '#6b7280', fontSize: '0.88rem' }}>공무원만 이해하는 고난이도 밸런스!</p>
+      {/* ── Nav ── */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 200, height: '48px', background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #edebe9', display: 'flex', alignItems: 'center', padding: '0 2rem', gap: '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1, cursor: 'pointer' }} onClick={() => router.push('/fun')}>
+          <svg width="14" height="14" viewBox="0 0 23 23" fill="none" style={{ flexShrink: 0 }}>
+            <rect x="0" y="0" width="10" height="10" fill="#f25022"/><rect x="12" y="0" width="10" height="10" fill="#7fba00"/>
+            <rect x="0" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/>
+          </svg>
+          <span style={{ color: '#0078D4', fontSize: '0.82rem', fontWeight: 600 }}>FuN fUn</span>
+          <span style={{ color: '#a19f9d', fontSize: '0.82rem', margin: '0 0.2rem' }}>›</span>
+          <span style={{ color: '#323130', fontSize: '0.82rem', fontWeight: 600 }}>밸런스 게임</span>
         </div>
+        {!done && (
+          <span style={{ color: '#605e5c', fontSize: '0.78rem', fontWeight: 600, marginRight: '1rem' }}>{idx + 1} / {QUESTIONS.length}</span>
+        )}
+        <button onClick={() => router.push('/')} style={{ padding: '0.35rem 0.85rem', background: 'transparent', border: '1px solid #8a8886', borderRadius: '2px', cursor: 'pointer', color: '#323130', fontSize: '0.78rem' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#f3f2f1'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>메인 채팅</button>
+      </nav>
+
+      {/* ── Hero ── */}
+      <div style={{ background: 'linear-gradient(135deg, #1a0a3d 0%, #744da9 100%)', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '1.75rem', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>⚖️</div>
+        <div>
+          <p style={{ color: '#d8b4fe', fontSize: '0.62rem', letterSpacing: '1.5px', textTransform: 'uppercase', margin: '0 0 0.15rem', fontWeight: 600 }}>선택 · 밸런스게임</p>
+          <h1 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.1rem', letterSpacing: '-0.3px' }}>공무원 밸런스 게임</h1>
+          <p style={{ color: '#c4b5fd', margin: 0, fontSize: '0.72rem' }}>공무원만 이해하는 고난이도 선택!</p>
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div style={{ padding: '1.5rem 2rem 3rem', maxWidth: '560px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1px' }}>
 
         {!done ? (
-          <div style={{ background: 'white', borderRadius: '20px', padding: '2rem 1.5rem', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#8b5cf6', fontWeight: 700 }}>{idx + 1} / {QUESTIONS.length}</span>
-              <div style={{ flex: 1, margin: '0 0.75rem', height: '6px', background: '#ede9fe', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${((idx) / QUESTIONS.length) * 100}%`, background: 'linear-gradient(90deg, #8b5cf6, #ec4899)', borderRadius: '3px', transition: 'width 0.3s' }} />
+          <>
+            {/* 진행 바 */}
+            <div style={{ background: 'white', border: '1px solid #edebe9', padding: '0.85rem 1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ fontSize: '0.72rem', color: '#605e5c', fontWeight: 600 }}>Q{idx + 1}</span>
+                <span style={{ fontSize: '0.72rem', color: COLOR_A, fontWeight: 600 }}>{Math.round((idx / QUESTIONS.length) * 100)}% 완료</span>
               </div>
-              <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>⚖️</span>
+              <div style={{ height: '4px', background: '#f3f2f1', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${((idx) / QUESTIONS.length) * 100}%`, background: COLOR_A, transition: 'width 0.35s' }} />
+              </div>
             </div>
 
-            <h2 style={{ textAlign: 'center', fontSize: '1rem', fontWeight: 700, color: '#374151', marginBottom: '1.5rem', lineHeight: 1.5 }}>{q.q}</h2>
+            {/* 질문 */}
+            <div style={{ background: 'white', border: '1px solid #edebe9', padding: '2rem 1.5rem' }}>
+              <h2 style={{ textAlign: 'center', fontSize: '1.05rem', fontWeight: 700, color: '#323130', marginBottom: '1.75rem', lineHeight: 1.55 }}>
+                ⚖️ {q.q}
+              </h2>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {(['a', 'b'] as const).map(opt => {
-                const text = opt === 'a' ? q.a : q.b;
-                const pct = opt === 'a' ? pctA : pctB;
-                const isChosen = selected === opt;
-                const otherChosen = selected && selected !== opt;
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {(['a', 'b'] as const).map(opt => {
+                  const text = opt === 'a' ? q.a : q.b;
+                  const pct = opt === 'a' ? pctA : pctB;
+                  const isChosen = selected === opt;
+                  const otherChosen = selected && selected !== opt;
+                  const optColor = opt === 'a' ? COLOR_A : COLOR_B;
 
-                return (
-                  <div key={opt}>
-                    <button
-                      onClick={() => choose(opt)}
-                      disabled={!!selected}
-                      style={{
-                        width: '100%', padding: '1rem 1.25rem', borderRadius: '12px',
-                        border: `2px solid ${isChosen ? '#8b5cf6' : otherChosen ? '#e5e7eb' : '#e5e7eb'}`,
-                        background: isChosen ? '#f5f3ff' : otherChosen ? '#fafafa' : 'white',
-                        color: otherChosen ? '#9ca3af' : '#1f2937',
-                        cursor: selected ? 'default' : 'pointer',
-                        fontSize: '0.92rem', fontWeight: 600, textAlign: 'left', transition: 'all 0.2s',
-                        opacity: otherChosen ? 0.6 : 1,
-                      }}
-                    >
-                      <span style={{ display: 'inline-block', padding: '0.2rem 0.6rem', background: opt === 'a' ? '#8b5cf6' : '#ec4899', color: 'white', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, marginRight: '0.6rem' }}>{opt.toUpperCase()}</span>
-                      {text}
-                    </button>
-                    {selected && (
-                      <div style={{ marginTop: '0.35rem', padding: '0 0.25rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.2rem' }}>
-                          <span>{opt === 'a' ? '나도 A' : '나도 B'}</span>
-                          <span style={{ fontWeight: 700, color: '#8b5cf6' }}>{pct}%</span>
+                  return (
+                    <div key={opt}>
+                      <button
+                        onClick={() => choose(opt)}
+                        disabled={!!selected}
+                        style={{
+                          width: '100%', padding: '1rem 1.25rem',
+                          border: `1.5px solid ${isChosen ? optColor : otherChosen ? '#edebe9' : '#edebe9'}`,
+                          background: isChosen ? `${optColor}0d` : otherChosen ? '#faf9f8' : 'white',
+                          color: otherChosen ? '#a19f9d' : '#323130',
+                          cursor: selected ? 'default' : 'pointer',
+                          fontSize: '0.88rem', fontWeight: isChosen ? 600 : 400, textAlign: 'left', transition: 'all 0.15s',
+                          opacity: otherChosen ? 0.55 : 1,
+                          borderRadius: '2px',
+                        }}
+                        onMouseEnter={e => { if (!selected) { e.currentTarget.style.borderColor = optColor; e.currentTarget.style.background = `${optColor}08`; } }}
+                        onMouseLeave={e => { if (!isChosen) { e.currentTarget.style.borderColor = '#edebe9'; e.currentTarget.style.background = 'white'; } }}
+                      >
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                          width: '22px', height: '22px',
+                          background: isChosen ? optColor : '#f3f2f1',
+                          color: isChosen ? 'white' : '#605e5c',
+                          borderRadius: '2px', fontSize: '0.72rem', fontWeight: 700, marginRight: '0.75rem',
+                          transition: 'all 0.15s', flexShrink: 0,
+                        }}>{opt.toUpperCase()}</span>
+                        {text}
+                      </button>
+                      {selected && (
+                        <div style={{ marginTop: '0.3rem', padding: '0 0.25rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#605e5c', marginBottom: '0.2rem' }}>
+                            <span>{opt === 'a' ? '나도 A' : '나도 B'}</span>
+                            <span style={{ fontWeight: 700, color: optColor }}>{pct}%</span>
+                          </div>
+                          <div style={{ height: '3px', background: '#f3f2f1', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${pct}%`, background: optColor, transition: 'width 0.55s ease' }} />
+                          </div>
                         </div>
-                        <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: `${pct}%`, background: opt === 'a' ? '#8b5cf6' : '#ec4899', borderRadius: '3px', transition: 'width 0.5s' }} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          </>
         ) : (
-          <div style={{ background: 'white', borderRadius: '20px', padding: '2rem 1.5rem', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
-            <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>🎊</div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#5b21b6', marginBottom: '1rem' }}>게임 완료!</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.5rem' }}>
-              {QUESTIONS.map((q, i) => (
-                <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', padding: '0.5rem 0.75rem', background: '#f5f3ff', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'left' }}>
-                  <span style={{ padding: '0.15rem 0.5rem', background: userChoices[i] === 'a' ? '#8b5cf6' : '#ec4899', color: 'white', borderRadius: '4px', fontWeight: 800, flexShrink: 0 }}>{(userChoices[i] || '?').toUpperCase()}</span>
-                  <span style={{ color: '#374151' }}>{userChoices[i] === 'a' ? q.a : q.b}</span>
-                </div>
-              ))}
+          <>
+            {/* 완료 */}
+            <div style={{ background: 'white', border: '1px solid #edebe9', padding: '2rem 1.5rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '3.5rem', marginBottom: '0.5rem' }}>🎊</div>
+              <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#323130', marginBottom: '1.5rem' }}>게임 완료!</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                {QUESTIONS.map((question, i) => (
+                  <div key={i} style={{
+                    display: 'flex', gap: '0.6rem', alignItems: 'center',
+                    padding: '0.55rem 0.85rem',
+                    background: userChoices[i] === 'a' ? `${COLOR_A}0a` : `${COLOR_B}0a`,
+                    border: `1px solid ${userChoices[i] === 'a' ? COLOR_A : COLOR_B}30`,
+                    fontSize: '0.8rem', borderRadius: '2px',
+                  }}>
+                    <span style={{
+                      padding: '0.18rem 0.5rem',
+                      background: userChoices[i] === 'a' ? COLOR_A : COLOR_B,
+                      color: 'white', borderRadius: '2px',
+                      fontWeight: 700, flexShrink: 0, fontSize: '0.7rem',
+                    }}>{(userChoices[i] || '?').toUpperCase()}</span>
+                    <span style={{ color: '#323130', lineHeight: 1.4 }}>{userChoices[i] === 'a' ? question.a : question.b}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={reset}
+                style={{ padding: '0.55rem 1.75rem', background: '#0078D4', color: 'white', border: 'none', borderRadius: '2px', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600 }}
+                onMouseEnter={e => e.currentTarget.style.background = '#106ebe'}
+                onMouseLeave={e => e.currentTarget.style.background = '#0078D4'}
+              >다시 하기 🎮</button>
             </div>
-            <button onClick={reset} style={{ width: '100%', padding: '0.85rem', background: 'linear-gradient(90deg, #8b5cf6, #ec4899)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer' }}>
-              다시 하기 🎮
-            </button>
-          </div>
+          </>
         )}
       </div>
     </div>

@@ -13,6 +13,8 @@ function getMessages(pct: number): { emoji: string; msg: string } {
   return { emoji: '😴', msg: '이제 막 시작했네요... 긴 하루의 시작...' };
 }
 
+const MS_FONT = '"Segoe UI", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif';
+
 export default function CountdownPage() {
   const router = useRouter();
   const [startTime, setStartTime] = useState('09:00');
@@ -49,75 +51,122 @@ export default function CountdownPage() {
   const fmt = (n: number) => String(n).padStart(2, '0');
 
   const nowStr = `${fmt(now.getHours())}:${fmt(now.getMinutes())}:${fmt(now.getSeconds())}`;
-
-  // 퇴근 후
   const done = remainMs === 0;
-
-  const barColor = pct >= 90 ? '#10b981' : pct >= 50 ? '#f59e0b' : pct >= 25 ? '#3b82f6' : '#ef4444';
+  const barColor = pct >= 90 ? '#107c10' : pct >= 50 ? '#ca5010' : pct >= 25 ? '#0078D4' : '#d13438';
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%)', padding: '1.5rem 1rem' }}>
-      <div style={{ maxWidth: '480px', margin: '0 auto' }}>
-        <button onClick={() => router.push('/fun')} style={{ marginBottom: '1.5rem', padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151' }}>
-          ← FuN fUn 홈
-        </button>
+    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: '#f3f2f1', fontFamily: MS_FONT, color: '#323130' }}>
 
-        <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(239,68,68,0.15)' }}>
-          <h1 style={{ margin: '0 0 0.25rem 0', fontSize: '1.5rem', fontWeight: 900, color: '#991b1b' }}>⏰ 퇴근 카운트다운</h1>
-          <p style={{ margin: 0, color: '#6b7280', fontSize: '0.88rem' }}>버텨라! 퇴근까지 남은 시간</p>
+      {/* ── Nav ── */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 200, height: '48px', background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #edebe9', display: 'flex', alignItems: 'center', padding: '0 2rem', gap: '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1, cursor: 'pointer' }} onClick={() => router.push('/fun')}>
+          <svg width="14" height="14" viewBox="0 0 23 23" fill="none" style={{ flexShrink: 0 }}>
+            <rect x="0" y="0" width="10" height="10" fill="#f25022"/><rect x="12" y="0" width="10" height="10" fill="#7fba00"/>
+            <rect x="0" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/>
+          </svg>
+          <span style={{ color: '#0078D4', fontSize: '0.82rem', fontWeight: 600 }}>FuN fUn</span>
+          <span style={{ color: '#a19f9d', fontSize: '0.82rem', margin: '0 0.2rem' }}>›</span>
+          <span style={{ color: '#323130', fontSize: '0.82rem', fontWeight: 600 }}>퇴근 카운트다운</span>
         </div>
+        <span style={{ color: '#605e5c', fontSize: '0.85rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginRight: '1rem' }}>{nowStr}</span>
+        <button onClick={() => router.push('/')} style={{ padding: '0.35rem 0.85rem', background: 'transparent', border: '1px solid #8a8886', borderRadius: '2px', cursor: 'pointer', color: '#323130', fontSize: '0.78rem' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#f3f2f1'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>메인 채팅</button>
+      </nav>
 
-        {/* 현재 시각 */}
-        <div style={{ background: 'white', borderRadius: '16px', padding: '2rem 1.5rem', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', marginBottom: '1rem' }}>
-          <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: '0.25rem' }}>현재 시각</div>
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#374151', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>{nowStr}</div>
+      {/* ── Hero ── */}
+      <div style={{ background: 'linear-gradient(135deg, #1a0000 0%, #c50f1f 100%)', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '1.75rem', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>⏰</div>
+        <div>
+          <p style={{ color: '#ffc8c8', fontSize: '0.62rem', letterSpacing: '1.5px', textTransform: 'uppercase', margin: '0 0 0.15rem', fontWeight: 600 }}>실용 · 퇴근카운트다운</p>
+          <h1 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.1rem', letterSpacing: '-0.3px' }}>퇴근 카운트다운</h1>
+          <p style={{ color: '#ffb3b3', margin: 0, fontSize: '0.72rem' }}>버텨라! 퇴근까지 남은 시간</p>
+        </div>
+      </div>
 
-          {/* 카운트다운 */}
-          <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>퇴근까지 남은 시간</div>
+      {/* ── Content ── */}
+      <div style={{ padding: '1.5rem 2rem 3rem', maxWidth: '560px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1px' }}>
+
+        {/* 메인 카운트다운 카드 */}
+        <div style={{ background: 'white', border: '1px solid #edebe9', padding: '2rem 1.5rem', textAlign: 'center' }}>
+          {/* 진행률 바 */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+              <span style={{ fontSize: '0.72rem', color: '#605e5c', fontWeight: 600 }}>{startTime} 출근</span>
+              <span style={{ fontSize: '0.72rem', color: barColor, fontWeight: 700 }}>{pct.toFixed(1)}%</span>
+              <span style={{ fontSize: '0.72rem', color: '#605e5c', fontWeight: 600 }}>{endTime} 퇴근</span>
+            </div>
+            <div style={{ height: '8px', background: '#f3f2f1', overflow: 'hidden', borderRadius: '0' }}>
+              <div style={{
+                height: '100%', width: `${pct}%`,
+                background: barColor,
+                transition: 'width 1s linear, background 0.5s',
+              }} />
+            </div>
+          </div>
+
+          {/* 남은 시간 */}
+          <div style={{ fontSize: '0.78rem', color: '#605e5c', marginBottom: '0.4rem', fontWeight: 600 }}>
+            퇴근까지 남은 시간
+          </div>
           {done ? (
-            <div style={{ fontSize: '3rem', fontWeight: 900, color: '#10b981', marginBottom: '1rem' }}>🎉 퇴근!</div>
+            <div style={{ fontSize: '3.5rem', fontWeight: 900, color: '#107c10', marginBottom: '1.25rem' }}>🎉 퇴근!</div>
           ) : (
-            <div style={{ fontSize: '3rem', fontWeight: 900, color: '#ef4444', fontVariantNumeric: 'tabular-nums', marginBottom: '1rem', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '3.25rem', fontWeight: 900, color: '#323130', fontVariantNumeric: 'tabular-nums', marginBottom: '1.25rem', letterSpacing: '0.05em' }}>
               {fmt(hh)}:{fmt(mm)}:{fmt(ss)}
             </div>
           )}
 
-          {/* 프로그레스 바 */}
-          <div style={{ background: '#f3f4f6', borderRadius: '20px', height: '20px', overflow: 'hidden', marginBottom: '0.5rem', position: 'relative' }}>
-            <div style={{ height: '100%', width: `${pct}%`, background: `linear-gradient(90deg, ${barColor}cc, ${barColor})`, borderRadius: '20px', transition: 'width 1s linear' }} />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'white', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-              {pct.toFixed(1)}%
-            </div>
-          </div>
-
           {/* 메시지 */}
-          <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: '#f9fafb', borderRadius: '10px', fontSize: '0.9rem', color: '#374151' }}>
-            <span style={{ fontSize: '1.5rem' }}>{emoji}</span>{' '}
-            <span style={{ fontWeight: 600 }}>{msg}</span>
+          <div style={{
+            padding: '0.85rem 1.25rem',
+            background: '#f3f2f1',
+            border: `1px solid #edebe9`,
+            borderLeft: `4px solid ${barColor}`,
+            display: 'flex', alignItems: 'center', gap: '0.75rem', textAlign: 'left',
+          }}>
+            <span style={{ fontSize: '1.75rem' }}>{emoji}</span>
+            <span style={{ fontWeight: 600, color: '#323130', fontSize: '0.88rem', lineHeight: 1.4 }}>{msg}</span>
           </div>
         </div>
 
         {/* 시간 설정 */}
-        <div style={{ background: 'white', borderRadius: '16px', padding: '1.25rem', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151', marginBottom: '0.75rem' }}>⚙️ 시간 설정</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+        <div style={{ background: 'white', border: '1px solid #edebe9', padding: '1.25rem 1.5rem' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#323130', marginBottom: '1rem' }}>⚙️ 시간 설정</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.85rem' }}>
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#6b7280', display: 'block', marginBottom: '0.25rem' }}>출근 시간</label>
-              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)}
-                style={{ width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '1rem', boxSizing: 'border-box' }} />
+              <label style={{ fontSize: '0.72rem', color: '#605e5c', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>출근 시간</label>
+              <input
+                type="time" value={startTime}
+                onChange={e => setStartTime(e.target.value)}
+                style={{ width: '100%', padding: '0.5rem 0.75rem', border: '1px solid #8a8886', borderRadius: '2px', fontSize: '0.95rem', boxSizing: 'border-box', fontWeight: 600, color: '#323130', outline: 'none' }}
+              />
             </div>
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#6b7280', display: 'block', marginBottom: '0.25rem' }}>퇴근 시간</label>
-              <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)}
-                style={{ width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '1rem', boxSizing: 'border-box' }} />
+              <label style={{ fontSize: '0.72rem', color: '#605e5c', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>퇴근 시간</label>
+              <input
+                type="time" value={endTime}
+                onChange={e => setEndTime(e.target.value)}
+                style={{ width: '100%', padding: '0.5rem 0.75rem', border: '1px solid #8a8886', borderRadius: '2px', fontSize: '0.95rem', boxSizing: 'border-box', fontWeight: 600, color: '#323130', outline: 'none' }}
+              />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             {[['08:00','17:00'], ['09:00','18:00'], ['10:00','19:00']].map(([s, e]) => (
-              <button key={s} onClick={() => { setStartTime(s); setEndTime(e); }}
-                style={{ flex: 1, padding: '0.4rem', background: startTime === s ? '#fef2f2' : '#f9fafb', border: `1px solid ${startTime === s ? '#ef4444' : '#e5e7eb'}`, borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', color: startTime === s ? '#ef4444' : '#6b7280', fontWeight: startTime === s ? 700 : 400 }}>
-                {s}~{e}
-              </button>
+              <button
+                key={s}
+                onClick={() => { setStartTime(s); setEndTime(e); }}
+                style={{
+                  flex: 1, padding: '0.45rem',
+                  background: startTime === s ? '#0078D4' : 'transparent',
+                  border: `1px solid ${startTime === s ? '#0078D4' : '#8a8886'}`,
+                  borderRadius: '2px', cursor: 'pointer',
+                  fontSize: '0.72rem',
+                  color: startTime === s ? 'white' : '#323130',
+                  fontWeight: startTime === s ? 700 : 400,
+                  transition: 'all 0.15s',
+                }}
+              >{s}~{e}</button>
             ))}
           </div>
         </div>
