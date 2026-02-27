@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { createUser, findUserByNickname } from '@/lib/app-db/users';
+import { getAppDb } from '@/lib/app-db/db';
 import { signSession, COOKIE_NAME } from '@/lib/auth/session';
 
 export async function POST(req: NextRequest) {
@@ -21,7 +22,15 @@ export async function POST(req: NextRequest) {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = createUser(nickname.trim(), hashed);
+    let user = createUser(nickname.trim(), hashed);
+
+    // 환경변수에 지정된 닉네임이면 관리자 권한 부여
+    const adminNickname = process.env.ADMIN_NICKNAME?.trim();
+    if (adminNickname && user.nickname === adminNickname) {
+      getAppDb().prepare(`UPDATE users SET role='admin' WHERE id=?`).run(user.id);
+      user = { ...user, role: 'admin' };
+    }
+
     const token = await signSession({ userId: user.id, nickname: user.nickname, role: user.role });
 
     const res = NextResponse.json({ id: user.id, nickname: user.nickname, role: user.role });
