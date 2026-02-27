@@ -22,27 +22,32 @@ export default function FunPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0f9ff 0%, #fdf4ff 50%, #fff7ed 100%)', padding: '2rem 1rem' }}>
-      {/* 헤더 */}
-      <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center', marginBottom: '3rem' }}>
+      {/* 상단 버튼 바 */}
+      <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <button
           onClick={() => router.back()}
-          style={{ position: 'absolute', left: '1.5rem', top: '1.5rem', padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          style={{ padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
           ← 돌아가기
         </button>
         <button
           onClick={() => router.push('/')}
-          style={{ position: 'absolute', right: '1.5rem', top: '1.5rem', padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          style={{ padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
           🏠 메인 채팅
         </button>
-        <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>🎮</div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 0.5rem 0', background: 'linear-gradient(90deg, #6366f1, #ec4899, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          FuN fUn
-        </h1>
-        <p style={{ color: '#6b7280', fontSize: '1rem', margin: 0 }}>
-          잠깐 머리 식히고 가세요 😄 &nbsp;공무원의 小 확 幸
-        </p>
+      </div>
+      {/* 헤더 */}
+      <div style={{ maxWidth: '1100px', margin: '0 auto', marginBottom: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.25rem' }}>
+        <div style={{ fontSize: '4rem', lineHeight: 1 }}>🎮</div>
+        <div>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 0.25rem 0', background: 'linear-gradient(90deg, #6366f1, #ec4899, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            FuN fUn
+          </h1>
+          <p style={{ color: '#6b7280', fontSize: '1rem', margin: 0 }}>
+            잠깐 머리 식히고 가세요 😄 &nbsp;공무원의 小 확 幸
+          </p>
+        </div>
       </div>
 
       {/* 카드 그리드 */}

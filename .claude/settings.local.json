@@ -31,7 +31,8 @@
       "Bash(netstat -ano)",
       "Read(//c/Users/USER/Desktop/React/rsai_ver1/**)",
       "Bash(xargs -I{} taskkill /PID {} /F)",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "WebFetch(domain:www.microsoft.com)"
     ]
   }
 }

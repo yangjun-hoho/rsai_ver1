@@ -36,6 +36,9 @@ function tracePath(cols: number, rows: number, lines: { r: number; c: number }[]
   return { path, result: c };
 }
 
+const MS_FONT = '"Segoe UI", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif';
+const ACCENT = '#ca5010';
+
 export default function LadderPage() {
   const router = useRouter();
   const [names, setNames] = useState<string[]>(['', '']);
@@ -75,52 +78,46 @@ export default function LadderPage() {
     const { cols, rows, lines } = ladder;
     ctx.clearRect(0, 0, W, H);
 
-    // 세로선
     for (let c = 0; c < cols; c++) {
       ctx.beginPath();
-      ctx.strokeStyle = '#cbd5e1';
+      ctx.strokeStyle = '#edebe9';
       ctx.lineWidth = 2;
       ctx.moveTo(colX(c, cols), rowY(0, rows));
       ctx.lineTo(colX(c, cols), rowY(rows + 1, rows));
       ctx.stroke();
     }
-    // 가로 연결선
     lines.forEach(({ r, c }) => {
       ctx.beginPath();
-      ctx.strokeStyle = '#94a3b8';
+      ctx.strokeStyle = '#a19f9d';
       ctx.lineWidth = 2.5;
       const y = rowY(r + 1, rows);
       ctx.moveTo(colX(c, cols), y);
       ctx.lineTo(colX(c + 1, cols), y);
       ctx.stroke();
     });
-    // 상단 이름
     names.forEach((name, c) => {
-      ctx.fillStyle = '#4338ca';
-      ctx.font = 'bold 13px sans-serif';
+      ctx.fillStyle = ACCENT;
+      ctx.font = 'bold 13px "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(name || `${c + 1}번`, colX(c, cols), rowY(-1, rows) + 36);
     });
-    // 하단 목적지 (공개된 것만)
     dests.forEach((dest, i) => {
-      const destCol = results.indexOf(i) >= 0 ? i : i; // 목적지는 위치 그대로
-      ctx.fillStyle = '#374151';
-      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#323130';
+      ctx.font = '12px "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(dest || `${i + 1}`, colX(i, cols), rowY(rows + 1, rows) + 10);
     });
 
-    // 공개된 경로 그리기
+    const PATH_COLORS = ['#0078D4','#d13438','#107c10','#ca5010','#744da9','#008272'];
     revealed.forEach((rev, i) => {
       if (!rev) return;
       const path = paths[i];
       ctx.beginPath();
-      ctx.strokeStyle = `hsl(${i * 60 + 200}, 80%, 50%)`;
+      ctx.strokeStyle = PATH_COLORS[i % PATH_COLORS.length];
       ctx.lineWidth = 4;
       let prevC = path[0];
       ctx.moveTo(colX(prevC, cols), rowY(0, rows));
       path.forEach((c, idx) => {
-        const r = idx; // row index in path = idx
         if (idx === 0) return;
         const y = rowY(idx - 1, rows);
         if (c !== prevC) {
@@ -136,59 +133,119 @@ export default function LadderPage() {
   }, [ladder, revealed, names, dests, paths, results]);
 
   const count = names.length;
+  const PATH_COLORS = ['#0078D4','#d13438','#107c10','#ca5010','#744da9','#008272'];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', padding: '1.5rem 1rem' }}>
-      <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-        <button onClick={() => { setStep('setup'); router.push('/fun'); }} style={{ marginBottom: '1.5rem', padding: '0.5rem 1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151' }}>
-          ← FuN fUn 홈
-        </button>
+    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: '#f3f2f1', fontFamily: MS_FONT, color: '#323130' }}>
 
-        <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(245,158,11,0.15)' }}>
-          <h1 style={{ margin: '0 0 0.25rem 0', fontSize: '1.5rem', fontWeight: 900, color: '#b45309' }}>🪜 사다리 게임</h1>
-          <p style={{ margin: 0, color: '#6b7280', fontSize: '0.88rem' }}>오늘 당번 공정하게 결정!</p>
+      {/* ── Nav ── */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 200, height: '48px', background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #edebe9', display: 'flex', alignItems: 'center', padding: '0 2rem', gap: '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1, cursor: 'pointer' }} onClick={() => router.push('/fun')}>
+          <svg width="14" height="14" viewBox="0 0 23 23" fill="none" style={{ flexShrink: 0 }}>
+            <rect x="0" y="0" width="10" height="10" fill="#f25022"/><rect x="12" y="0" width="10" height="10" fill="#7fba00"/>
+            <rect x="0" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/>
+          </svg>
+          <span style={{ color: '#0078D4', fontSize: '0.82rem', fontWeight: 600 }}>FuN fUn</span>
+          <span style={{ color: '#a19f9d', fontSize: '0.82rem', margin: '0 0.2rem' }}>›</span>
+          <span style={{ color: '#323130', fontSize: '0.82rem', fontWeight: 600 }}>사다리 게임</span>
         </div>
+        {step !== 'setup' && (
+          <button onClick={() => setStep('setup')} style={{ padding: '0.35rem 0.85rem', background: 'transparent', border: '1px solid #8a8886', borderRadius: '2px', cursor: 'pointer', color: '#323130', fontSize: '0.78rem', marginRight: '0.5rem' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#f3f2f1'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>다시 설정</button>
+        )}
+        <button onClick={() => router.push('/')} style={{ padding: '0.35rem 0.85rem', background: 'transparent', border: '1px solid #8a8886', borderRadius: '2px', cursor: 'pointer', color: '#323130', fontSize: '0.78rem' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#f3f2f1'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>메인 채팅</button>
+      </nav>
+
+      {/* ── Hero ── */}
+      <div style={{ background: 'linear-gradient(135deg, #3d1a00 0%, #ca5010 100%)', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '1.75rem', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>🪜</div>
+        <div>
+          <p style={{ color: '#fed7aa', fontSize: '0.62rem', letterSpacing: '1.5px', textTransform: 'uppercase', margin: '0 0 0.15rem', fontWeight: 600 }}>랜덤 · 사다리게임</p>
+          <h1 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.1rem', letterSpacing: '-0.3px' }}>사다리 게임</h1>
+          <p style={{ color: '#fdba74', margin: 0, fontSize: '0.72rem' }}>오늘 당번 공정하게 결정!</p>
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div style={{ padding: '1.5rem 2rem 3rem', maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1px' }}>
 
         {step === 'setup' && (
-          <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-              {[2, 3, 4, 5, 6].map(n => (
-                <button key={n} onClick={() => { setNames(Array(n).fill('')); setDests(Array(n).fill('')); }}
-                  style={{ flex: 1, padding: '0.5rem', background: count === n ? '#f59e0b' : '#f3f4f6', color: count === n ? 'white' : '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: count === n ? 700 : 400, fontSize: '0.9rem' }}>{n}명</button>
-              ))}
+          <div style={{ background: 'white', border: '1px solid #edebe9', padding: '1.75rem 1.5rem' }}>
+            {/* 인원 수 */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#323130', marginBottom: '0.6rem' }}>참가 인원 수</div>
+              <div style={{ display: 'flex', gap: '0.4rem' }}>
+                {[2, 3, 4, 5, 6].map(n => (
+                  <button
+                    key={n}
+                    onClick={() => { setNames(Array(n).fill('')); setDests(Array(n).fill('')); }}
+                    style={{
+                      flex: 1, padding: '0.5rem',
+                      background: count === n ? '#0078D4' : 'transparent',
+                      color: count === n ? 'white' : '#323130',
+                      border: `1px solid ${count === n ? '#0078D4' : '#8a8886'}`,
+                      borderRadius: '2px',
+                      cursor: 'pointer', fontWeight: count === n ? 700 : 400,
+                      fontSize: '0.88rem', transition: 'all 0.12s',
+                    }}
+                  >{n}명</button>
+                ))}
+              </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+
+            {/* 이름 / 목적지 입력 */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
               <div>
-                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>참가자 이름</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#605e5c', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>참가자 이름</div>
                 {names.map((n, i) => (
-                  <input key={i} value={n} onChange={e => { const a = [...names]; a[i] = e.target.value; setNames(a); }}
+                  <input
+                    key={i} value={n}
+                    onChange={e => { const a = [...names]; a[i] = e.target.value; setNames(a); }}
                     placeholder={`참가자 ${i + 1}`}
-                    style={{ width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '6px', marginBottom: '0.4rem', fontSize: '0.88rem', boxSizing: 'border-box' }} />
+                    style={{ width: '100%', padding: '0.45rem 0.65rem', border: '1px solid #8a8886', borderRadius: '2px', marginBottom: '0.35rem', fontSize: '0.85rem', boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.12s' }}
+                    onFocus={e => e.currentTarget.style.borderColor = ACCENT}
+                    onBlur={e => e.currentTarget.style.borderColor = '#8a8886'}
+                  />
                 ))}
               </div>
               <div>
-                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>목적지 (결과)</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#605e5c', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>목적지 (결과)</div>
                 {dests.map((d, i) => (
-                  <input key={i} value={d} onChange={e => { const a = [...dests]; a[i] = e.target.value; setDests(a); }}
+                  <input
+                    key={i} value={d}
+                    onChange={e => { const a = [...dests]; a[i] = e.target.value; setDests(a); }}
                     placeholder={`결과 ${i + 1}`}
-                    style={{ width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '6px', marginBottom: '0.4rem', fontSize: '0.88rem', boxSizing: 'border-box' }} />
+                    style={{ width: '100%', padding: '0.45rem 0.65rem', border: '1px solid #8a8886', borderRadius: '2px', marginBottom: '0.35rem', fontSize: '0.85rem', boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.12s' }}
+                    onFocus={e => e.currentTarget.style.borderColor = ACCENT}
+                    onBlur={e => e.currentTarget.style.borderColor = '#8a8886'}
+                  />
                 ))}
               </div>
             </div>
-            <button onClick={buildGame}
-              style={{ width: '100%', padding: '0.85rem', background: 'linear-gradient(90deg, #f59e0b, #f97316)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer' }}>
-              사다리 생성! 🪜
-            </button>
+
+            <button
+              onClick={buildGame}
+              style={{ width: '100%', padding: '0.6rem', background: '#0078D4', color: 'white', border: 'none', borderRadius: '2px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#106ebe'}
+              onMouseLeave={e => e.currentTarget.style.background = '#0078D4'}
+            >사다리 생성! 🪜</button>
           </div>
         )}
 
         {(step === 'play' || step === 'result') && ladder && (
-          <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-            <canvas ref={canvasRef} width={W} height={H} style={{ width: '100%', maxWidth: W, display: 'block', margin: '0 auto' }} />
+          <div style={{ background: 'white', border: '1px solid #edebe9', padding: '1.5rem' }}>
+            <canvas
+              ref={canvasRef} width={W} height={H}
+              style={{ width: '100%', maxWidth: W, display: 'block', margin: '0 auto', border: '1px solid #edebe9' }}
+            />
 
-            <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+            <div style={{ marginTop: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
               {names.map((name, i) => (
-                <button key={i}
+                <button
+                  key={i}
                   onClick={() => {
                     const next = [...revealed];
                     next[i] = true;
@@ -196,26 +253,41 @@ export default function LadderPage() {
                     if (next.every(Boolean)) setStep('result');
                   }}
                   disabled={revealed[i]}
-                  style={{ padding: '0.5rem 1.25rem', background: revealed[i] ? `hsl(${i * 60 + 200}, 80%, 50%)` : '#f3f4f6', color: revealed[i] ? 'white' : '#374151', border: 'none', borderRadius: '20px', cursor: revealed[i] ? 'default' : 'pointer', fontWeight: 700, fontSize: '0.88rem' }}>
+                  style={{
+                    padding: '0.45rem 1.1rem',
+                    background: revealed[i] ? PATH_COLORS[i % PATH_COLORS.length] : 'transparent',
+                    color: revealed[i] ? 'white' : '#323130',
+                    border: `1px solid ${revealed[i] ? PATH_COLORS[i % PATH_COLORS.length] : '#8a8886'}`,
+                    borderRadius: '2px',
+                    cursor: revealed[i] ? 'default' : 'pointer',
+                    fontWeight: 600, fontSize: '0.82rem',
+                    transition: 'all 0.12s',
+                  }}
+                  onMouseEnter={e => { if (!revealed[i]) e.currentTarget.style.background = '#f3f2f1'; }}
+                  onMouseLeave={e => { if (!revealed[i]) e.currentTarget.style.background = 'transparent'; }}
+                >
                   {name || `${i + 1}번`} {revealed[i] ? '→ ' + (dests[results[i]] || `결과${results[i] + 1}`) : '공개!'}
                 </button>
               ))}
             </div>
 
             {step === 'result' && (
-              <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px' }}>
-                <div style={{ fontWeight: 800, color: '#92400e', marginBottom: '0.5rem' }}>🎉 결과</div>
+              <div style={{ marginTop: '1.25rem', padding: '1rem 1.25rem', background: '#f3f2f1', border: '1px solid #edebe9', borderLeft: `4px solid ${ACCENT}` }}>
+                <div style={{ fontWeight: 700, color: '#323130', marginBottom: '0.6rem', fontSize: '0.88rem' }}>🎉 최종 결과</div>
                 {names.map((name, i) => (
-                  <div key={i} style={{ padding: '0.4rem 0', borderBottom: '1px solid #fef3c7', fontSize: '0.9rem', color: '#374151' }}>
-                    <strong>{name || `${i + 1}번`}</strong> → <span style={{ color: '#b45309', fontWeight: 700 }}>{dests[results[i]] || `결과 ${results[i] + 1}`}</span>
+                  <div key={i} style={{
+                    padding: '0.4rem 0.25rem',
+                    borderBottom: '1px solid #edebe9',
+                    fontSize: '0.88rem', color: '#323130',
+                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  }}>
+                    <span style={{ fontWeight: 700 }}>{name || `${i + 1}번`}</span>
+                    <span style={{ color: '#a19f9d' }}>→</span>
+                    <span style={{ color: ACCENT, fontWeight: 700 }}>{dests[results[i]] || `결과 ${results[i] + 1}`}</span>
                   </div>
                 ))}
               </div>
             )}
-
-            <button onClick={() => setStep('setup')} style={{ width: '100%', marginTop: '1rem', padding: '0.7rem', background: '#fef3c7', color: '#92400e', border: '2px solid #f59e0b', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer' }}>
-              다시 하기
-            </button>
           </div>
         )}
       </div>
