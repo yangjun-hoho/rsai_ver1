@@ -71,8 +71,25 @@ export class ODTExporter {
    * 다운로드 링크에 직접 사용할 수 있는 Blob을 반환합니다.
    */
   async exportToODT(reportData: ReportData): Promise<Blob> {
-    this.createODTStructure();
-    const content = this.generateContentXML(reportData);
+    // 헤더 이미지 로드 (없으면 null)
+    let imgArrayBuffer: ArrayBuffer | null = null;
+    let imgHeightCm = 2.5;
+    try {
+      const res = await fetch('/images/head-report.png');
+      if (res.ok) {
+        imgArrayBuffer = await res.arrayBuffer();
+        const blob = new Blob([imgArrayBuffer], { type: 'image/png' });
+        const bitmap = await createImageBitmap(blob);
+        imgHeightCm = parseFloat(((bitmap.height / bitmap.width) * 18).toFixed(3));
+        bitmap.close();
+      }
+    } catch { /* 이미지 없으면 생략 */ }
+
+    this.createODTStructure(!!imgArrayBuffer);
+    if (imgArrayBuffer) {
+      this.zip.file('Pictures/head-report.png', imgArrayBuffer);
+    }
+    const content = this.generateContentXML(reportData, !!imgArrayBuffer, imgHeightCm);
     this.zip.file('content.xml', content);
     return await this.zip.generateAsync({
       type: 'blob',
@@ -87,9 +104,9 @@ export class ODTExporter {
    * - styles.xml: 문서 스타일 정의
    * - meta.xml: 문서 메타정보
    */
-  private createODTStructure() {
+  private createODTStructure(hasImage = false) {
     this.zip.file('mimetype', 'application/vnd.oasis.opendocument.text');
-    this.zip.file('META-INF/manifest.xml', this.getManifestXML());
+    this.zip.file('META-INF/manifest.xml', this.getManifestXML(hasImage));
     this.zip.file('styles.xml', this.getStylesXML());
     this.zip.file('meta.xml', this.getMetaXML());
   }
@@ -98,7 +115,7 @@ export class ODTExporter {
    * 보고서 데이터를 ODT content.xml 문자열로 변환합니다.
    * 순서: 컬러 바 → 제목 → 요약 → 섹션들 → 메타데이터
    */
-  private generateContentXML(reportData: ReportData): string {
+  private generateContentXML(reportData: ReportData, hasImage = false, imgHeightCm = 2.5): string {
     const title = reportData.title || '보고서';
     const sections = reportData.sections || [];
 
@@ -124,7 +141,9 @@ export class ODTExporter {
                         xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
                         xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
                         xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"
-                        xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0">
+                        xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"
+                        xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
   <!-- content.xml에도 폰트 선언이 필요: ODT 리더는 styles.xml과 별개로 이 파일에서도 폰트를 검색함 -->
   <office:font-face-decls>
     <style:font-face style:name="Pretendard ExtraBold" svg:font-family="Pretendard ExtraBold" style:font-family-generic="swiss"/>
@@ -138,16 +157,10 @@ export class ODTExporter {
   <office:body>
     <office:text>`;
 
-    // 문서 최상단의 파랑(78%) / 흰색(2%) / 초록(20%) 컬러 구분 바
-    content += `<table:table table:name="TitleTopLine" table:style-name="GradientLine">`;
-    content += `<table:table-column table:style-name="GradientLine.Blue"/>`;
-    content += `<table:table-column table:style-name="GradientLine.White"/>`;
-    content += `<table:table-column table:style-name="GradientLine.Green"/>`;
-    content += `<table:table-row table:style-name="GradientLine.Row">`;
-    content += `<table:table-cell table:style-name="GradientLine.BlueCell"><text:p text:style-name="GradientLine.Empty"></text:p></table:table-cell>`;
-    content += `<table:table-cell table:style-name="GradientLine.WhiteCell"><text:p text:style-name="GradientLine.Empty"></text:p></table:table-cell>`;
-    content += `<table:table-cell table:style-name="GradientLine.GreenCell"><text:p text:style-name="GradientLine.Empty"></text:p></table:table-cell>`;
-    content += `</table:table-row></table:table>`;
+    // 문서 최상단 헤더 이미지 (있는 경우)
+    if (hasImage) {
+      content += `<text:p text:style-name="HeaderImagePara"><draw:frame draw:style-name="fr_header" draw:name="HeaderImage" text:anchor-type="as-char" svg:width="18cm" svg:height="${imgHeightCm}cm"><draw:image xlink:href="Pictures/head-report.png" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame></text:p>`;
+    }
 
     // 보고서 제목 + 제목 아래 회색 구분선
     content += `<text:p text:style-name="Official_Title">${this.escapeXML(title)}</text:p>`;
@@ -180,6 +193,14 @@ export class ODTExporter {
    */
   private getAutomaticStyles(): string {
     return `
+    <!-- 헤더 이미지 프레임 스타일 -->
+    <style:style style:name="fr_header" style:family="graphic">
+      <style:graphic-properties fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0cm" fo:margin-bottom="0cm" style:horizontal-pos="center" style:horizontal-rel="page-content"/>
+    </style:style>
+    <!-- 헤더 이미지 단락 스타일 -->
+    <style:style style:name="HeaderImagePara" style:family="paragraph">
+      <style:paragraph-properties fo:text-align="center" fo:margin-top="0cm" fo:margin-bottom="0cm"/>
+    </style:style>
     <!-- 본문 테이블: 전체 너비 18cm, 중앙 정렬 -->
     <style:style style:name="Official_Table" style:family="table">
       <style:table-properties style:width="18cm" table:align="center" fo:margin-top="0.1cm" fo:margin-bottom="1cm"/>
@@ -200,43 +221,7 @@ export class ODTExporter {
     <style:style style:name="Official_Table.A2" style:family="table-cell">
       <style:table-cell-properties fo:padding="0.2cm" fo:border="1pt solid #000000"/>
     </style:style>
-    <!-- 상단 컬러 바 테이블: 전체 너비 18cm -->
-    <style:style style:name="GradientLine" style:family="table">
-      <style:table-properties style:width="18cm" table:align="center" fo:margin-top="0.5cm" fo:margin-bottom="0.5cm"/>
-    </style:style>
-    <!-- 파랑 열: 14.22cm (전체의 79%) -->
-    <style:style style:name="GradientLine.Blue" style:family="table-column">
-      <style:table-column-properties style:column-width="14.22cm"/>
-    </style:style>
-    <!-- 흰색 열: 0.18cm (전체의 1%) -->
-    <style:style style:name="GradientLine.White" style:family="table-column">
-      <style:table-column-properties style:column-width="0.18cm"/>
-    </style:style>
-    <!-- 초록 열: 3.6cm (전체의 20%) -->
-    <style:style style:name="GradientLine.Green" style:family="table-column">
-      <style:table-column-properties style:column-width="3.6cm"/>
-    </style:style>
-    <!-- 컬러 바 행 높이: 얇게 표시 -->
-    <style:style style:name="GradientLine.Row" style:family="table-row">
-      <style:table-row-properties style:row-height="0.23cm"/>
-    </style:style>
-    <!-- 파랑 셀: #1e40af (진한 파랑) -->
-    <style:style style:name="GradientLine.BlueCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#1e40af" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <!-- 흰색 셀: #ffffff -->
-    <style:style style:name="GradientLine.WhiteCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#ffffff" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <!-- 초록 셀: #22c55e -->
-    <style:style style:name="GradientLine.GreenCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#22c55e" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <!-- 컬러 바 내 빈 문단 스타일: 높이를 최소화 -->
-    <style:style style:name="GradientLine.Empty" style:family="paragraph">
-      <style:paragraph-properties fo:line-height="0.1cm"/>
-      <style:text-properties fo:font-size="2pt"/>
-    </style:style>`;
+`;
   }
 
   /**
@@ -414,13 +399,14 @@ export class ODTExporter {
    * ODT 규격의 manifest.xml을 반환합니다.
    * 문서에 포함된 파일 목록과 각 파일의 MIME 타입을 선언합니다.
    */
-  private getManifestXML(): string {
+  private getManifestXML(hasImage = false): string {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
   <manifest:file-entry manifest:media-type="application/vnd.oasis.opendocument.text" manifest:full-path="/"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="content.xml"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="styles.xml"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="meta.xml"/>
+  ${hasImage ? '<manifest:file-entry manifest:media-type="image/png" manifest:full-path="Pictures/head-report.png"/>' : ''}
 </manifest:manifest>`;
   }
 

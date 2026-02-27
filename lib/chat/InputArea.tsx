@@ -25,6 +25,7 @@ interface InputAreaProps {
   onModelChange: (model: string) => void;
   onCloseMode: () => void;
   onToolSubmit: (toolId: ToolId, data: Record<string, unknown>) => void;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
 const TOOL_LABELS: Record<string, string> = {
@@ -48,6 +49,7 @@ export default function InputArea({
   onModelChange,
   onCloseMode,
   onToolSubmit,
+  onLoadingChange,
 }: InputAreaProps) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -118,6 +120,7 @@ export default function InputArea({
                 onSubmit={(data) => onToolSubmit('press-release', data)}
                 onCancel={onCloseMode}
                 isLoading={isLoading}
+                onLoadingChange={onLoadingChange}
               />
             )}
           </div>

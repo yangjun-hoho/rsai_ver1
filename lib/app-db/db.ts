@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
+import bcrypt from 'bcryptjs';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -65,6 +66,20 @@ function initTables(db: Database.Database) {
   // 기존 테이블에 컬럼 추가 (이미 있으면 무시)
   try { db.exec(`ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1`); } catch { /* 이미 존재 */ }
   try { db.exec(`ALTER TABLE posts ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0`); } catch { /* 이미 존재 */ }
+
+  // admin 계정 자동 생성/갱신 (.env의 ADMIN_NICKNAME, ADMIN_PASSWORD)
+  const adminNickname = process.env.ADMIN_NICKNAME;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (adminNickname && adminPassword) {
+    const existing = db.prepare(`SELECT id FROM users WHERE nickname = ?`).get(adminNickname) as { id: number } | undefined;
+    const hashed = bcrypt.hashSync(adminPassword, 10);
+    if (existing) {
+      db.prepare(`UPDATE users SET password = ?, role = 'admin', is_active = 1 WHERE id = ?`).run(hashed, existing.id);
+    } else {
+      const newUser = db.prepare(`INSERT INTO users (nickname, password, role) VALUES (?, ?, 'admin') RETURNING id`).get(adminNickname, hashed) as { id: number };
+      db.prepare(`INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)`).run(newUser.id);
+    }
+  }
 
   // 기본 PII 패턴 시드 (비어있을 때만)
   const count = (db.prepare(`SELECT COUNT(*) as c FROM pii_patterns`).get() as { c: number }).c;

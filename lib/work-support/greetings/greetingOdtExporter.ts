@@ -13,6 +13,24 @@ export async function exportGreetingToODT(greetingText: string, greetingType: st
   const zip = new JSZip();
   const title = greetingType || '인사말씀';
 
+  // 헤더 이미지 로드
+  let imgArrayBuffer: ArrayBuffer | null = null;
+  let imgHeightCm = 2.5;
+  try {
+    const res = await fetch('/images/head-report.png');
+    if (res.ok) {
+      imgArrayBuffer = await res.arrayBuffer();
+      const blob = new Blob([imgArrayBuffer], { type: 'image/png' });
+      const bitmap = await createImageBitmap(blob);
+      imgHeightCm = parseFloat(((bitmap.height / bitmap.width) * 18).toFixed(3));
+      bitmap.close();
+    }
+  } catch { /* 이미지 없으면 생략 */ }
+
+  if (imgArrayBuffer) {
+    zip.file('Pictures/head-report.png', imgArrayBuffer);
+  }
+
   zip.file('mimetype', 'application/vnd.oasis.opendocument.text');
 
   zip.file('META-INF/manifest.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -21,6 +39,7 @@ export async function exportGreetingToODT(greetingText: string, greetingType: st
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="content.xml"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="styles.xml"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="meta.xml"/>
+  ${imgArrayBuffer ? '<manifest:file-entry manifest:media-type="image/png" manifest:full-path="Pictures/head-report.png"/>' : ''}
 </manifest:manifest>`);
 
   zip.file('meta.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -72,17 +91,11 @@ export async function exportGreetingToODT(greetingText: string, greetingType: st
       <style:text-properties fo:font-size="2pt"/>
     </style:style>
 
-    <!-- 본문: 휴먼명조, 14pt, 200% 행간 -->
+    <!-- 본문: 휴먼명조, 14pt, 120% 행간 -->
     <style:style style:name="Greeting_Body" style:family="paragraph">
       <style:paragraph-properties fo:margin-bottom="0.3cm" fo:line-height="120%"/>
       <style:text-properties style:font-name="휴먼명조" style:font-name-asian="휴먼명조"
                              fo:font-size="14pt" fo:color="#1a1a1a"/>
-    </style:style>
-
-    <!-- 컬러 바 내 빈 문단 -->
-    <style:style style:name="GradientLine_Empty" style:family="paragraph">
-      <style:paragraph-properties fo:line-height="0.1cm"/>
-      <style:text-properties fo:font-size="2pt"/>
     </style:style>
   </office:styles>
 
@@ -112,51 +125,25 @@ export async function exportGreetingToODT(greetingText: string, greetingType: st
                         xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
                         xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
                         xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"
-                        xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0">
+                        xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"
+                        xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
   <office:font-face-decls>
     <style:font-face style:name="Pretendard ExtraBold" svg:font-family="Pretendard ExtraBold" style:font-family-generic="swiss"/>
     <style:font-face style:name="휴먼명조" svg:font-family="휴먼명조" style:font-family-generic="swiss"/>
     <style:font-face style:name="Arial" svg:font-family="Arial" style:font-family-generic="swiss"/>
   </office:font-face-decls>
   <office:automatic-styles>
-    <!-- 상단 컬러 바: 파랑(79%) / 흰색(1%) / 초록(20%) -->
-    <style:style style:name="GradientLine" style:family="table">
-      <style:table-properties style:width="18cm" table:align="center" fo:margin-top="0.5cm" fo:margin-bottom="0.5cm"/>
+    <style:style style:name="fr_header" style:family="graphic">
+      <style:graphic-properties fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0cm" fo:margin-bottom="0cm"/>
     </style:style>
-    <style:style style:name="GradientLine.Blue" style:family="table-column">
-      <style:table-column-properties style:column-width="14.22cm"/>
-    </style:style>
-    <style:style style:name="GradientLine.White" style:family="table-column">
-      <style:table-column-properties style:column-width="0.18cm"/>
-    </style:style>
-    <style:style style:name="GradientLine.Green" style:family="table-column">
-      <style:table-column-properties style:column-width="3.6cm"/>
-    </style:style>
-    <style:style style:name="GradientLine.Row" style:family="table-row">
-      <style:table-row-properties style:row-height="0.23cm"/>
-    </style:style>
-    <style:style style:name="GradientLine.BlueCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#1e40af" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <style:style style:name="GradientLine.WhiteCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#ffffff" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <style:style style:name="GradientLine.GreenCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#22c55e" fo:border="none" fo:padding="0cm"/>
+    <style:style style:name="HeaderImagePara" style:family="paragraph">
+      <style:paragraph-properties fo:text-align="center" fo:margin-top="0cm" fo:margin-bottom="0cm"/>
     </style:style>
   </office:automatic-styles>
   <office:body>
     <office:text>
-      <table:table table:name="TopColorBar" table:style-name="GradientLine">
-        <table:table-column table:style-name="GradientLine.Blue"/>
-        <table:table-column table:style-name="GradientLine.White"/>
-        <table:table-column table:style-name="GradientLine.Green"/>
-        <table:table-row table:style-name="GradientLine.Row">
-          <table:table-cell table:style-name="GradientLine.BlueCell"><text:p text:style-name="GradientLine_Empty"></text:p></table:table-cell>
-          <table:table-cell table:style-name="GradientLine.WhiteCell"><text:p text:style-name="GradientLine_Empty"></text:p></table:table-cell>
-          <table:table-cell table:style-name="GradientLine.GreenCell"><text:p text:style-name="GradientLine_Empty"></text:p></table:table-cell>
-        </table:table-row>
-      </table:table>
+      ${imgArrayBuffer ? `<text:p text:style-name="HeaderImagePara"><draw:frame draw:style-name="fr_header" draw:name="HeaderImage" text:anchor-type="as-char" svg:width="18cm" svg:height="${imgHeightCm}cm"><draw:image xlink:href="Pictures/head-report.png" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame></text:p>` : ''}
       <text:p text:style-name="Greeting_Title">${escapeXML(title)}</text:p>
       <text:p text:style-name="Title_Bottom_Line"></text:p>
       ${bodyParagraphs}

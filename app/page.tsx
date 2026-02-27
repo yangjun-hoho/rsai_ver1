@@ -349,6 +349,10 @@ export default function Home() {
                 onModelChange={setSelectedModel}
                 onCloseMode={() => setActiveMode(null)}
                 onToolSubmit={handleToolSubmit}
+                onLoadingChange={(loading) => {
+                  setIsLoading(loading);
+                  if (loading) setPreviewTool('press-release');
+                }}
               />
             </div>
 

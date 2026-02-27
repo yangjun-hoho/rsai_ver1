@@ -8,9 +8,10 @@ interface Props {
   onSubmit: (data: Record<string, unknown>) => void;
   onCancel: () => void;
   isLoading: boolean;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
-export default function PressReleaseChatForm({ onSubmit, onCancel, isLoading }: Props) {
+export default function PressReleaseChatForm({ onSubmit, onCancel, isLoading, onLoadingChange }: Props) {
   const [coreContent, setCoreContent] = useState('');
   const [keywords, setKeywords]       = useState(['', '', '', '', '', '']);
   const [step, setStep]               = useState<'input' | 'selectTitle'>('input');
@@ -56,6 +57,7 @@ export default function PressReleaseChatForm({ onSubmit, onCancel, isLoading }: 
     if (busy) return;
     setSelectedTitle(title);
     setGenerating(true);
+    onLoadingChange?.(true);
     try {
       const res = await fetch('/api/work-support/press-release', {
         method: 'POST',
@@ -67,7 +69,7 @@ export default function PressReleaseChatForm({ onSubmit, onCancel, isLoading }: 
         onSubmit({ pressRelease: result.pressRelease });
       }
     } catch { /* ignore */ }
-    finally { setGenerating(false); }
+    finally { setGenerating(false); onLoadingChange?.(false); }
   }
 
   if (step === 'selectTitle') {

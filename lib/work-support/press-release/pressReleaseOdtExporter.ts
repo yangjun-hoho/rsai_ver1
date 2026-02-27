@@ -22,6 +22,24 @@ export async function exportPressReleaseToODT(data: PressReleaseSimpleData): Pro
   const zip = new JSZip();
   const docTitle = data.title || '보도자료';
 
+  // 헤더 이미지 로드 (보도자료는 좌우 여백 2cm → 콘텐츠 폭 17cm)
+  let imgArrayBuffer: ArrayBuffer | null = null;
+  let imgHeightCm = 2.5;
+  try {
+    const res = await fetch('/images/head-report.png');
+    if (res.ok) {
+      imgArrayBuffer = await res.arrayBuffer();
+      const blob = new Blob([imgArrayBuffer], { type: 'image/png' });
+      const bitmap = await createImageBitmap(blob);
+      imgHeightCm = parseFloat(((bitmap.height / bitmap.width) * 17).toFixed(3));
+      bitmap.close();
+    }
+  } catch { /* 이미지 없으면 생략 */ }
+
+  if (imgArrayBuffer) {
+    zip.file('Pictures/head-report.png', imgArrayBuffer);
+  }
+
   zip.file('mimetype', 'application/vnd.oasis.opendocument.text');
 
   zip.file('META-INF/manifest.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -30,6 +48,7 @@ export async function exportPressReleaseToODT(data: PressReleaseSimpleData): Pro
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="content.xml"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="styles.xml"/>
   <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="meta.xml"/>
+  ${imgArrayBuffer ? '<manifest:file-entry manifest:media-type="image/png" manifest:full-path="Pictures/head-report.png"/>' : ''}
 </manifest:manifest>`);
 
   zip.file('meta.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -74,7 +93,7 @@ export async function exportPressReleaseToODT(data: PressReleaseSimpleData): Pro
       <style:text-properties fo:font-size="2pt"/>
     </style:style>
 
-    <!-- 기사 제목: Pretendard ExtraBold, 16pt, 중앙, 굵게 -->
+    <!-- 기사 제목: Pretendard ExtraBold, 20pt, 중앙, 굵게 -->
     <style:style style:name="PR_ArticleTitle" style:family="paragraph">
       <style:paragraph-properties fo:text-align="center" fo:margin-bottom="0.8cm" fo:line-height="120%"/>
       <style:text-properties style:font-name="Pretendard ExtraBold" style:font-name-asian="Pretendard ExtraBold"
@@ -82,17 +101,11 @@ export async function exportPressReleaseToODT(data: PressReleaseSimpleData): Pro
                              fo:color="#111111"/>
     </style:style>
 
-    <!-- 본문 단락: 휴먼명조 14pt, 200% 행간, 양쪽 정렬 -->
+    <!-- 본문 단락: 휴먼명조 14pt, 150% 행간, 양쪽 정렬 -->
     <style:style style:name="PR_Body" style:family="paragraph">
       <style:paragraph-properties fo:text-align="justify" fo:margin-bottom="0.5cm" fo:line-height="150%"/>
       <style:text-properties style:font-name="휴먼명조" style:font-name-asian="휴먼명조"
                              fo:font-size="14pt" fo:color="#111111"/>
-    </style:style>
-
-    <!-- 컬러바 빈 단락 -->
-    <style:style style:name="PR_Empty" style:family="paragraph">
-      <style:paragraph-properties fo:line-height="0.1cm"/>
-      <style:text-properties fo:font-size="2pt"/>
     </style:style>
   </office:styles>
 
@@ -120,50 +133,25 @@ export async function exportPressReleaseToODT(data: PressReleaseSimpleData): Pro
                         xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
                         xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
                         xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"
-                        xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0">
+                        xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"
+                        xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
   <office:font-face-decls>
     <style:font-face style:name="Pretendard ExtraBold" svg:font-family="Pretendard ExtraBold" style:font-family-generic="swiss"/>
     <style:font-face style:name="휴먼명조" svg:font-family="휴먼명조" style:font-family-generic="roman"/>
     <style:font-face style:name="Arial" svg:font-family="Arial" style:font-family-generic="swiss"/>
   </office:font-face-decls>
   <office:automatic-styles>
-    <style:style style:name="ColorBar" style:family="table">
-      <style:table-properties style:width="17cm" table:align="center" fo:margin-bottom="0cm"/>
+    <style:style style:name="fr_header" style:family="graphic">
+      <style:graphic-properties fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0cm" fo:margin-bottom="0cm"/>
     </style:style>
-    <style:style style:name="ColorBar.Blue" style:family="table-column">
-      <style:table-column-properties style:column-width="13.515cm"/>
-    </style:style>
-    <style:style style:name="ColorBar.White" style:family="table-column">
-      <style:table-column-properties style:column-width="0.17cm"/>
-    </style:style>
-    <style:style style:name="ColorBar.Green" style:family="table-column">
-      <style:table-column-properties style:column-width="3.315cm"/>
-    </style:style>
-    <style:style style:name="ColorBar.Row" style:family="table-row">
-      <style:table-row-properties style:row-height="0.3cm"/>
-    </style:style>
-    <style:style style:name="ColorBar.BlueCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#1e40af" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <style:style style:name="ColorBar.WhiteCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#ffffff" fo:border="none" fo:padding="0cm"/>
-    </style:style>
-    <style:style style:name="ColorBar.GreenCell" style:family="table-cell">
-      <style:table-cell-properties fo:background-color="#22c55e" fo:border="none" fo:padding="0cm"/>
+    <style:style style:name="HeaderImagePara" style:family="paragraph">
+      <style:paragraph-properties fo:text-align="center" fo:margin-top="0cm" fo:margin-bottom="0cm"/>
     </style:style>
   </office:automatic-styles>
   <office:body>
     <office:text>
-      <table:table table:name="TopColorBar" table:style-name="ColorBar">
-        <table:table-column table:style-name="ColorBar.Blue"/>
-        <table:table-column table:style-name="ColorBar.White"/>
-        <table:table-column table:style-name="ColorBar.Green"/>
-        <table:table-row table:style-name="ColorBar.Row">
-          <table:table-cell table:style-name="ColorBar.BlueCell"><text:p text:style-name="PR_Empty"></text:p></table:table-cell>
-          <table:table-cell table:style-name="ColorBar.WhiteCell"><text:p text:style-name="PR_Empty"></text:p></table:table-cell>
-          <table:table-cell table:style-name="ColorBar.GreenCell"><text:p text:style-name="PR_Empty"></text:p></table:table-cell>
-        </table:table-row>
-      </table:table>
+      ${imgArrayBuffer ? `<text:p text:style-name="HeaderImagePara"><draw:frame draw:style-name="fr_header" draw:name="HeaderImage" text:anchor-type="as-char" svg:width="17cm" svg:height="${imgHeightCm}cm"><draw:image xlink:href="Pictures/head-report.png" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame></text:p>` : ''}
       <text:p text:style-name="PR_BigTitle">보도자료</text:p>
       <text:p text:style-name="PR_TitleLine"></text:p>
       ${data.title ? para('PR_ArticleTitle', docTitle) : ''}
