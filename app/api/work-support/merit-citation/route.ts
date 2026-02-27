@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,6 +8,9 @@ export async function POST(request: NextRequest) {
     if (!options.meritField || !options.majorAchievements) {
       return NextResponse.json({ error: '필수 정보가 누락되었습니다.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([options.majorAchievements], '/api/work-support/merit-citation');
+    if (piiBlock) return piiBlock;
 
     const systemPrompt = '당신은 한국의 공적조서 작성 전문가입니다. 공무원 및 일반인 대상 공적조서를 공식 형식에 맞춰 완벽하게 작성할 수 있습니다.';
 

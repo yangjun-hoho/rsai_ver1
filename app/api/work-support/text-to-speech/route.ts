@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 import { spawn } from 'child_process';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -27,6 +28,9 @@ export async function POST(request: NextRequest) {
     if (!text?.trim()) {
       return NextResponse.json({ error: '변환할 텍스트를 입력해주세요.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([text], '/api/work-support/text-to-speech');
+    if (piiBlock) return piiBlock;
 
     if (text.length > 5000) {
       return NextResponse.json({ error: '텍스트는 5,000자 이하로 입력해주세요.' }, { status: 400 });

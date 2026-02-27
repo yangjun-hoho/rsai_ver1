@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -22,6 +23,9 @@ export async function POST(request: NextRequest) {
     if (!templateType || !content) {
       return NextResponse.json({ error: '대본 유형과 내용을 입력해주세요.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([content], '/api/work-support/scenario-generator');
+    if (piiBlock) return piiBlock;
 
     const templateDesc = templatePrompts[templateType] || '발표 대본';
     const durationText = duration ? `발표 시간: 약 ${duration}분` : '';

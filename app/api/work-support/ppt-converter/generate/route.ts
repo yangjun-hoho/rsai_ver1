@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 const GEMINI_URL =
@@ -104,6 +105,9 @@ export async function POST(request: NextRequest) {
     if (!inputText.trim()) {
       return NextResponse.json({ error: '변환할 텍스트를 입력해주세요.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([inputText], '/api/work-support/ppt-converter/generate');
+    if (piiBlock) return piiBlock;
 
     if (!GEMINI_API_KEY) {
       return NextResponse.json({ error: 'AI API 키가 설정되지 않았습니다.' }, { status: 500 });

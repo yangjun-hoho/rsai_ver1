@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 
 // ─── 타입 매핑 (영문 ID → 한글 레이블) ───────────────────────────────────────
 const reportTypeMap: Record<string, string> = {
@@ -268,6 +269,9 @@ export async function POST(request: NextRequest) {
     if (!reportType || !title) {
       return NextResponse.json({ error: '보고서 유형과 제목을 입력해주세요.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([title], '/api/work-support/report');
+    if (piiBlock) return piiBlock;
 
     const koreanType = reportTypeMap[reportType] || reportType;
     const koreanDetail = detailTypeMap[detailType] || detailType;

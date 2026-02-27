@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -101,6 +102,9 @@ export async function POST(request: NextRequest) {
     if (!action || !coreContent) {
       return NextResponse.json({ error: 'action과 핵심 내용을 입력해주세요.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([coreContent, title].filter(Boolean) as string[], '/api/work-support/press-release');
+    if (piiBlock) return piiBlock;
 
     const cleanedKeywords = (keywords as string[]).map((k: string) => k?.trim()).filter(Boolean);
 

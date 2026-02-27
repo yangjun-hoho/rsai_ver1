@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { speechCategoryData, getSpeechLength } from '@/lib/work-support/greetings/templates';
+import { rejectIfPii } from '@/lib/security/piiFilter';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -23,6 +24,9 @@ export async function POST(request: NextRequest) {
     if (!speechCategory || !specificSituation) {
       return NextResponse.json({ error: '행사 유형과 구체적인 상황을 입력해주세요.' }, { status: 400 });
     }
+
+    const piiBlock = rejectIfPii([specificSituation, speaker, coreContent].filter(Boolean) as string[], '/api/work-support/greetings');
+    if (piiBlock) return piiBlock;
 
     const lengthGuide = getSpeechLength(speechLength);
     const categoryData = speechCategoryData[speechCategory];
