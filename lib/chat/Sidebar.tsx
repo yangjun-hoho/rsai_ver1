@@ -45,6 +45,11 @@ const SHORTCUTS = [
   { id: 'fun',               label: 'FuN fUn',         icon: '🎮', path: '/fun' },
 ];
 
+const MEMBER_LINKS = [
+  { id: 'board', label: '자유게시판', icon: '📋', path: '/board' },
+  { id: 'my',    label: '나의 메뉴',  icon: '👤', path: '/my' },
+];
+
 interface SidebarProps {
   activeMode: ToolId | null;
   onToolClick: (id: ToolId) => void;
@@ -161,6 +166,29 @@ export default function Sidebar({ activeMode, onToolClick }: SidebarProps) {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
               {SHORTCUTS.map((sc) => (
+                <a
+                  key={sc.id}
+                  href={sc.path}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.3rem 0.5rem', borderRadius: '6px', textDecoration: 'none', color: '#37352f', fontSize: '0.8rem', fontWeight: 500 }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <span style={{ fontSize: '1rem', width: '20px', textAlign: 'center', flexShrink: 0 }}>{sc.icon}</span>
+                  <span>{sc.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 회원 공간 섹션 */}
+        {open && (
+          <div style={{ padding: '0.75rem 0.75rem', borderBottom: '1px solid #e9e9e7' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#6b6b6b', textTransform: 'uppercase', letterSpacing: '0.025em', marginBottom: '0.5rem', paddingLeft: '0.25rem' }}>
+              회원 공간
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+              {MEMBER_LINKS.map((sc) => (
                 <a
                   key={sc.id}
                   href={sc.path}

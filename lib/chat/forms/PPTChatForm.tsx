@@ -51,12 +51,12 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
   }
 
   const tabStyle = (active: boolean) => ({
-    flex: 1, padding: '0.4rem', border: 'none',
-    borderBottom: `2px solid ${active ? '#2383e2' : 'transparent'}`,
-    background: 'none',
-    color: active ? '#2383e2' : '#9b9a97',
+    flex: 1, padding: '0.45rem 0.75rem', border: 'none',
+    background: active ? '#2383e2' : '#f1f1f1',
+    color: active ? '#ffffff' : '#9b9a97',
     fontSize: '0.9rem', cursor: 'pointer',
     fontWeight: active ? 600 : 400,
+    transition: 'background 0.15s, color 0.15s',
   } as React.CSSProperties);
 
   const charRatio = content.length / MAX_CHARS;
@@ -85,9 +85,9 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
         </div>
 
         {/* 탭 */}
-        <div style={{ borderBottom: '1px solid #e9e9e7', display: 'flex' }}>
-          <button type="button" style={tabStyle(activeTab === 'text')} onClick={() => setActiveTab('text')}>📝 텍스트 입력</button>
-          <button type="button" style={tabStyle(activeTab === 'file')} onClick={() => setActiveTab('file')}>📎 파일 업로드</button>
+        <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.1rem' }}>
+          <button type="button" style={{ ...tabStyle(activeTab === 'text'), borderRadius: '6px 6px 0px 0px' }} onClick={() => setActiveTab('text')}>📝 텍스트 입력</button>
+          <button type="button" style={{ ...tabStyle(activeTab === 'file'), borderRadius: '6px 6px 0px 0px' }} onClick={() => setActiveTab('file')}>📎 파일 업로드</button>
         </div>
 
         {activeTab === 'text' && (
@@ -107,11 +107,11 @@ export default function PPTChatForm({ onSubmit, onCancel, isLoading }: Props) {
 
         {activeTab === 'file' && (
           <div
-            style={{ border: '1px dashed #d1d5db', borderRadius: '4px', background: '#fafafa', cursor: 'pointer', padding: '0.75rem', textAlign: 'center' }}
+            style={{ border: '1px dashed #d1d5db', borderRadius: '4px', background: '#fafafa', cursor: 'pointer', padding: '1.5rem', textAlign: 'center' }}
             onClick={() => fileRef.current?.click()}
           >
-            <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.25rem' }}>{isUploading ? '⏳' : '📎'}</span>
-            <p style={{ margin: 0, fontSize: '0.84rem', color: '#6b6b6b' }}>
+            <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>{isUploading ? '⏳' : '📎'}</span>
+            <p style={{ margin: 0, fontSize: '0.84rem', color: '#4e4e4eff' }}>
               {isUploading ? '파일 처리 중...' : 'PDF, TXT, DOCX 파일을 클릭하여 업로드'}
             </p>
             {uploadedFile && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.78rem', color: '#28a745' }}>✓ {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}KB)</p>}
