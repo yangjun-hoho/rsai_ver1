@@ -32,7 +32,13 @@
       "Read(//c/Users/USER/Desktop/React/rsai_ver1/**)",
       "Bash(xargs -I{} taskkill /PID {} /F)",
       "Bash(npm run dev)",
-      "WebFetch(domain:www.microsoft.com)"
+      "Bash(git pull origin main)",
+      "Bash(git stash)",
+      "Bash(git stash pop)",
+      "Bash(git restore --staged .claude/settings.local.json)",
+      "Bash(git add app/login/page.tsx)",
+      "Bash(git commit -m \"fix: login 페이지 useSearchParams Suspense 래핑\")",
+      "Bash(git push)"
     ]
   }
 }
