@@ -44,5 +44,40 @@ function initTables(db: Database.Database) {
       created_at TEXT    NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT    NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS pii_patterns (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      type       TEXT    NOT NULL,
+      regex      TEXT    NOT NULL,
+      hint       TEXT    NOT NULL,
+      is_active  INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS pii_logs (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      pattern_type TEXT    NOT NULL,
+      path         TEXT    NOT NULL,
+      detected_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
   `);
+
+  // 기존 테이블에 컬럼 추가 (이미 있으면 무시)
+  try { db.exec(`ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1`); } catch { /* 이미 존재 */ }
+  try { db.exec(`ALTER TABLE posts ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0`); } catch { /* 이미 존재 */ }
+
+  // 기본 PII 패턴 시드 (비어있을 때만)
+  const count = (db.prepare(`SELECT COUNT(*) as c FROM pii_patterns`).get() as { c: number }).c;
+  if (count === 0) {
+    const insert = db.prepare(`INSERT INTO pii_patterns (type, regex, hint) VALUES (?, ?, ?)`);
+    const seedMany = db.transaction(() => {
+      insert.run('주민등록번호', '\\d{6}-[1-4]\\d{6}', '숫자 패턴이 주민번호와 유사합니다. 관리번호라면 앞에 문자를 붙여 구분해 주세요 (예: 관리번호: 880101-A)');
+      insert.run('주민등록번호', '(?<!\\d)\\d{6}[1-4]\\d{6}(?!\\d)', '숫자 패턴이 주민번호와 유사합니다. 관리번호라면 앞에 문자를 붙여 구분해 주세요');
+      insert.run('휴대전화번호', '01[016789]-?\\d{3,4}-?\\d{4}', '전화번호 형식이 감지됐습니다. 부서명과 함께 "스마트도시과 대표: 031-0000" 처럼 입력해 주세요');
+      insert.run('일반전화번호', '0\\d{1,2}-\\d{3,4}-\\d{4}', '전화번호 형식이 감지됐습니다. 번호 앞에 용도를 표기해 주세요 (예: 대표전화: 02-...)');
+      insert.run('계좌번호', '\\d{3,4}-\\d{2,6}-\\d{4,8}', '계좌번호 형식이 감지됐습니다. 예산코드라면 "예산코드 110-300" 형식으로 구분해 주세요');
+      insert.run('이메일 주소', '[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}', '이메일 주소가 포함되어 있습니다. 이메일 대신 "담당자 홍길동 주무관"처럼 이름으로 표기해 주세요');
+    });
+    seedMany();
+  }
 }

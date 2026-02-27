@@ -38,7 +38,9 @@
       "Bash(git restore --staged .claude/settings.local.json)",
       "Bash(git add app/login/page.tsx)",
       "Bash(git commit -m \"fix: login 페이지 useSearchParams Suspense 래핑\")",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(git add -A)",
+      "Bash(git commit -m \"feat: PII 필터 + 관리자 패널 구현:*)"
     ]
   }
 }
