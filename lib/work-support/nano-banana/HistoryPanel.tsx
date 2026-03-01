@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 export interface Generation {
   id: string;
   prompt: string;
@@ -119,7 +121,7 @@ export default function HistoryPanel({
                     background: 'transparent', padding: 0, transition: 'border-color 0.2s',
                   }}
                 >
-                  <img src={gen.imageUrl} alt={`variant ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <Image src={gen.imageUrl} alt={`variant ${i + 1}`} fill unoptimized style={{ objectFit: 'cover' }} />
                   <div style={{
                     position: 'absolute', top: '0.3rem', left: '0.3rem',
                     fontSize: '0.7rem', padding: '0.2rem 0.4rem', borderRadius: '3px',

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifySession, COOKIE_NAME } from '@/lib/auth/session';
-import { getPost, deletePost } from '@/lib/app-db/board';
+import { getPost, incrementViews, deletePost } from '@/lib/app-db/board';
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const post = getPost(Number(id));
   if (!post) return NextResponse.json({ error: '존재하지 않는 글입니다' }, { status: 404 });
+  incrementViews(Number(id));
   return NextResponse.json(post);
 }
 

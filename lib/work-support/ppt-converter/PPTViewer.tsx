@@ -385,18 +385,13 @@ export default function PPTViewer({
 
   const accentColor = template === 'template1' ? T1.navy : T2.purple;
 
-  const SlideView = ({ s, fs }: { s: Slide; fs: boolean }) =>
-    template === 'template1'
-      ? <SlideViewT1 slide={s} isFullscreen={fs} />
-      : <SlideViewT2 slide={s} isFullscreen={fs} />;
-
   return (
     <>
       {/* 전체화면 모달 */}
       {fullscreen && (
         <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999, display: 'flex', flexDirection: 'column' }}>
           <div style={{ flex: 1, overflow: 'hidden' }}>
-            <SlideView s={slide} fs={true} />
+            {template === 'template1' ? <SlideViewT1 slide={slide} isFullscreen={true} /> : <SlideViewT2 slide={slide} isFullscreen={true} />}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', padding: '1rem', background: 'rgba(0,0,0,0.8)' }}>
             <button onClick={goPrev} disabled={current === 0} style={{ padding: '0.5rem 1.5rem', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '6px', cursor: current === 0 ? 'not-allowed' : 'pointer', opacity: current === 0 ? 0.4 : 1 }}>← 이전</button>
@@ -472,7 +467,7 @@ export default function PPTViewer({
           >
             {previewScale > 0 && (
               <div style={{ width: SLIDE_W, height: SLIDE_H, transform: `scale(${previewScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0 }}>
-                <SlideView s={slide} fs={true} />
+                {template === 'template1' ? <SlideViewT1 slide={slide} isFullscreen={true} /> : <SlideViewT2 slide={slide} isFullscreen={true} />}
               </div>
             )}
           </div>

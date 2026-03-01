@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-interface Post { id: number; title: string; nickname: string; views: number; created_at: string; }
+interface Post { id: number; title: string; nickname: string; views: number; created_at: string; comment_count: number; }
 interface Me { id: number; nickname: string; role: string; }
 
 export default function BoardPage() {
@@ -15,7 +15,7 @@ export default function BoardPage() {
   const [page, setPage] = useState(1);
   const [me, setMe] = useState<Me | null>(null);
 
-  useEffect(() => { document.title = '자유게시판 | 아레스 AI'; }, []);
+  useEffect(() => { document.title = 'AI 자유게시판 | 아레스 AI'; }, []);
 
   useEffect(() => {
     fetch('/api/auth/me').then(r => r.json()).then(d => setMe(d.user));
@@ -41,11 +41,11 @@ export default function BoardPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#faf9f5' }}>
-      {/* 헤더 */}
+      {/* 네비게이션 바 */}
       <div style={{ background: 'white', borderBottom: '1px solid #e9e9e7', padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Link href="/" style={{ fontSize: '0.85rem', color: '#9b9a97', textDecoration: 'none' }}>← 메인</Link>
-          <span style={{ fontSize: '1rem', fontWeight: 700, color: '#37352f' }}>📋 자유게시판</span>
+          <span style={{ fontSize: '1rem', fontWeight: 700, color: '#37352f' }}>🤖 AI 자유게시판</span>
           <span style={{ fontSize: '0.78rem', color: '#9b9a97' }}>총 {total}개</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -64,6 +64,28 @@ export default function BoardPage() {
         </div>
       </div>
 
+      {/* Hero 섹션 */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1d4ed8 100%)',
+        padding: '1.5rem 1rem',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* 배경 장식 */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(99,102,241,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(59,130,246,0.3) 0%, transparent 50%)', pointerEvents: 'none' }} />
+
+        <div style={{ position: 'relative', maxWidth: '600px', margin: '0 auto' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '20px', padding: '0.3rem 0.9rem', marginBottom: '1rem' }}>
+            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, letterSpacing: '0.05em' }}>🤖 AI POWERED COMMUNITY</span>
+          </div>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: 'rgba(199,210,254,0.9)', lineHeight: 1.7 }}>
+            글을 작성하면 <strong style={{ color: '#a5f3fc' }}>AI가 본문을 읽고 자동으로 댓글</strong>을 달아드립니다.<br />
+            자유롭게 이야기를 나눠보세요!
+          </p>
+        </div>
+      </div>
+
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1.5rem 1rem' }}>
         {/* 글쓰기 버튼 */}
         {me && (
@@ -79,7 +101,7 @@ export default function BoardPage() {
         <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e9e9e7' }}>
           {posts.length === 0 ? (
             <div style={{ padding: '3rem', textAlign: 'center', color: '#9b9a97', fontSize: '0.9rem' }}>
-              아직 게시글이 없습니다. 첫 글을 작성해보세요!
+              아직 게시글이 없습니다. 첫 글을 작성하면 AI가 댓글을 달아줍니다!
             </div>
           ) : posts.map((post, i) => (
             <div key={post.id}
@@ -88,8 +110,16 @@ export default function BoardPage() {
               onMouseEnter={e => (e.currentTarget.style.background = '#f9f9f7')}
               onMouseLeave={e => (e.currentTarget.style.background = 'white')}
             >
-              <span style={{ fontSize: '0.75rem', color: '#c0c0bd', minWidth: '30px', textAlign: 'right' }}>{total - (page - 1) * 15 - i}</span>
-              <span style={{ flex: 1, fontSize: '0.9rem', color: '#37352f', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</span>
+              <span style={{ fontSize: '0.75rem', color: '#c0c0bd', minWidth: '30px', textAlign: 'right', flexShrink: 0 }}>{total - (page - 1) * 15 - i}</span>
+              <span style={{ flex: 1, fontSize: '0.9rem', color: '#37352f', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {post.title}
+              </span>
+              {/* 댓글 수 */}
+              {post.comment_count > 0 && (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem', color: '#2383e2', fontWeight: 600, flexShrink: 0, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '10px', padding: '0.1rem 0.5rem' }}>
+                  💬 {post.comment_count}
+                </span>
+              )}
               <span style={{ fontSize: '0.78rem', color: '#9b9a97', flexShrink: 0 }}>{post.nickname}</span>
               <span style={{ fontSize: '0.75rem', color: '#c0c0bd', flexShrink: 0 }}>조회 {post.views}</span>
               <span style={{ fontSize: '0.75rem', color: '#c0c0bd', flexShrink: 0 }}>{formatDate(post.created_at)}</span>

@@ -127,6 +127,9 @@ function generateHtml(reportData: Record<string, unknown>): string {
 
   let html = '';
 
+  // 헤더 이미지
+  html += `<img src="/images/head-report.png" alt="보고서 헤더" style="width:100%;display:block;margin-bottom:0.1rem;" />`;
+
   // 헤더
   html += `<div class="report-header">
     <h1 class="report-title">${title}</h1>
@@ -180,17 +183,10 @@ const officialCSS = `
     background: white;
     color: #000;
     text-align: center;
-    margin-bottom: 1rem;
-    padding: 1.5rem 0 1rem 0;
+    margin-bottom: 0.1rem;
+    padding: 1rem 0 1rem 0;
     border: none;
     position: relative;
-  }
-  .template-official .report-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 12px;
-    background: linear-gradient(150deg, #1e40af 79.5%, white 79.5%, white 80.5%, #22c55e 80.5%);
   }
   .template-official .report-header::after {
     content: '';
@@ -202,7 +198,7 @@ const officialCSS = `
   .template-official .report-title {
     font-size: 2rem;
     font-weight: bold;
-    margin: 10px 0 5px 0;
+    margin: 0px 0 5px 0;
     line-height: 1.3;
     color: #000;
   }
@@ -534,9 +530,10 @@ export default function ReportViewer({ reportData }: ReportViewerProps) {
       }, 100);
     }
 
+    const container = containerRef.current;
     return () => {
-      if (!containerRef.current) return;
-      const canvases = containerRef.current.querySelectorAll<HTMLCanvasElement>('canvas');
+      if (!container) return;
+      const canvases = container.querySelectorAll<HTMLCanvasElement>('canvas');
       canvases.forEach(c => { if (c._chartInstance) { (c._chartInstance as { destroy(): void }).destroy(); c._chartInstance = undefined; } });
     };
   }, [viewMode, reportData, isDownloading]);

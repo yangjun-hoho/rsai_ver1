@@ -169,12 +169,12 @@ export default function ChatArea({ messages, isLoading, onToolClick }: ChatAreaP
                   }}
                 >
                   {/* 3:1 이미지 영역 */}
-                  <div style={{ width: '100%', aspectRatio: '3 / 1', overflow: 'hidden', background: '#f0f0ee', flexShrink: 0 }}>
-                    <img
+                  <div style={{ width: '100%', aspectRatio: '3 / 1', overflow: 'hidden', background: '#f0f0ee', flexShrink: 0, position: 'relative' }}>
+                    <Image
                       src={card.image}
                       alt={card.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      fill
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
                   {/* 텍스트 영역 */}

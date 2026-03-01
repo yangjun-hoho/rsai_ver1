@@ -89,6 +89,27 @@ const AI_TOOLS = [
     color: '#7C3AED',
   },
   {
+    name: 'Sora',
+    emoji: '🎥',
+    description: 'OpenAI의 텍스트→동영상 AI. 프롬프트 한 줄로 고품질 영상을 생성합니다.',
+    url: 'https://sora.com',
+    color: '#0EA5E9',
+  },
+  {
+    name: 'Kling AI',
+    emoji: '🎞️',
+    description: '중국 콰이쇼우의 AI 동영상 생성 플랫폼. 사실적인 영상 품질로 주목받고 있습니다.',
+    url: 'https://klingai.com',
+    color: '#F97316',
+  },
+  {
+    name: 'Pika',
+    emoji: '✨',
+    description: '텍스트·이미지를 영상으로 변환하는 AI 동영상 제작 플랫폼입니다.',
+    url: 'https://pika.art',
+    color: '#EC4899',
+  },
+  {
     name: 'Suno AI',
     emoji: '🎵',
     description: 'AI로 음악과 노래를 만들 수 있는 혁신적 도구입니다.',

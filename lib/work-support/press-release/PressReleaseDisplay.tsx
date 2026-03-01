@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { exportPressReleaseToODT, type PressReleaseSimpleData } from './pressReleaseOdtExporter';
 
 interface PressReleaseDisplayProps {
@@ -21,15 +22,8 @@ const prCSS = `
   .pr-doc-header {
     text-align: center;
     margin-bottom: 1.5rem;
-    padding: 1.5rem 0 1rem 0;
+    padding: 1rem 0 1rem 0;
     position: relative;
-  }
-  .pr-doc-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 12px;
-    background: linear-gradient(150deg, #1e40af 79.5%, white 79.5%, white 80.5%, #22c55e 80.5%);
   }
   .pr-doc-header::after {
     content: '';
@@ -133,6 +127,7 @@ export default function PressReleaseDisplay({ data, isLoading }: PressReleaseDis
           </div>
         ) : hasContent ? (
           <div className="pr-doc-container">
+            <Image src="/images/head-report.png" alt="헤더" width={900} height={100} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
             <div className="pr-doc-header">
               <h1 className="pr-doc-big-title">보도자료</h1>
             </div>

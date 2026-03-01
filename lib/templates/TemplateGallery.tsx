@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { TemplateConfig } from './types';
 import { TEMPLATES, TEMPLATE_CATEGORIES } from './registry';
 
@@ -13,6 +14,7 @@ interface TemplateGalleryProps {
 export default function TemplateGallery({ onSelect, onClose }: TemplateGalleryProps) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
 
   const filtered = selectedCategory === '전체'
     ? TEMPLATES
@@ -86,25 +88,18 @@ export default function TemplateGallery({ onSelect, onClose }: TemplateGalleryPr
               }}
             >
               {/* 썸네일 이미지 */}
-              <div style={{ width: '100%', height: '130px', overflow: 'hidden', flexShrink: 0, position: 'relative', background: '#f3f4f6' }}>
-                <img
-                  src={`/images/templates/${template.id}.png`}
-                  alt={template.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  onError={e => {
-                    // 이미지 없으면 이모지 fallback
-                    const el = e.currentTarget;
-                    el.style.display = 'none';
-                    const parent = el.parentElement;
-                    if (parent) {
-                      parent.style.display = 'flex';
-                      parent.style.alignItems = 'center';
-                      parent.style.justifyContent = 'center';
-                      parent.style.fontSize = '2.5rem';
-                      parent.textContent = template.icon;
-                    }
-                  }}
-                />
+              <div style={{ width: '100%', height: '130px', overflow: 'hidden', flexShrink: 0, position: 'relative', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {imgErrors.has(template.id) ? (
+                  <span style={{ fontSize: '2.5rem' }}>{template.icon}</span>
+                ) : (
+                  <Image
+                    src={`/images/templates/${template.id}.png`}
+                    alt={template.name}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    onError={() => setImgErrors(prev => new Set(prev).add(template.id))}
+                  />
+                )}
               </div>
               {/* 카드 텍스트 */}
               <div style={{ padding: '0.9rem 1rem', display: 'flex', flexDirection: 'column', flex: 1 }}>

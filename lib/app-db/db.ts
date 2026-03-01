@@ -46,6 +46,15 @@ function initTables(db: Database.Database) {
       updated_at TEXT    NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS comments (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      post_id    INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+      author     TEXT    NOT NULL,
+      content    TEXT    NOT NULL,
+      is_ai      INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS pii_patterns (
       id         INTEGER PRIMARY KEY AUTOINCREMENT,
       type       TEXT    NOT NULL,
@@ -66,6 +75,7 @@ function initTables(db: Database.Database) {
   // 기존 테이블에 컬럼 추가 (이미 있으면 무시)
   try { db.exec(`ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1`); } catch { /* 이미 존재 */ }
   try { db.exec(`ALTER TABLE posts ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0`); } catch { /* 이미 존재 */ }
+  try { db.exec(`ALTER TABLE posts ADD COLUMN ai_commented INTEGER NOT NULL DEFAULT 0`); } catch { /* 이미 존재 */ }
 
   // admin 계정 자동 생성/갱신 (.env의 ADMIN_NICKNAME, ADMIN_PASSWORD)
   const adminNickname = process.env.ADMIN_NICKNAME;

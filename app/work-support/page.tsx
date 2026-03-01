@@ -25,19 +25,26 @@ export default function WorkSupportPage() {
   }, []);
 
   return (
-    <div className="page-container">
-      <header className="page-header">
-        <div className="header-content">
-          <button className="back-button" onClick={() => router.push('/')} title="이전 페이지로 돌아가기" aria-label="이전 페이지로 돌아가기">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-          </button>
-          <h1>⚡ 업무 지원</h1>
+    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: 'linear-gradient(135deg, #f0f2f5 0%, #e8eef5 100%)', fontFamily: 'inherit', zIndex: 50 }}>
+      {/* 헤더 */}
+      <div style={{ padding: '1.25rem 2rem', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid rgba(0,0,0,0.07)', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', position: 'sticky', top: 0, zIndex: 10 }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#1f2937' }}>⚡ 업무 지원</h1>
+          <p style={{ margin: 0, fontSize: '0.75rem', color: '#9ca3af' }}>AI 기반 업무 자동화 도구 모음</p>
         </div>
-      </header>
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={() => router.push('/')}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.75rem', background: 'transparent', border: '1px solid #d1d5db', borderRadius: '7px', cursor: 'pointer', color: '#6b7280', fontSize: '0.82rem', fontWeight: 500 }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#f9fafb'; e.currentTarget.style.color = '#374151'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#6b7280'; }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          홈
+        </button>
+      </div>
 
-      <div className="page-content" style={{ overflow: 'auto' }}>
+      <div style={{ overflow: 'auto' }}>
         <div style={{ padding: '1.5rem', maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
             {services.map((item) => (

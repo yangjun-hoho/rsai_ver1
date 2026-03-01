@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { exportScenarioToODT } from './scenarioOdtExporter';
 
 interface ScriptData {
@@ -41,15 +42,8 @@ const scenarioCSS = `
   .scenario-doc-header {
     text-align: center;
     margin-bottom: 1.5rem;
-    padding: 1.5rem 0 1rem 0;
+    padding: 1rem 0 1rem 0;
     position: relative;
-  }
-  .scenario-doc-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 12px;
-    background: linear-gradient(150deg, #1e40af 79.5%, white 79.5%, white 80.5%, #22c55e 80.5%);
   }
   .scenario-doc-header::after {
     content: '';
@@ -124,6 +118,7 @@ export default function ScenarioViewer({ script, template }: ScenarioViewerProps
       {/* 콘텐츠 */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', background: '#f8f8f4' }}>
         <div className="scenario-doc-container">
+          <Image src="/images/head-report.png" alt="헤더" width={800} height={200} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
           <div className="scenario-doc-header">
             <h1 className="scenario-doc-title">{titleLabel}</h1>
           </div>

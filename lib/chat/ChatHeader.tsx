@@ -12,9 +12,10 @@ interface ChatHeaderProps {
   selectedModel: string;
   onClear: () => void;
   onExport: () => void;
+  nickname?: string;
 }
 
-export default function ChatHeader({ models, selectedModel, onClear, onExport }: ChatHeaderProps) {
+export default function ChatHeader({ models, selectedModel, onClear, onExport, nickname }: ChatHeaderProps) {
   const currentModel = models.find((m) => m.id === selectedModel);
 
   return (
@@ -31,7 +32,7 @@ export default function ChatHeader({ models, selectedModel, onClear, onExport }:
       {/* 좌측: 타이틀 + 모델 뱃지 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <h1 style={{ fontSize: '0.9rem', fontWeight: 400, color: '#494846bf', margin: 0 }}>
-          아레스 AI-Agent
+          AI-Agent
         </h1>
         {currentModel && (
           <div style={{
@@ -71,12 +72,33 @@ export default function ChatHeader({ models, selectedModel, onClear, onExport }:
 
       {/* 우측: 버튼들 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        {nickname && (
+          <span style={{ fontSize: '0.78rem', color: '#9b9a97', fontWeight: 500, marginRight: '0.1rem' }}>
+            {nickname}
+          </span>
+        )}
+        <a
+          href="/my"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.25rem 0.6rem', border: '1px solid #e9e9e7', background: 'rgba(71,71,71,0.03)', color: '#6b6b6b', borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 500, textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.07)'; e.currentTarget.style.borderColor = '#d0d0ce'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(71,71,71,0.03)'; e.currentTarget.style.borderColor = '#e9e9e7'; }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          나의 메뉴
+        </a>
         <IconBtn onClick={onExport} title="대화 내보내기">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </IconBtn>
-        <IconBtn onClick={onClear} title="대화 초기화">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><g transform="scale(-1,1) translate(-24,0)"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></g></svg>
-        </IconBtn>
+        <button
+          onClick={onClear}
+          title="대화 초기화"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.25rem 0.6rem', border: '1px solid #e9e9e7', background: 'rgba(71,71,71,0.03)', color: '#6b6b6b', borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 500 }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.07)'; e.currentTarget.style.borderColor = '#d0d0ce'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(71,71,71,0.03)'; e.currentTarget.style.borderColor = '#e9e9e7'; }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><g transform="scale(-1,1) translate(-24,0)"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></g></svg>
+          대화 초기화
+        </button>
       </div>
     </div>
   );

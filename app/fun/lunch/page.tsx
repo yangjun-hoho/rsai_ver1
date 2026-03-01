@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 const DEFAULT_ITEMS = ['한식 🍚', '중식 🥟', '일식 🍣', '양식 🍝', '분식 🍜', '패스트푸드 🍔'];
 const COLORS = ['#d13438','#ca5010','#ca5010','#107c10','#0078D4','#744da9','#008272','#c50f1f'];
 
 const MS_FONT = '"Segoe UI", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif';
+
+const SIZE = 300;
+const CX = SIZE / 2, CY = SIZE / 2, R = SIZE / 2 - 8;
 
 export default function LunchPage() {
   const router = useRouter();
@@ -20,10 +23,7 @@ export default function LunchPage() {
 
   useEffect(() => { document.title = '점심메뉴 결정기 | FuN fUn'; }, []);
 
-  const SIZE = 300;
-  const CX = SIZE / 2, CY = SIZE / 2, R = SIZE / 2 - 8;
-
-  function drawWheel(ang: number) {
+  const drawWheel = useCallback(function drawWheel(ang: number) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d')!;
@@ -68,9 +68,9 @@ export default function LunchPage() {
     ctx.textAlign = 'center';
     ctx.shadowBlur = 0;
     ctx.fillText('SPIN', CX, CY + 4);
-  }
+  }, [items]);
 
-  useEffect(() => { drawWheel(angle); }, [items, angle]);
+  useEffect(() => { drawWheel(angle); }, [drawWheel, angle]);
 
   function spin() {
     if (spinning || items.length < 2) return;

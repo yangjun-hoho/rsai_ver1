@@ -172,7 +172,7 @@ export class ODTExporter {
     }
 
     // 각 섹션을 XML로 변환하여 순서대로 추가
-    content += sections.map((section, index) => this.generateSectionXML(section, index)).join('');
+    content += sections.map(section => this.generateSectionXML(section)).join('');
 
     // 문서 하단 메타데이터 블록 (있을 경우에만 출력)
     if (reportData.metadata) {
@@ -233,7 +233,7 @@ export class ODTExporter {
    *  - '**(...)**' 패턴이면 소제목 (○ 기호)
    *  - 그 외는 일반 본문
    */
-  private generateSectionXML(section: Section, _index: number): string {
+  private generateSectionXML(section: Section): string {
     let xml = '';
     // 섹션 제목 (□ 기호 앞에 붙임)
     xml += `<text:p text:style-name="Official_Section_Title">□ ${this.escapeXML(section.title || '제목 없음')}</text:p>`;

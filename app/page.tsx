@@ -8,6 +8,7 @@ import InputArea from '@/lib/chat/InputArea';
 import PreviewPanel from '@/lib/chat/PreviewPanel';
 import TemplateView from '@/lib/templates/TemplateView';
 import RagView from '@/lib/rag/RagView';
+import BoardPanel from '@/lib/board/BoardPanel';
 import type { Message } from '@/lib/chat/MessageBubble';
 
 const AVAILABLE_MODELS = [
@@ -33,6 +34,7 @@ export default function Home() {
   useEffect(() => { selectedModelRef.current = selectedModel; }, [selectedModel]);
   const [isLoading, setIsLoading]     = useState(false);
   const [error, setError]             = useState('');
+  const [nickname, setNickname]       = useState<string | undefined>(undefined);
 
   // 미리보기 패널 상태
   const [previewTool, setPreviewTool] = useState<ToolId | null>(null);
@@ -45,6 +47,7 @@ export default function Home() {
 
   useEffect(() => {
     document.title = '아레스 AI';
+    fetch('/api/auth/me').then(r => r.json()).then(d => { if (d.user?.nickname) setNickname(d.user.nickname); });
     try {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) setMessages(JSON.parse(saved));
@@ -321,6 +324,10 @@ export default function Home() {
           <RagView onClose={() => setActiveMode(null)} />
         ) : activeMode === 'templates' ? (
           <TemplateView onClose={() => setActiveMode(null)} />
+        ) : activeMode === 'board' ? (
+          <div style={{ flex: 1, display: 'flex', overflow: 'hidden', height: '100%' }}>
+            <BoardPanel />
+          </div>
         ) : (
           <>
             {/* 채팅 영역 */}
@@ -330,6 +337,7 @@ export default function Home() {
                 selectedModel={selectedModel}
                 onClear={handleClear}
                 onExport={handleExport}
+                nickname={nickname}
               />
 
               <ChatArea messages={messages} isLoading={isLoading} onToolClick={handleToolClick} />

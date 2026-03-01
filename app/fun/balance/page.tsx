@@ -25,7 +25,7 @@ export default function BalancePage() {
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<'a' | 'b' | null>(null);
   const [votes, setVotes] = useState<{ a: number; b: number }[]>(
-    QUESTIONS.map(() => ({ a: Math.floor(30 + Math.random() * 40), b: Math.floor(30 + Math.random() * 40) }))
+    () => QUESTIONS.map(() => ({ a: Math.floor(30 + Math.random() * 40), b: Math.floor(30 + Math.random() * 40) }))
   );
   const [done, setDone] = useState(false);
   const [userChoices, setUserChoices] = useState<('a' | 'b')[]>([]);

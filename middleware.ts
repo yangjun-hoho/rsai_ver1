@@ -12,6 +12,11 @@ export async function middleware(req: NextRequest) {
 
   if (!isProtected && !isAdmin) return NextResponse.next();
 
+  // /api/board GET 요청(목록·상세 읽기)은 비로그인도 허용
+  if (isProtected && pathname.startsWith('/api/board') && req.method === 'GET') {
+    return NextResponse.next();
+  }
+
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const session = token ? await verifySession(token) : null;
 

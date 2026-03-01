@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 
 export interface BrushStroke {
   id: string;
@@ -57,7 +57,6 @@ export default function ImageCanvas({
   const isDrawingRef = useRef(false);
   const currentStrokeRef = useRef<{ x: number; y: number }[]>([]);
   const panRef = useRef({ x: 0, y: 0 });
-  const [panState, setPanState] = useState({ x: 0, y: 0 });
 
   const getCanvasCoords = useCallback((e: MouseEvent | Touch): { x: number; y: number } => {
     const canvas = canvasRef.current!;
@@ -137,7 +136,6 @@ export default function ImageCanvas({
         const zoom = Math.min(scaleX, scaleY, 1);
         onSetCanvasZoom(zoom);
         panRef.current = { x: 0, y: 0 };
-        setPanState({ x: 0, y: 0 });
       }
       redraw();
     };
@@ -213,7 +211,7 @@ export default function ImageCanvas({
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
     };
-  }, [selectedTool, isGenerating, canvasZoom, brushSize, getCanvasCoords, onAddBrushStroke, redraw]);
+  }, [selectedTool, isGenerating, canvasZoom, brushSize, getCanvasCoords, onAddBrushStroke, onSetCanvasZoom, redraw]);
 
   function handleDownload() {
     if (!canvasImage) return;
@@ -262,7 +260,7 @@ export default function ImageCanvas({
           <button onClick={() => onSetCanvasZoom(Math.min(5, canvasZoom + 0.1))} style={tbBtn()}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
           </button>
-          <button onClick={() => { onSetCanvasZoom(1); panRef.current = { x: 0, y: 0 }; setPanState({ x: 0, y: 0 }); redraw(); }} style={tbBtn()}>
+          <button onClick={() => { onSetCanvasZoom(1); panRef.current = { x: 0, y: 0 }; redraw(); }} style={tbBtn()}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.37"/></svg>
           </button>
           {selectedTool === 'mask' && (

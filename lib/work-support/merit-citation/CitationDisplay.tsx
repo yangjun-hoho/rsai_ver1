@@ -21,15 +21,8 @@ const citationCSS = `
   .citation-doc-header {
     text-align: center;
     margin-bottom: 1.5rem;
-    padding: 1.5rem 0 1rem 0;
+    padding: 1rem 0 1rem 0;
     position: relative;
-  }
-  .citation-doc-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 12px;
-    background: linear-gradient(150deg, #1e40af 79.5%, white 79.5%, white 80.5%, #22c55e 80.5%);
   }
   .citation-doc-header::after {
     content: '';
@@ -97,6 +90,7 @@ export default function CitationDisplay({ citationText, isLoading }: CitationDis
           </div>
         ) : citationText ? (
           <div className="citation-doc-container">
+            <img src="/images/head-report.png" alt="헤더" style={{ width: '100%', display: 'block', marginBottom: '0.1rem' }} />
             <div className="citation-doc-header">
               <h1 className="citation-doc-title">공적조서</h1>
             </div>

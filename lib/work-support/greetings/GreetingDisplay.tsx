@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { exportGreetingToODT } from './greetingOdtExporter';
 
 interface GreetingDisplayProps {
@@ -22,15 +23,8 @@ const greetingCSS = `
   .greeting-doc-header {
     text-align: center;
     margin-bottom: 1.5rem;
-    padding: 1.5rem 0 1rem 0;
+    padding: 1rem 0 1rem 0;
     position: relative;
-  }
-  .greeting-doc-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 12px;
-    background: linear-gradient(150deg, #1e40af 79.5%, white 79.5%, white 80.5%, #22c55e 80.5%);
   }
   .greeting-doc-header::after {
     content: '';
@@ -97,6 +91,7 @@ export default function GreetingDisplay({ greetingText, greetingType, isLoading 
           </div>
         ) : greetingText ? (
           <div className="greeting-doc-container">
+            <Image src="/images/head-report.png" alt="헤더" width={900} height={100} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
             <div className="greeting-doc-header">
               <h1 className="greeting-doc-title">{greetingType || '인사말씀'}</h1>
             </div>

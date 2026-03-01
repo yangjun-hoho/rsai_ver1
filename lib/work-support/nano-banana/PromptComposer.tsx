@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 
 export type ToolMode = 'generate' | 'edit' | 'mask';
 
@@ -181,7 +182,7 @@ export default function PromptComposer(props: PromptComposerProps) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem' }}>
             {refImgs.map((img, i) => (
               <div key={i} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', ...t.preview, minHeight: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={img} alt={`ref ${i + 1}`} style={{ width: '100%', height: 'auto', objectFit: 'contain', maxHeight: '160px' }} />
+                <Image src={img} alt={`ref ${i + 1}`} unoptimized width={0} height={0} style={{ width: '100%', height: 'auto', objectFit: 'contain', maxHeight: '160px' }} />
                 <button
                   onClick={() => removeRefImg(i)}
                   style={{ position: 'absolute', top: '4px', right: '4px', width: '22px', height: '22px', background: 'rgba(239,68,68,.9)', border: 'none', borderRadius: '50%', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}

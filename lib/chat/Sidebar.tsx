@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export type ToolId = 'report' | 'ppt' | 'scenario' | 'merit-citation' | 'greetings' | 'press-release' | 'templates' | 'rag';
+export type ToolId = 'report' | 'ppt' | 'scenario' | 'merit-citation' | 'greetings' | 'press-release' | 'templates' | 'rag' | 'board';
 
 export interface Tool {
   id: ToolId;
@@ -46,8 +46,7 @@ const SHORTCUTS = [
 ];
 
 const MEMBER_LINKS = [
-  { id: 'board', label: '자유게시판', icon: '📋', path: '/board' },
-  { id: 'my',    label: '나의 메뉴',  icon: '👤', path: '/my' },
+  { id: 'board', label: 'AI 자유게시판', icon: '🤖', path: '/board' },
 ];
 
 interface SidebarProps {
@@ -195,18 +194,21 @@ export default function Sidebar({ activeMode, onToolClick }: SidebarProps) {
               회원 공간
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-              {MEMBER_LINKS.map((sc) => (
-                <a
-                  key={sc.id}
-                  href={sc.path}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.3rem 0.5rem', borderRadius: '6px', textDecoration: 'none', color: '#37352f', fontSize: '0.8rem', fontWeight: 500 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <span style={{ fontSize: '1rem', width: '20px', textAlign: 'center', flexShrink: 0 }}>{sc.icon}</span>
-                  <span>{sc.label}</span>
-                </a>
-              ))}
+              {MEMBER_LINKS.map((sc) => {
+                const isActive = activeMode === sc.id;
+                return (
+                  <button
+                    key={sc.id}
+                    onClick={() => onToolClick(sc.id as ToolId)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.3rem 0.5rem', borderRadius: '6px', textDecoration: 'none', color: isActive ? '#0066cc' : '#37352f', fontSize: '0.8rem', fontWeight: isActive ? 600 : 500, background: isActive ? '#e8f4ff' : 'transparent', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                    onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = isActive ? '#e8f4ff' : 'transparent'; }}
+                  >
+                    <span style={{ fontSize: '1rem', width: '20px', textAlign: 'center', flexShrink: 0 }}>{sc.icon}</span>
+                    <span>{sc.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
