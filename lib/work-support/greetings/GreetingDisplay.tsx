@@ -91,7 +91,7 @@ export default function GreetingDisplay({ greetingText, greetingType, isLoading 
           </div>
         ) : greetingText ? (
           <div className="greeting-doc-container">
-            <Image src="/images/head-report.png" alt="헤더" width={900} height={100} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
+            <Image src="/images/document/head-report.png" alt="헤더" width={900} height={100} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
             <div className="greeting-doc-header">
               <h1 className="greeting-doc-title">{greetingType || '인사말씀'}</h1>
             </div>

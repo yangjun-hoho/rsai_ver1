@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-type Tab = 'dashboard' | 'users' | 'posts' | 'pii';
+type Tab = 'dashboard' | 'users' | 'posts' | 'pii' | 'notices';
 
 interface Stats { totalUsers: number; todayJoined: number; totalPosts: number; piiThisMonth: number; recentUsers: AdminUser[]; recentPosts: RecentPost[]; recentPiiLogs: PiiLog[]; }
 interface AdminUser { id: number; nickname: string; role: string; is_active: number; created_at: string; }
@@ -295,6 +295,128 @@ function PiiTab() {
   );
 }
 
+// ── 공지사항 관리 탭 ────────────────────────────────────────
+interface Notice { id: number; title: string; content: string; is_active: number; created_at: string; }
+
+function NoticesTab() {
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [form, setForm] = useState({ title: '', content: '' });
+  const [editing, setEditing] = useState<Notice | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(() => {
+    fetch('/api/admin/notices').then(r => r.json()).then(d => setNotices(d.notices || []));
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  async function handleSubmit() {
+    if (!form.title.trim() || !form.content.trim()) return alert('제목과 내용을 입력하세요.');
+    setSaving(true);
+    if (editing) {
+      await fetch(`/api/admin/notices/${editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      setEditing(null);
+    } else {
+      await fetch('/api/admin/notices', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+    }
+    setForm({ title: '', content: '' });
+    setSaving(false);
+    load();
+  }
+
+  async function handleToggle(n: Notice) {
+    await fetch(`/api/admin/notices/${n.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: n.is_active ? 0 : 1 }) });
+    load();
+  }
+
+  async function handleDelete(n: Notice) {
+    if (!confirm(`"${n.title}" 공지를 삭제하시겠습니까?`)) return;
+    await fetch(`/api/admin/notices/${n.id}`, { method: 'DELETE' });
+    load();
+  }
+
+  function handleEdit(n: Notice) {
+    setEditing(n);
+    setForm({ title: n.title, content: n.content });
+  }
+
+  function handleCancel() {
+    setEditing(null);
+    setForm({ title: '', content: '' });
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* 작성/수정 폼 */}
+      <div style={S.card}>
+        <h3 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#37352f', margin: '0 0 1rem 0' }}>
+          {editing ? '✏️ 공지 수정' : '📢 새 공지 작성'}
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <input
+            style={S.input}
+            placeholder="공지 제목"
+            value={form.title}
+            onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
+          />
+          <textarea
+            style={{ ...S.input, minHeight: '80px', resize: 'vertical' }}
+            placeholder="공지 내용"
+            value={form.content}
+            onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button style={S.btn('#37352f')} onClick={handleSubmit} disabled={saving}>
+              {saving ? '저장 중...' : editing ? '수정 완료' : '등록'}
+            </button>
+            {editing && <button style={S.outBtn} onClick={handleCancel}>취소</button>}
+          </div>
+        </div>
+      </div>
+
+      {/* 공지 목록 */}
+      <div style={S.card}>
+        <h3 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#37352f', margin: '0 0 0.75rem 0' }}>공지 목록</h3>
+        {notices.length === 0 ? (
+          <div style={{ color: '#9b9a97', fontSize: '0.82rem' }}>등록된 공지가 없습니다.</div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={S.th}>제목</th>
+                <th style={S.th}>내용</th>
+                <th style={S.th}>상태</th>
+                <th style={S.th}>등록일</th>
+                <th style={S.th}>액션</th>
+              </tr>
+            </thead>
+            <tbody>
+              {notices.map(n => (
+                <tr key={n.id}>
+                  <td style={{ ...S.td, fontWeight: 600, maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.title}</td>
+                  <td style={{ ...S.td, maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#6b7280' }}>{n.content}</td>
+                  <td style={S.td}>
+                    <span style={{ fontSize: '0.72rem', padding: '0.15rem 0.5rem', borderRadius: '4px', background: n.is_active ? '#dcfce7' : '#f3f4f6', color: n.is_active ? '#16a34a' : '#9b9a97', cursor: 'pointer', fontWeight: 600 }}
+                      onClick={() => handleToggle(n)}>
+                      {n.is_active ? '게시 중' : '비활성'}
+                    </span>
+                  </td>
+                  <td style={{ ...S.td, color: '#9b9a97' }}>{n.created_at.slice(0, 10)}</td>
+                  <td style={S.td}>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <button style={S.btn('#6b7280')} onClick={() => handleEdit(n)}>수정</button>
+                      <button style={S.btn('#dc2626')} onClick={() => handleDelete(n)}>삭제</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── 메인 관리자 페이지 ─────────────────────────────────────
 export default function AdminPage() {
   const router = useRouter();
@@ -316,6 +438,7 @@ export default function AdminPage() {
     { id: 'users',     label: '👥 사용자 관리' },
     { id: 'posts',     label: '📋 게시판 관리' },
     { id: 'pii',       label: '🛡️ PII 필터' },
+    { id: 'notices',   label: '📢 공지사항' },
   ];
 
   return (
@@ -343,6 +466,7 @@ export default function AdminPage() {
           {tab === 'users'     && <UsersTab />}
           {tab === 'posts'     && <PostsTab />}
           {tab === 'pii'       && <PiiTab />}
+          {tab === 'notices'   && <NoticesTab />}
         </div>
       </div>
     </div>

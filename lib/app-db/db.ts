@@ -70,6 +70,14 @@ function initTables(db: Database.Database) {
       path         TEXT    NOT NULL,
       detected_at  TEXT    NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS notices (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      title      TEXT    NOT NULL,
+      content    TEXT    NOT NULL,
+      is_active  INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 
   // 기존 테이블에 컬럼 추가 (이미 있으면 무시)

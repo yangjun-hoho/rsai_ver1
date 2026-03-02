@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+
+interface ActiveNotice { id: number; title: string; content: string; }
 import Sidebar, { type ToolId } from '@/lib/chat/Sidebar';
 import ChatHeader from '@/lib/chat/ChatHeader';
 import ChatArea from '@/lib/chat/ChatArea';
@@ -36,6 +38,10 @@ export default function Home() {
   const [error, setError]             = useState('');
   const [nickname, setNickname]       = useState<string | undefined>(undefined);
 
+  // 공지 배너 상태
+  const [notice, setNotice] = useState<ActiveNotice | null>(null);
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
+
   // 미리보기 패널 상태
   const [previewTool, setPreviewTool] = useState<ToolId | null>(null);
   // 도구별 독립 저장소 (SvelteKit 방식)
@@ -48,6 +54,7 @@ export default function Home() {
   useEffect(() => {
     document.title = '아레스 AI';
     fetch('/api/auth/me').then(r => r.json()).then(d => { if (d.user?.nickname) setNickname(d.user.nickname); });
+    fetch('/api/notices').then(r => r.json()).then(d => { if (d.notice) setNotice(d.notice); });
     try {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) setMessages(JSON.parse(saved));
@@ -315,6 +322,25 @@ export default function Home() {
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
       overflow: 'hidden',
     }}>
+      {/* 공지 팝업 */}
+      {notice && !noticeDismissed && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          onClick={() => setNoticeDismissed(true)}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', maxWidth: '440px', width: '90%', boxShadow: '0 20px 60px rgba(0,0,0,0.25)', position: 'relative' }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '1.3rem' }}>📢</span>
+              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#1f2937' }}>{notice.title}</h2>
+            </div>
+            <p style={{ margin: '0 0 1.5rem 0', fontSize: '0.9rem', color: '#374151', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{notice.content}</p>
+            <button onClick={() => setNoticeDismissed(true)}
+              style={{ width: '100%', padding: '0.65rem', background: '#1e40af', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>
+              확인
+            </button>
+          </div>
+        </div>
+      )}
+
       <Sidebar activeMode={activeMode} onToolClick={handleToolClick} />
 
       {/* 메인 콘텐츠 영역 */}

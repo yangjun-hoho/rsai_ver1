@@ -17,7 +17,7 @@ export async function exportCitationToODT(citationText: string): Promise<void> {
   let imgArrayBuffer: ArrayBuffer | null = null;
   let imgHeightCm = 2.5;
   try {
-    const res = await fetch('/images/head-report.png');
+    const res = await fetch('/images/document/head-report.png');
     if (res.ok) {
       imgArrayBuffer = await res.arrayBuffer();
       const blob = new Blob([imgArrayBuffer], { type: 'image/png' });

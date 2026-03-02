@@ -128,7 +128,7 @@ function generateHtml(reportData: Record<string, unknown>): string {
   let html = '';
 
   // 헤더 이미지
-  html += `<img src="/images/head-report.png" alt="보고서 헤더" style="width:100%;display:block;margin-bottom:0.1rem;" />`;
+  html += `<img src="/images/document/head-report.png" alt="보고서 헤더" style="width:100%;display:block;margin-bottom:0.1rem;" />`;
 
   // 헤더
   html += `<div class="report-header">

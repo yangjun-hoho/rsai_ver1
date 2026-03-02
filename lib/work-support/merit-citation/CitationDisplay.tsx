@@ -91,7 +91,7 @@ export default function CitationDisplay({ citationText, isLoading }: CitationDis
           </div>
         ) : citationText ? (
           <div className="citation-doc-container">
-            <Image src="/images/head-report.png" alt="헤더" width={800} height={200} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
+            <Image src="/images/document/head-report.png" alt="헤더" width={800} height={200} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
             <div className="citation-doc-header">
               <h1 className="citation-doc-title">공적조서</h1>
             </div>

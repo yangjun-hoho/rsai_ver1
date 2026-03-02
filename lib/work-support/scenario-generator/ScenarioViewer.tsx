@@ -119,7 +119,7 @@ export default function ScenarioViewer({ script, template }: ScenarioViewerProps
       {/* 콘텐츠 */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', background: '#f8f8f4' }}>
         <div className="scenario-doc-container">
-          <Image src="/images/head-report.png" alt="헤더" width={800} height={200} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
+          <Image src="/images/document/head-report.png" alt="헤더" width={800} height={200} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
           <div className="scenario-doc-header">
             <h1 className="scenario-doc-title">{titleLabel}</h1>
           </div>

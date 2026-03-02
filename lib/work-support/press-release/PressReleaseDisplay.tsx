@@ -127,7 +127,7 @@ export default function PressReleaseDisplay({ data, isLoading }: PressReleaseDis
           </div>
         ) : hasContent ? (
           <div className="pr-doc-container">
-            <Image src="/images/head-report.png" alt="헤더" width={900} height={100} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
+            <Image src="/images/document/head-report.png" alt="헤더" width={900} height={100} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
             <div className="pr-doc-header">
               <h1 className="pr-doc-big-title">보도자료</h1>
             </div>
