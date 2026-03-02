@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { exportCitationToODT } from './citationOdtExporter';
 
 interface CitationDisplayProps {
@@ -21,7 +22,7 @@ const citationCSS = `
   .citation-doc-header {
     text-align: center;
     margin-bottom: 1.5rem;
-    padding: 1rem 0 1rem 0;
+    padding: 0.5rem 0 1rem 0;
     position: relative;
   }
   .citation-doc-header::after {
@@ -90,7 +91,7 @@ export default function CitationDisplay({ citationText, isLoading }: CitationDis
           </div>
         ) : citationText ? (
           <div className="citation-doc-container">
-            <img src="/images/head-report.png" alt="헤더" style={{ width: '100%', display: 'block', marginBottom: '0.1rem' }} />
+            <Image src="/images/head-report.png" alt="헤더" width={800} height={200} style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '0.1rem' }} />
             <div className="citation-doc-header">
               <h1 className="citation-doc-title">공적조서</h1>
             </div>
